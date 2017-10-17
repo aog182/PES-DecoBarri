@@ -1,3 +1,3 @@
 //global.BD_URI = 'mongodb://localhost/decobarris';
-global.BD_URI = 'mongodb://projectePES:PES12L@ds121565.mlab.com:21565/decorbarris'
+global.BD_URI = 'mongodb://<dbuser>:<dbpassword>@ds121575.mlab.com:21575/decobarris'
 global.secret = 'secret'
