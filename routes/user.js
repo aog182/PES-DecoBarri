@@ -51,10 +51,8 @@ module.exports = function(app){
 		//falta comprovar si existeix, retornar error 409
 
 		user.save(function(err){
-			if(err){
-				console.log(err);
+			if(err)
 				res.status(500).send('Internal Server Error');
-			}
 			else{
 				var myToken = jwt.sign({username: req.body.username}, global.secret)
 				res.status(200).json(myToken);
