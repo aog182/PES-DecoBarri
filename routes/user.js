@@ -42,8 +42,8 @@ module.exports = function(app){
 		}
 
 		var user = new User({
-			name: req.body.name,
-			username: req.body.username,
+			_id: req.body.username,
+			username: req.body.name,
 			password: req.body.password,
 			email: req.body.email
 		});
@@ -51,8 +51,10 @@ module.exports = function(app){
 		//falta comprovar si existeix, retornar error 409
 
 		user.save(function(err){
-			if(err)
+			if(err){
+				console.log(err);
 				res.status(500).send('Internal Server Error');
+			}
 			else{
 				var myToken = jwt.sign({username: req.body.username}, global.secret)
 				res.status(200).json(myToken);
