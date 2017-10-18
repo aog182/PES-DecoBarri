@@ -14,7 +14,7 @@ app.use(bodyParser.json())
 
 app.use(cors());
 
-app.use(expressJWT({secret:global.secret}).unless({path:['/user/login','/user/add']}));
+//app.use(expressJWT({secret:global.secret}).unless({path:['/user/login','/user/add']}));
  
 app.set('port', (process.env.PORT || 5000));
 
