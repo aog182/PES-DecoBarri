@@ -59,6 +59,7 @@ module.exports = function(app){
 				res.status(409).send('User already registered.');
 		});
 
+
 		user.save(function(err){
 			if(err)
 				res.status(500).send('Internal Server Error');
@@ -117,6 +118,27 @@ module.exports = function(app){
 		});
 	}
 
+	editName = function(req, res) {
+		if(!req.params.username) {
+			res.status(400).send('username required');
+			return;
+		}
+
+		if(!req.body.name) {
+			res.status(400).send('Name required');
+			return;
+		}
+
+		var query = {'_id': req.params.username}
+
+		User.findOneAndUpdate(query, {'name': req.body.name}, function(err){
+			if(err)
+				res.status(404).send('User not found');
+			else
+				res.send('Username modified');
+			});
+	}
+
 
 	//returns all the paraments, except the password, of all users
 	app.get('/user/findAll', findAllUsers);
@@ -127,6 +149,7 @@ module.exports = function(app){
 	//need to pass the name and the password
 	app.post('/user/login', loginUser);
 	app.delete('/user/delete/:username', deleteUser);
+	app.put('/user/edit/:username', editName);
 
 }
 
