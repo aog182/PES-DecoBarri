@@ -15,7 +15,7 @@ module.exports = function(app){
 	}
 
 	findUserByID = function(req, res){
-		if(!req.body.username){
+		if(!req.params.username){
 			res.status(400).send('username required');
 			return;
 		}
@@ -53,20 +53,19 @@ module.exports = function(app){
 			email: req.body.email
 		});
 
-		//si existeix, retornar error 409
-		User.findById(req.body.username, function(err, user){
-			if(!err)
-				res.status(409).send('User already registered.');
-		});
-
 		user.save(function(err){
 			if(err)
-				res.status(500).send('Internal Server Error');
+				if(err.code = 11000)
+					res.status(409).send('User already registered.');
+					//return res.status(500).send('Internal Server Error');
+				else
+					res.status(500).send(err.message);
+					//res.status(500).send('Internal Server Error');
 			else{
 				var myToken = jwt.sign({username: req.body.username}, global.secret)
-				res.status(200).json(myToken);
+				return res.status(200).json(myToken);
 			}
-		});		
+		});	
 	}
 
 	deleteUser = function(req, res){

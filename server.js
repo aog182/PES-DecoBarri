@@ -22,12 +22,13 @@ app.set('port', (process.env.PORT || 5000));
 
 require('./database/db');
 require('./models/user');
+require('./models/project');
 require('./routes/user')(app);
-
+require('./routes/project')(app);
  
 app.get('/', function (req, res) {
 	res.setHeader('Access-Control-Allow-Origin', '*');
-  res.send('Hello World');
+  	res.send('Hello World');
 });
 
 
