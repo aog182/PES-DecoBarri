@@ -7,7 +7,7 @@ module.exports = function(app){
 
 	findAllProjects = function(req, res){
 		Project.find({},function(err, projects){
-			if(err)
+			if(!projects)
 				return res.status(404).send('Projects not found.');
 			else
 				return res.send(projects);
