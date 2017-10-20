@@ -15,7 +15,12 @@ module.exports = function(app){
 	}
 
 	findUserByID = function(req, res){
-		User.findById(req.params.id,{'password':0}, function(err, user){
+		if(!req.body.username){
+			res.status(400).send('username required');
+			return;
+		}
+
+		User.findById(req.params.username,{'password':0}, function(err, user){
 			if(err)
 				res.status(404).send('User not found.');
 			else
@@ -43,12 +48,16 @@ module.exports = function(app){
 
 		var user = new User({
 			_id: req.body.username,
-			username: req.body.name,
+			name: req.body.name,
 			password: req.body.password,
 			email: req.body.email
 		});
 
-		//falta comprovar si existeix, retornar error 409
+		//si existeix, retornar error 409
+		User.findById(req.body.username, function(err, user){
+			if(!err)
+				res.status(409).send('User already registered.');
+		});
 
 		user.save(function(err){
 			if(err)
@@ -61,7 +70,10 @@ module.exports = function(app){
 	}
 
 	deleteUser = function(req, res){
-		User.findById(req.params.id, function(err, user){
+		if(!req.params.username)
+			res.status(400).send('username required');
+			return ;
+		User.findById(req.params.username, function(err, user){
 			if(err)
 				res.status(404).send('User not found.');
 			else{
@@ -109,12 +121,12 @@ module.exports = function(app){
 	//returns all the paraments, except the password, of all users
 	app.get('/user/findAll', findAllUsers);
 	//returns all the paraments, except the password of the user with that id
-	app.get('/user/findByID/:id', findUserByID);
+	app.get('/user/findByID/:username', findUserByID);
 	//need to pass name, username, password and email
 	app.post('/user/add', addUser);
 	//need to pass the name and the password
 	app.post('/user/login', loginUser);
-	app.delete('/user/delete/:id', deleteUser);
+	app.delete('/user/delete/:username', deleteUser);
 
 }
 

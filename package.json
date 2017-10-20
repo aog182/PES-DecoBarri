@@ -1,7 +1,7 @@
 {
-  "name": "app",
+  "name": "Decobarris",
   "version": "1.0.0",
-  "description": "prueba",
+  "description": "backend",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
