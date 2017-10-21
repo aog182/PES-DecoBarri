@@ -7,8 +7,8 @@ module.exports = function(app){
 
 	findAllProjects = function(req, res){
 		Project.find({},function(err, projects){
-			if(!projects)
-				return res.status(404).send('Projects not found.');
+			if(err)
+				res.status(500).send('Internal Server Error');
 			else
 				return res.send(projects);
 		});
@@ -21,7 +21,9 @@ module.exports = function(app){
 		}
 
 		Project.findById(req.params.id, function(err, project){
-			if(!project)
+			if(err)
+				res.status(500).send('Internal Server Error');
+			else if(!project)
 				res.status(404).send('Project not found.');
 			else
 				res.send(project);
@@ -49,14 +51,15 @@ module.exports = function(app){
 		});
 
 		project.save(function(err){
-			if (err)
-				if(err.code = 11000)
-					return res.status(409).send('Project already registered.');
-					//return res.status(500).send('Internal Server Error');
+			if(err){
+				if(err.code == 11000)
+					res.status(409).send('User already registered');
 				else
-					return res.status(500).send(err.message);
-			else
-				return res.status(200);
+					res.status(500).send('Internal Server Error');
+			}
+			else{
+				res.status(200).send('Project registered');
+			}
 		});		
 	}
 

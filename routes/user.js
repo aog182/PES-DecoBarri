@@ -55,21 +55,17 @@ module.exports = function(app){
 			email: req.body.email
 		});
 
-		//si existeix, retornar error 409
-		User.findById(req.body._id, function(err, user){
-			if(user){
-				res.status(409).send('User already registered.');
-				return;
+
+		new_user.save(function(err){
+			if(err){
+				if(err.code == 11000)
+					res.status(409).send('User alredy registered');
+				else
+					res.status(500).send('Internal Server Error');
 			}
 			else{
-				new_user.save(function(err){
-					if(err)
-						res.status(500).send('Internal Server Error');
-					else{
-						var myToken = jwt.sign({_id: req.body._id}, global.secret)
-						res.status(200).json(myToken);
-					}
-				});	
+				var myToken = jwt.sign({_id: req.body._id}, global.secret)
+				res.status(200).json(myToken);
 			}
 		});
 	}
