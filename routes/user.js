@@ -142,7 +142,9 @@ module.exports = function(app){
 		var query = {'_id': req.params._id}
 
 		User.findOneAndUpdate(query, {'name': req.body.name}, function(err, user){
-			if(!user)
+			if(err)
+				res.status(500).send('Internal Server Error');
+			else if(!user)
 				res.status(404).send('User not found');
 			else
 				res.status(200).send('User modified');
