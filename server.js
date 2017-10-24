@@ -18,13 +18,13 @@ app.use(cors());
  
 app.set('port', (process.env.PORT || 5000));
 
-
-
 require('./database/db');
 require('./models/user');
 require('./models/project');
+require('./models/material');
 require('./routes/user')(app);
 require('./routes/project')(app);
+require('./routes/material')(app);
  
 app.get('/', function (req, res) {
 	res.setHeader('Access-Control-Allow-Origin', '*');
