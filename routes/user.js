@@ -145,13 +145,16 @@ module.exports = function(app){
 			res.status(400).send('username required');
 			return;
 		}
-
 		if(!req.body.name) {
 			res.status(400).send('Name required');
 			return;
 		}
-		if(!req.body.password) {
+		if(!req.body.new_password) {
 			res.status(400).send('Password required');
+			return;
+		}
+		if(!req.body.old_password) {
+			res.status(400).send('Old password required');
 			return;
 		}
 		if(!req.body.email) {
@@ -159,19 +162,25 @@ module.exports = function(app){
 			return;
 		}
 
-		var query = {'_id': req.params._id}
-
 		User.findById(req.params._id, function(err, user){
 			if(err)
 				res.status(500).send('Internal Server Error');
 			else if(!user)
-				res.status(404).send('User not found');
+				res.status(404).send('User not found.');
 			else{
-				user.name = req.body.name;
-				user.password = req.body.password;
-				user.email = req.body.email;
-				user.save(); //per a que el password es torni a encriptar
-				res.status(200).send('User modified');
+				user.comparePassword(req.body.old_password, function(err, isMath){
+					if(err)
+						res.status(500).send('Internal Server Error');
+					else if(!isMath)
+						res.status(401).send('Invalid password');
+					else{
+						user.name = req.body.name;
+						user.password = req.body.new_password;
+						user.email = req.body.email;
+						user.save(); //per a que el password es torni a encriptar
+						res.status(200).send('User modified');
+					}
+				});
 			}
 		});
 	}
@@ -226,7 +235,7 @@ module.exports = function(app){
 	app.post('/user/login', loginUser);
 	app.delete('/user/delete/:_id', deleteUser);
 	app.put('/user/edit/:_id', editUser);
-	app.post('/user/addProject/:_id', addProject);
+	app.put('/user/addProject/:_id', addProject);
 
 }
 

@@ -7,7 +7,7 @@
     "test": "mocha",
     "start": "node server.js"
   },
-  "author": "albert",
+  "author": "",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^1.0.3",

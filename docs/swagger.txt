@@ -1,0 +1,266 @@
+swagger: "2.0"
+info:
+  description: "Documentation of PES-Decobarri"
+  version: "1.0.0"
+  title: "DecoBarri"
+host: project-pes.herokuapp.com
+tags:
+- name: "User"
+  description: ""
+- name: "Project"
+  description: ""
+schemes:
+- "https"
+paths:
+  /user/findAll:
+    get:
+      summary: " "
+      description: " "
+      tags:
+      - "User"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Successful operation"
+        500:
+          description: "Internal Server Error"
+  
+  '/user/findByID/{_id}':
+    get:
+      tags:
+      - "User"
+      parameters:
+        - name: _id
+          in: path
+          description: ID de l'usuari
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+        500:
+          description: Internal Server Error
+        404:
+          description: User not found.
+          
+  '/user/findByName/{name}':
+    get:
+      tags:
+      - "User"
+      parameters:
+        - name: name
+          in: path
+          description: ID de l'usuari
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+        500:
+          description: Internal Server Error
+    
+  '/user/add':
+    post:
+      tags:
+      - "User"
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateUser'
+      responses:
+        200:
+          description: Success
+        409:
+          description: User alredy registered
+        500:
+          description: "Internal Server Error"
+    
+  '/user/delete/{_id}':
+    delete:
+      tags:
+      - "User"
+      parameters:
+        - name: _id
+          in: path
+          description: ID de l'usuari
+          required: true
+          type: string
+      responses:
+        200:
+          description: User deleted
+        404:
+          description: User not found
+        500:
+          description: Internal Server Error
+    
+  '/user/login':
+    post:
+      tags:
+      - "User"
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Login'
+      responses:
+        200:
+          description: Retorna my Token
+        401:
+          description: Invalid password
+        404:
+          description: User not found
+        500:
+          description: Internal Server Error
+    
+  '/user/edit/{_id}':
+    put:
+      tags: 
+        - User
+      parameters:
+        - name: _id
+          in: path
+          description: ID de l'usuari
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EditUser'
+      responses:
+        200:
+          description: Success
+        401:
+          description: Invalid password
+        404:
+          description: User not found
+        500:
+          description: Internal Server Error
+  
+  /user/addProject/{_id}:
+    put:
+      tags: 
+        - User
+      parameters:
+        - name: _id
+          in: path
+          description: ID de l'usuari
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AddProject'
+      responses:
+        200:
+          description: Success
+        404:
+          description: User not found
+        500:
+          description: Internal Server Error
+  
+  /project/findAll:
+    get:
+      tags:
+      - "Project"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Successful operation"
+        500:
+          description: "Internal Server Error"
+  
+  '/project/findByID/{id}':
+    get:
+      tags:
+      - "Project"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+        500:
+          description: Internal Server Error
+        404:
+          description: Project not found.
+          
+  '/project/add':
+    post:
+      tags:
+      - "Project"
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateProject'
+      responses:
+        200:
+          description: Success
+        409:
+          description: Project alredy registered
+        500:
+          description: "Internal Server Error"
+    
+definitions:
+  CreateUser: 
+    type: object
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      email:
+        type: string
+        
+  EditUser: 
+    type: object
+    properties:
+      name:
+        type: string
+      old_password:
+        type: string
+      new_password:
+        type: string
+      email:
+        type: string
+        
+  Login:
+    type: object
+    properties:
+      _id:
+        type: string
+      password:
+        type: string
+
+
+  CreateProject: 
+    type: object
+    properties:
+      name:
+        type: string
+      theme:
+        type: string
+      description:
+        type: string
+      city:
+        type: string
+      address::
+        type: string
+        
+  AddProject:
+    type: object
+    properties:
+      project_id:
+        type: string
