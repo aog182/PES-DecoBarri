@@ -5,9 +5,9 @@ info:
   title: "DecoBarri"
 host: project-pes.herokuapp.com
 tags:
-- name: "User"
+- name: User
   description: ""
-- name: "Project"
+- name: Project
   description: ""
 schemes:
 - "https"
@@ -17,7 +17,7 @@ paths:
       summary: " "
       description: " "
       tags:
-      - "User"
+      - User
       produces:
       - "application/json"
       responses:
@@ -26,10 +26,10 @@ paths:
         500:
           description: "Internal Server Error"
   
-  '/user/findByID/{_id}':
+  /user/findByID/{_id}:
     get:
       tags:
-      - "User"
+      - User
       parameters:
         - name: _id
           in: path
@@ -44,10 +44,10 @@ paths:
         404:
           description: User not found.
           
-  '/user/findByName/{name}':
+  /user/findByName/{name}:
     get:
       tags:
-      - "User"
+      - User
       parameters:
         - name: name
           in: path
@@ -60,10 +60,10 @@ paths:
         500:
           description: Internal Server Error
     
-  '/user/add':
+  /user/add:
     post:
       tags:
-      - "User"
+      - User
       parameters:
         - name: body
           in: body
@@ -78,10 +78,10 @@ paths:
         500:
           description: "Internal Server Error"
     
-  '/user/delete/{_id}':
+  /user/delete/{_id}:
     delete:
       tags:
-      - "User"
+      - User
       parameters:
         - name: _id
           in: path
@@ -96,10 +96,10 @@ paths:
         500:
           description: Internal Server Error
     
-  '/user/login':
+  /user/login:
     post:
       tags:
-      - "User"
+      - User
       parameters:
         - name: body
           in: body
@@ -116,7 +116,7 @@ paths:
         500:
           description: Internal Server Error
     
-  '/user/edit/{_id}':
+  /user/edit/{_id}:
     put:
       tags: 
         - User
@@ -167,7 +167,7 @@ paths:
   /project/findAll:
     get:
       tags:
-      - "Project"
+      - Project
       produces:
       - "application/json"
       responses:
@@ -176,12 +176,12 @@ paths:
         500:
           description: "Internal Server Error"
   
-  '/project/findByID/{id}':
+  /project/findByID/{_id}:
     get:
       tags:
-      - "Project"
+      - Project
       parameters:
-        - name: id
+        - name: _id
           in: path
           required: true
           type: string
@@ -192,11 +192,26 @@ paths:
           description: Internal Server Error
         404:
           description: Project not found.
-          
-  '/project/add':
+
+  /project/findByName/{name}:
+    get:
+      tags:
+      - Project
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+        500:
+          description: Internal Server Error
+         
+  /project/add:
     post:
       tags:
-      - "Project"
+      - Project
       parameters:
         - name: body
           in: body
@@ -205,12 +220,54 @@ paths:
             $ref: '#/definitions/CreateProject'
       responses:
         200:
-          description: Success
+          description: Success. Returns Project id
         409:
           description: Project alredy registered
         500:
           description: "Internal Server Error"
-    
+
+  /project/delete/{_id}:
+    delete:
+      tags:
+      - Project
+      parameters:
+        - name: _id
+          in: path
+          description: ID del projecte
+          required: true
+          type: string
+      responses:
+        200:
+          description: Project deleted
+        404:
+          description: Project not found
+        500:
+          description: Internal Server Error
+          
+  /project/edit/{_id}:
+    put:
+      tags: 
+        - User
+      parameters:
+        - name: _id
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EditProject'
+      responses:
+        200:
+          description: Success
+        401:
+          description: Invalid password
+        404:
+          description: User not found
+        500:
+          description: Internal Server Error
+  
 definitions:
   CreateUser: 
     type: object
@@ -256,9 +313,23 @@ definitions:
         type: string
       city:
         type: string
-      address::
+      address:
         type: string
         
+  EditProject: 
+    type: object
+    properties:
+      name:
+        type: string
+      theme:
+        type: string
+      description:
+        type: string
+      city:
+        type: string
+      address:
+        type: string
+
   AddProject:
     type: object
     properties:

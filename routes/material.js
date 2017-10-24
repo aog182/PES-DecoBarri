@@ -6,15 +6,14 @@ module.exports = function(app){
 	var Material = db.model('Material');
 
 	findAllMaterials = function(req, res){
-		Project.find({},function(err, materials){
+		Material.find({},function(err, materials){
 			if(err)
 				res.status(500).send('Internal Server Error');
 			else
-				return res.send(materials);
+				return res.status(200).send(materials);
 		});
 	}
 
 	//returns all the paraments of all projects
-	app.get('/project/findAll', findAllMaterials);
-
+	app.get('/material/findAll', findAllMaterials);
 }
