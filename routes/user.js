@@ -137,10 +137,10 @@ module.exports = function(app){
 			}
 		});
 	}
-
-	editName = function(req, res) {
+	
+	editUser = function(req, res) {
 		if(!req.params._id) {
-			res.status(400).send('_id required');
+			res.status(400).send('username required');
 			return;
 		}
 
@@ -148,10 +148,19 @@ module.exports = function(app){
 			res.status(400).send('Name required');
 			return;
 		}
+		if(!req.body.password) {
+			res.status(400).send('Password required');
+			return;
+		}
+		if(!req.body.email) {
+			res.status(400).send('Email required');
+			return;
+		}
 
 		var query = {'_id': req.params._id}
 
-		User.findOneAndUpdate(query, {'name': req.body.name}, function(err, user){
+		User.findOneAndUpdate(query, {'name': req.body.name, 'password': req.body.password,
+			'email': req.body.email}, function(err, user){
 			if(err)
 				res.status(500).send('Internal Server Error');
 			else if(!user)
@@ -172,7 +181,7 @@ module.exports = function(app){
 	//need to pass the name and the password
 	app.post('/user/login', loginUser);
 	app.delete('/user/delete/:_id', deleteUser);
-	app.put('/user/edit/:_id', editName);
+	app.put('/user/edit/:_id', editUser);
 
 }
 

@@ -7,6 +7,6 @@ var Material = new mongoose.Schema({
 	address: {type : String, required : false},
 	urgent: {type: Boolean, required: false}
 
-},{collection: 'material'});
+});
 
-module.exports = mongoose.model('material', Material);
+module.exports = mongoose.model('Material', Material);
