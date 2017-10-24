@@ -26,9 +26,23 @@ module.exports = function(app){
 			if(!user)
 				res.status(404).send('User not found.');
 			else
-				res.send(user);
+				res.status(200).send(user);
 		});
 	}
+
+	findUserByName = function(req, res){
+		if(!req.params.name){
+			res.status(400).send('name required');
+			return;
+		}
+
+		User.find({'name':req.params.name},{'password':0, '__v':0}, function(err, users){
+			if(err)
+				res.status(500).send('Internal Server Error');
+			else
+				res.status(200).send(users);
+		});
+	};
 
 	addUser = function(req,res){
 		if(!req.body.name){
@@ -152,6 +166,7 @@ module.exports = function(app){
 	app.get('/user/findAll', findAllUsers);
 	//returns all the paraments, except the password of the user with that id
 	app.get('/user/findByID/:_id', findUserByID);
+	app.get('/user/findByName/:name', findUserByName);
 	//need to pass name, _id, password and email
 	app.post('/user/add', addUser);
 	//need to pass the name and the password

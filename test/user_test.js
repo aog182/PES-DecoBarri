@@ -142,6 +142,35 @@ describe('get a user by the _id', function(){
 	});
 });
 
+describe('get a user by the name', function(){
+	before(function(done){
+		chai.request(baseUrl)
+			.post('user/add')
+			.send(user)
+			.end(function(err, res){
+				done();
+			});
+	});
+
+	after(function(done){
+		chai.request(baseUrl)
+			.delete('user/delete/' + user._id)
+			.end(function(err, res){
+				done();
+			});
+	});
+
+	it('return status 200 and all paraments except the password and __v', function(done){
+		chai.request(baseUrl)
+			.get('user/findByName/' + user.name)
+			.end(function(err, res){
+				chai.expect(res).to.have.status(200);
+				done();
+			});
+	});
+});
+
+
 describe('get a user by the _id, user does not exist', function(){
 
 	it('return status 404', function(done){

@@ -31,9 +31,6 @@ module.exports = function(app){
 	}
 
 	addProject = function(req,res){
-		if(!req.body.id){
-			return res.status(400).send('id required');
-		}
 		if(!req.body.name){
 			return res.status(400).send('name required');
 		}
@@ -42,7 +39,6 @@ module.exports = function(app){
 		}
 		
 		var project = new Project({
-			_id: req.body.id,
 			name: req.body.name,
 			theme: req.body.theme,
 			description: req.body.description,
