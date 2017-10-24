@@ -45,13 +45,13 @@ module.exports = function(app){
 	};
 
 	addUser = function(req,res){
-		if(!req.body.name){
-			res.status(400).send('name required');
-			return ;
-		}
 		if(!req.body._id){
 			res.status(400).send('_id required');
 			return;
+		}
+		if(!req.body.name){
+			res.status(400).send('name required');
+			return ;
 		}
 		if(!req.body.password){
 			res.status(400).send('password required');
