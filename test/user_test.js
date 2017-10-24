@@ -288,7 +288,7 @@ describe('login failed id wrong', function(){
 });
 
 
-describe('edit a user that exists', function(){
+describe('edit a user that exists and password correct', function(){
 	before(function(done){
 		chai.request(baseUrl)
 			.post('user/add')
@@ -307,9 +307,9 @@ describe('edit a user that exists', function(){
 	});
 
 	var new_user = {
-		_id : user._id,
 		name : 'albert',
-		password : 'abcd',
+		old_password : user.password,
+		new_password : 'abcd',
 		email : 'albert@email.com'
 	};
 
@@ -324,12 +324,48 @@ describe('edit a user that exists', function(){
 	});
 });
 
+describe('edit a user that exists and password wrong', function(){
+	before(function(done){
+		chai.request(baseUrl)
+			.post('user/add')
+			.send(user)
+			.end(function(err){
+				done();
+			});
+	});
+
+	after(function(done){
+		chai.request(baseUrl)
+			.delete('user/delete/' + user._id)
+			.end(function(err){
+				done();
+			});
+	});
+
+	var new_user = {
+		name : 'albert',
+		old_password : user.password+'a',
+		new_password : 'abcd',
+		email : 'albert@email.com'
+	};
+
+	it('returns status 401', function(done){
+		chai.request(baseUrl)
+			.put('user/edit/' + user._id)
+			.send(new_user)
+			.end(function(err, res){
+				chai.expect(res).to.have.status(401);
+				done();
+			});
+	});
+});
+
 describe('edit a user that does not exist', function(){
 
 	var new_user = {
-		_id : user._id,
 		name : 'albert',
-		password : 'abcd',
+		old_password : user.password,
+		new_password : 'abcd',
 		email : 'albert@email.com'
 	};
 
@@ -343,6 +379,7 @@ describe('edit a user that does not exist', function(){
 			});
 	});
 });
+
 
 
 
