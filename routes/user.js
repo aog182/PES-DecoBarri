@@ -4,6 +4,7 @@ module.exports = function(app){
 	
 	var db = require('../database/db');
 	var User = db.model('User');
+	var Project = db.model('Project');
 
 	findAllUsers = function(req, res){
 		User.find({},{'password':0, '__v':0},function(err, users){
@@ -67,6 +68,7 @@ module.exports = function(app){
 			name: req.body.name,
 			password: req.body.password,
 			email: req.body.email
+			//projects: [{_id:"1234"},{_id:"1233"}]
 		});
 
 
@@ -159,15 +161,57 @@ module.exports = function(app){
 
 		var query = {'_id': req.params._id}
 
-		User.findOneAndUpdate(query, {'name': req.body.name, 'password': req.body.password,
-			'email': req.body.email}, function(err, user){
+		User.findById(req.params._id, function(err, user){
 			if(err)
 				res.status(500).send('Internal Server Error');
 			else if(!user)
 				res.status(404).send('User not found');
-			else
+			else{
+				user.name = req.body.name;
+				user.password = req.body.password;
+				user.email = req.body.email;
+				user.save(); //per a que el password es torni a encriptar
 				res.status(200).send('User modified');
-			});
+			}
+		});
+	}
+
+	addProject = function(req, res){
+		//La id del body es la del projecte, la de la url es del usuari
+
+		if(!req.params._id) {
+			res.status(400).send('username required');
+			return;
+		}
+
+		if(!req.body.project_id) {
+			res.status(400).send('project required');
+			return;
+		}
+
+
+		Project.findById(req.body.project_id,{},function(err, project){
+			if(err)
+				res.status(500).send('Internal Server Error');
+			else if(!project)
+				res.status(404).send('Project not found');
+			else {
+				var query = {'_id': req.params._id};
+				var project = {'_id':req.body.project_id};
+
+				User.findOneAndUpdate(query, {$push: {'projects': project}}, function(err, user){
+					if(err){
+						res.status(500).send('Internal Server Error');
+					}
+					else if(!user){
+						res.status(404).send('User not found');
+					}
+					else{
+						res.status(200).send('Project added');
+					}
+				});
+			}
+		});
 	}
 
 
@@ -182,6 +226,7 @@ module.exports = function(app){
 	app.post('/user/login', loginUser);
 	app.delete('/user/delete/:_id', deleteUser);
 	app.put('/user/edit/:_id', editUser);
+	app.post('/user/addProject/:_id', addProject);
 
 }
 
