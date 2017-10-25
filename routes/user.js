@@ -43,7 +43,7 @@ module.exports = function(app){
 			else
 				res.status(200).send(users);
 		});
-	};
+	}
 
 	addUser = function(req,res){
 		if(!req.body._id){
@@ -188,8 +188,12 @@ module.exports = function(app){
 								user.name = req.body.name;
 								user.password = req.body.new_password;
 								user.email = req.body.email;
-								user.save(); //per a que el password es torni a encriptar
-								res.status(200).send('User modified');
+								user.save(function(err){ //per a que el password es torni a encriptar
+									if(err)
+										res.status(500).send('Internal Server Error');
+									else
+										res.status(200).send('User modified');
+								});
 							}
 						});
 					}
@@ -231,8 +235,12 @@ module.exports = function(app){
 							res.status(409).send('The user has been already registered in this project');
 						else{
 							user.projects.push(project);
-							user.save();
-							res.status(200).send('User modified');
+							user.save(function(err){
+								if(err)
+									res.status(500).send('Internal Server Error');
+								else
+									res.status(200).send('User modified');
+							});
 						}
 					}
 				});
@@ -266,8 +274,12 @@ module.exports = function(app){
 				else{
 					var project = {'_id':req.body.project_id};
 					user.projects.pull(project);
-					user.save();
-					res.status(200).send('User modified');
+					user.save(function(err){
+						if(err)
+							res.status(500).send('Internal Server Error');
+						else
+							res.status(200).send('User modified');
+					});
 				}				
 			}
 		});
