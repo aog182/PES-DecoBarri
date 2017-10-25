@@ -268,6 +268,20 @@ paths:
         500:
           description: Internal Server Error
   
+  /material/findAll:
+    get:
+      summary: " "
+      description: " "
+      tags:
+      - Material
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Succes. Returns _id of material"
+        500:
+          description: "Internal Server Error"
+  
 definitions:
   CreateUser: 
     type: object
