@@ -68,20 +68,26 @@ module.exports = function(app){
 			name: req.body.name,
 			password: req.body.password,
 			email: req.body.email
-			//projects: [{_id:"1234"},{_id:"1233"}]
 		});
 
-
-		new_user.save(function(err){
-			if(err){
-				if(err.code == 11000)
-					res.status(409).send('User alredy registered');
-				else
-					res.status(500).send('Internal Server Error');
-			}
+		User.find({'email':req.body.email},{}, function(err, users){
+			if(err)
+				res.status(500).send('Internal Server Error');
+			else if(users.length)
+				res.status(409).send('Email already registered');
 			else{
-				var myToken = jwt.sign({_id: req.body._id}, global.secret)
-				res.status(200).json(myToken);
+				new_user.save(function(err){
+					if(err){
+						if(err.code == 11000)
+							res.status(409).send('User alredy registered');
+						else
+							res.status(500).send('Internal Server Error');
+					}
+					else{
+						var myToken = jwt.sign({_id: req.body._id}, global.secret)
+						res.status(200).json(myToken);
+					}
+				});
 			}
 		});
 	}
@@ -118,7 +124,7 @@ module.exports = function(app){
 			return;
 		}
 
-		User.findOne({_id: req.body._id}, function(err, user){
+		User.findById(req.body._id, function(err, user){
 			if(err)
 				res.status(500).send('Internal Server Error');
 			else if(!user)
@@ -162,23 +168,30 @@ module.exports = function(app){
 			return;
 		}
 
-		User.findById(req.params._id, function(err, user){
+		//SELECT * FROM users WHERE users._id != req.params._id AND users.email = req.body.email
+		User.find({"_id": {"$ne": req.params._id},"email": req.body.email}, function(err, users){
 			if(err)
 				res.status(500).send('Internal Server Error');
-			else if(!user)
-				res.status(404).send('User not found.');
+			else if(users.length)
+				res.status(409).send('Email already registered');
 			else{
-				user.comparePassword(req.body.old_password, function(err, isMath){
-					if(err)
-						res.status(500).send('Internal Server Error');
-					else if(!isMath)
-						res.status(401).send('Invalid password');
+				User.findById(req.params._id,function(err, user){
+					if(!user)
+						res.status(404).send('User not found');
 					else{
-						user.name = req.body.name;
-						user.password = req.body.new_password;
-						user.email = req.body.email;
-						user.save(); //per a que el password es torni a encriptar
-						res.status(200).send('User modified');
+						user.comparePassword(req.body.old_password, function(err, isMatch){
+							if(err)
+								res.status(500).send('Internal Server Error');
+							else if(!isMatch)
+								res.status(401).send('Invalid password');
+							else{
+								user.name = req.body.name;
+								user.password = req.body.new_password;
+								user.email = req.body.email;
+								user.save(); //per a que el password es torni a encriptar
+								res.status(200).send('User modified');
+							}
+						});
 					}
 				});
 			}
