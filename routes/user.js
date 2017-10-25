@@ -211,17 +211,13 @@ module.exports = function(app){
 			return;
 		}
 
-
-		Project.findById(req.body.project_id,{},function(err, project){
-			if(err)
+		Project.findById(req.body.project_id,{},function(err, projectObj){
+			if(err && err.code)
 				res.status(500).send('Internal Server Error');
-			else if(!project)
+			else if(!projectObj)
 				res.status(404).send('Project not found');
 			else {
-				var query = {'_id': req.params._id};
-				var project = {'_id':req.body.project_id};
-
-				User.findOneAndUpdate(query, {$push: {'projects': project}}, function(err, user){
+				User.findById(req.params._id,function(err, user){
 					if(err){
 						res.status(500).send('Internal Server Error');
 					}
@@ -229,9 +225,50 @@ module.exports = function(app){
 						res.status(404).send('User not found');
 					}
 					else{
-						res.status(200).send('Project added');
+						var project = {'_id':req.body.project_id};
+						//comrpovar si existeix, si ja existeix no s'afegeix
+						if(user.projects.find(o => o._id == req.body.project_id))
+							res.status(409).send('The user has been already registered in this project');
+						else{
+							user.projects.push(project);
+							user.save();
+							res.status(200).send('User modified');
+						}
 					}
 				});
+			}
+		});
+	}
+
+	deleteProject = function(req, res){
+		//La id del body es la del projecte, la de la url es del usuari
+
+		if(!req.params._id) {
+			res.status(400).send('username required');
+			return;
+		}
+
+		if(!req.body.project_id) {
+			res.status(400).send('project required');
+			return;
+		}
+		User.findById(req.params._id,function(err, user){
+			if(err){
+				res.status(500).send('Internal Server Error');
+			}
+			else if(!user){
+				res.status(404).send('User not found');
+			}
+			else{
+				//comprovar que no existeix, si no existeix retorna error
+				if(!user.projects.find(o => o._id == req.body.project_id))
+					res.status(409).send('The user is not registered in this project');
+				else{
+					var project = {'_id':req.body.project_id};
+					user.projects.pull(project);
+					user.save();
+					res.status(200).send('User modified');
+				}				
 			}
 		});
 	}
@@ -249,6 +286,7 @@ module.exports = function(app){
 	app.delete('/user/delete/:_id', deleteUser);
 	app.put('/user/edit/:_id', editUser);
 	app.put('/user/addProject/:_id', addProject);
+	app.put('/user/deleteProject/:_id', deleteProject)
 
 }
 
