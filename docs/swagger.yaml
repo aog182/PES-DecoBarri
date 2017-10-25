@@ -155,7 +155,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/AddProject'
+            $ref: '#/definitions/AddProjectToUser'
       responses:
         200:
           description: Success
@@ -217,12 +217,10 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/CreateProject'
+            $ref: '#/definitions/StructureProject'
       responses:
         200:
           description: Success. Returns Project id
-        409:
-          description: Project alredy registered
         500:
           description: "Internal Server Error"
 
@@ -257,7 +255,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/EditProject'
+            $ref: '#/definitions/StructureProject'
       responses:
         200:
           description: Success
@@ -282,6 +280,48 @@ paths:
         500:
           description: "Internal Server Error"
   
+  /material/add:
+    post:
+      tags:
+      - Material
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/StructureMaterial'
+      responses:
+        200:
+          description: Success. Returns Material id
+        500:
+          description: "Internal Server Error"
+
+/material/edit/{_id}:
+    put:
+      tags: 
+        - Material
+      parameters:
+        - name: _id
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/StructureMaterial'
+      responses:
+        200:
+          description: Success
+        400:
+          description: Param required.
+        401:
+          description: Param not the right type.
+        404:
+          description: Material not found
+        500:
+          description: Internal Server Error
+
 definitions:
   CreateUser: 
     type: object
@@ -315,37 +355,36 @@ definitions:
       password:
         type: string
 
-
-  CreateProject: 
-    type: object
-    properties:
-      name:
-        type: string
-      theme:
-        type: string
-      description:
-        type: string
-      city:
-        type: string
-      address:
-        type: string
-        
-  EditProject: 
-    type: object
-    properties:
-      name:
-        type: string
-      theme:
-        type: string
-      description:
-        type: string
-      city:
-        type: string
-      address:
-        type: string
-
-  AddProject:
+  AddProjectToUser:
     type: object
     properties:
       project_id:
+        type: string
+
+  StructureProject: 
+    type: object
+    properties:
+      name:
+        type: string
+      theme:
+        type: string
+      description:
+        type: string
+      city:
+        type: string
+      address:
+        type: string
+
+  StructureMaterial: 
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      urgent:
+        type: boolean
+      quantity:
+        type: integer
+      address:
         type: string

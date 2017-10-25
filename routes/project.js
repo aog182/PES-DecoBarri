@@ -63,6 +63,7 @@ module.exports = function(app){
 		project.save(function(err){
 			if(err){
 				if(err.code == 11000)
+					//Impossible arribar aqui, no busquem id
 					res.status(409).send('Project already registered');
 				else
 					res.status(500).send('Internal Server Error');
@@ -74,7 +75,6 @@ module.exports = function(app){
 	}
 
 	editProject = function(req, res) {
-		var message = "Required: ";
 		if(!req.params._id) {
 			res.status(400).send('_id required');
 			return;
@@ -140,8 +140,8 @@ module.exports = function(app){
 	//need to pass name, username, password and email
 	app.post('/project/add', addProject);
 
+	app.put('/project/edit/:_id', editProject);
+
 	app.delete('/project/delete/:_id', deleteProject);
 
-	app.put('/project/edit/:_id', editProject);
-	
 }
