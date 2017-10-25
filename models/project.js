@@ -6,7 +6,6 @@ var Project = new mongoose.Schema({
 	description: {type : String, required : false},
 	city: {type : String, required : true},
 	address: {type : String, required : false}
-
 });
 
 module.exports = mongoose.model('Project', Project);

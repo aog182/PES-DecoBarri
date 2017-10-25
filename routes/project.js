@@ -63,7 +63,7 @@ module.exports = function(app){
 		project.save(function(err){
 			if(err){
 				if(err.code == 11000)
-					res.status(409).send('User already registered');
+					res.status(409).send('Project already registered');
 				else
 					res.status(500).send('Internal Server Error');
 			}
