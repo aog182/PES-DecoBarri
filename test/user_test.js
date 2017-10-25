@@ -411,8 +411,68 @@ describe('edit a user that does not exist', function(){
 	});
 });
 
+describe('edit a user that exists and email duplicated', function(){
+	var user2 = {
+		_id : 'albertLuth',
+		name : 'albert',
+		password : '1234',
+		email : 'albert@email.com'
+	};
+
+	before(function(done){
+		chai.request(global.baseUrl)
+			.post('user/add')
+			.send(user)
+			.end(function(err){
+				done();
+			});
+	});
+
+	before(function(done){
+		chai.request(global.baseUrl)
+			.post('user/add')
+			.send(user2)
+			.end(function(err){
+				done();
+			});
+	});
+
+	after(function(done){
+		chai.request(global.baseUrl)
+			.delete('user/delete/' + user._id)
+			.end(function(err){
+				done();
+			});
+	});
+
+	after(function(done){
+		chai.request(global.baseUrl)
+			.delete('user/delete/' + user2._id)
+			.end(function(err){
+				done();
+			});
+	});
+
+	var new_user = {
+		name : user.name,
+		old_password : user.password,
+		new_password : 'abcd',
+		email : user2.email
+	};
+
+	it('returns status 409', function(done){
+		chai.request(global.baseUrl)
+			.put('user/edit/' + user._id)
+			.send(new_user)
+			.end(function(err, res){
+				chai.expect(res).to.have.status(409);
+				done();
+			});
+	});
+});
 
 
+//FALTA: addProject, borrar project
 
 
 
