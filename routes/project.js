@@ -36,7 +36,8 @@ module.exports = function(app){
 			return;
 		}
 
-		Project.find({'name':req.params.name}, function(err, project){
+		var regex = new RegExp(req.params.name, 'i');  // 'i' makes it case insensitive
+		Project.find({'name':regex}, function(err, project){
 			if(err)
 				res.status(500).send('Internal Server Error');
 			else
