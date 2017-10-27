@@ -7,7 +7,7 @@ chai.use(chaiHttp);
 require('../config');
 
 var user = {
-	_id: "xavi",
+	username: "xavi",
 	name: "xavier",
 	password: "1234",
 	email: "xavi@email.com"
@@ -28,7 +28,7 @@ describe('add user', function(){
 
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user._id)
+			.delete('user/delete/' + user.username)
 			.end(function(err){
 				done();
 			});
@@ -58,7 +58,7 @@ describe('add user already registered', function(){
 
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user._id)
+			.delete('user/delete/' + user.username)
 			.end(function(err){
 				done();
 			});
@@ -78,7 +78,7 @@ describe('add user already registered', function(){
 describe('add user with same email', function(){
 
 	var user2 = {
-		_id: user._id,
+		username: user.username,
 		name: user.name+'a',
 		password: "1234",
 		email: user.email
@@ -95,7 +95,7 @@ describe('add user with same email', function(){
 
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user._id)
+			.delete('user/delete/' + user.username)
 			.end(function(err){
 				done();
 			});
@@ -124,7 +124,7 @@ describe('delete a user from the DB', function(){
 
 	it('returns status 200', function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user._id)
+			.delete('user/delete/' + user.username)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
 				done();
@@ -136,7 +136,7 @@ describe('delete a user that does not exist', function(){
 
 	it('returns status 404', function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user._id)
+			.delete('user/delete/' + user.username)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(404);
 				done();
@@ -144,7 +144,7 @@ describe('delete a user that does not exist', function(){
 	});
 });
 
-describe('get a user by the _id', function(){
+describe('get a user by the username', function(){
 	before(function(done){
 		chai.request(global.baseUrl)
 			.post('user/add')
@@ -156,7 +156,7 @@ describe('get a user by the _id', function(){
 
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user._id)
+			.delete('user/delete/' + user.username)
 			.end(function(err, res){
 				done();
 			});
@@ -164,10 +164,10 @@ describe('get a user by the _id', function(){
 
 	it('return status 200 and all paraments except the password and __v', function(done){
 		chai.request(global.baseUrl)
-			.get('user/findByID/' + user._id)
+			.get('user/findByID/' + user.username)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
-				chai.expect(res.body._id).to.equal(user._id);
+				chai.expect(res.body._id).to.equal(user.username);
 				chai.expect(res.body.name).to.equal(user.name);
 				chai.expect(res.body.email).to.equal(user.email);
 				chai.expect(res.body).to.not.have.property('password');
@@ -189,7 +189,7 @@ describe('get a user by the name', function(){
 
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user._id)
+			.delete('user/delete/' + user.username)
 			.end(function(err, res){
 				done();
 			});
@@ -205,11 +205,11 @@ describe('get a user by the name', function(){
 	});
 });
 
-describe('get a user by the _id, user does not exist', function(){
+describe('get a user by the username, user does not exist', function(){
 
 	it('return status 404', function(done){
 		chai.request(global.baseUrl)
-			.get('user/findByID/' + user._id)
+			.get('user/findByID/' + user.username)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(404);
 				done();
@@ -229,14 +229,14 @@ describe('login succed', function(){
 
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user._id)
+			.delete('user/delete/' + user.username)
 			.end(function(err){
 				done();
 			});
 	});
 
 	let user_login = {
-		_id: user._id,
+		username: user.username,
 		password: user.password
 	};
 
@@ -263,14 +263,14 @@ describe('login failed password wrong', function(){
 
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user._id)
+			.delete('user/delete/' + user.username)
 			.end(function(err){
 				done();
 			});
 	});
 
 	let user_login = {
-		_id: user._id,
+		username: user.username,
 		password: user.password + 'a'
 	};
 
@@ -297,14 +297,14 @@ describe('login failed id wrong', function(){
 
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user._id)
+			.delete('user/delete/' + user.username)
 			.end(function(err){
 				done();
 			});
 	});
 
 	let user_login = {
-		_id: user._id+'dsfs',
+		username: user.username+'dsfs',
 		password: user.password
 	};
 
@@ -331,7 +331,7 @@ describe('edit a user that exists and password correct', function(){
 
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user._id)
+			.delete('user/delete/' + user.username)
 			.end(function(err){
 				done();
 			});
@@ -346,7 +346,7 @@ describe('edit a user that exists and password correct', function(){
 
 	it('returns status 200', function(done){
 		chai.request(global.baseUrl)
-			.put('user/edit/' + user._id)
+			.put('user/edit/' + user.username)
 			.send(new_user)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
@@ -367,7 +367,7 @@ describe('edit a user that exists and password wrong', function(){
 
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user._id)
+			.delete('user/delete/' + user.username)
 			.end(function(err){
 				done();
 			});
@@ -382,7 +382,7 @@ describe('edit a user that exists and password wrong', function(){
 
 	it('returns status 401', function(done){
 		chai.request(global.baseUrl)
-			.put('user/edit/' + user._id)
+			.put('user/edit/' + user.username)
 			.send(new_user)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(401);
@@ -402,7 +402,7 @@ describe('edit a user that does not exist', function(){
 
 	it('returns status 404', function(done){
 		chai.request(global.baseUrl)
-			.put('user/edit/' + user._id)
+			.put('user/edit/' + user.username)
 			.send(new_user)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(404);
@@ -413,7 +413,7 @@ describe('edit a user that does not exist', function(){
 
 describe('edit a user that exists and email duplicated', function(){
 	var user2 = {
-		_id : 'albertLuth',
+		username : 'albertLuth',
 		name : 'albert',
 		password : '1234',
 		email : 'albert@email.com'
@@ -439,7 +439,7 @@ describe('edit a user that exists and email duplicated', function(){
 
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user._id)
+			.delete('user/delete/' + user.username)
 			.end(function(err){
 				done();
 			});
@@ -447,7 +447,7 @@ describe('edit a user that exists and email duplicated', function(){
 
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user2._id)
+			.delete('user/delete/' + user2.username)
 			.end(function(err){
 				done();
 			});
@@ -462,7 +462,7 @@ describe('edit a user that exists and email duplicated', function(){
 
 	it('returns status 409', function(done){
 		chai.request(global.baseUrl)
-			.put('user/edit/' + user._id)
+			.put('user/edit/' + user.username)
 			.send(new_user)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(409);
