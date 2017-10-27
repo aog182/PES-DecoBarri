@@ -16,12 +16,12 @@ module.exports = function(app){
 	}
 
 	findUserByID = function(req, res){
-		if(!req.params._id){
-			res.status(400).send('_id required');
+		if(!req.params.username){
+			res.status(400).send('username required');
 			return;
 		}
 
-		User.findById(req.params._id,{'password':0, '__v':0}, function(err, user){
+		User.findById(req.params.username,{'password':0, '__v':0}, function(err, user){
 			if(err)
 				res.status(500).send('Internal Server Error');
 			if(!user)
@@ -46,8 +46,8 @@ module.exports = function(app){
 	}
 
 	addUser = function(req,res){
-		if(!req.body._id){
-			res.status(400).send('_id required');
+		if(!req.body.username){ 
+			res.status(400).send('username required');
 			return;
 		}
 		if(!req.body.name){
@@ -64,7 +64,7 @@ module.exports = function(app){
 		}
 
 		var new_user = new User({
-			_id: req.body._id,
+			_id: req.body.username, //Els que fan servir l'API no tenen perquè saber que la clau es diu "_id"
 			name: req.body.name,
 			password: req.body.password,
 			email: req.body.email
@@ -84,7 +84,7 @@ module.exports = function(app){
 							res.status(500).send('Internal Server Error');
 					}
 					else{
-						var myToken = jwt.sign({_id: req.body._id}, global.secret)
+						var myToken = jwt.sign({_id: req.body.username}, global.secret)
 						res.status(200).json(myToken);
 					}
 				});
@@ -93,12 +93,12 @@ module.exports = function(app){
 	}
 
 	deleteUser = function(req, res){
-		if(!req.params._id){
-			res.status(400).send('_id required');
+		if(!req.params.username){
+			res.status(400).send('username required');
 			return;
 		}
 
-		User.findById(req.params._id, function(err, user){
+		User.findById(req.params.username, function(err, user){
 			if(err)
 				res.status(500).send('Internal Server Error');
 			else if(!user)
@@ -115,8 +115,8 @@ module.exports = function(app){
 	}
 
 	loginUser = function(req, res){
-		if(!req.body._id){
-			res.status(400).send('_id required');
+		if(!req.body.username){
+			res.status(400).send('username required');
 			return ;
 		}
 		if(!req.body.password){
@@ -124,7 +124,7 @@ module.exports = function(app){
 			return;
 		}
 
-		User.findById(req.body._id, function(err, user){
+		User.findById(req.body.username, function(err, user){
 			if(err)
 				res.status(500).send('Internal Server Error');
 			else if(!user)
@@ -136,7 +136,7 @@ module.exports = function(app){
 					else if(!isMath)
 						res.status(401).send('Invalid password');
 					else{
-						var myToken = jwt.sign({_id: req.body._id}, global.secret)
+						var myToken = jwt.sign({_id: req.body.username}, global.secret)
 						res.status(200).json(myToken);
 					}
 						
@@ -147,7 +147,7 @@ module.exports = function(app){
 	}
 	
 	editUser = function(req, res) {
-		if(!req.params._id) {
+		if(!req.params.username) {
 			res.status(400).send('username required');
 			return;
 		}
@@ -168,14 +168,14 @@ module.exports = function(app){
 			return;
 		}
 
-		//SELECT * FROM users WHERE users._id != req.params._id AND users.email = req.body.email
-		User.find({"_id": {"$ne": req.params._id},"email": req.body.email}, function(err, users){
+		//SELECT * FROM users WHERE users._id != req.params.username AND users.email = req.body.email
+		User.find({"_id": {"$ne": req.params.username},"email": req.body.email}, function(err, users){
 			if(err)
 				res.status(500).send('Internal Server Error');
 			else if(users.length)
 				res.status(409).send('Email already registered');
 			else{
-				User.findById(req.params._id,function(err, user){
+				User.findById(req.params.username,function(err, user){
 					if(!user)
 						res.status(404).send('User not found');
 					else{
@@ -205,7 +205,7 @@ module.exports = function(app){
 	addProject = function(req, res){
 		//La id del body es la del projecte, la de la url es del usuari
 
-		if(!req.params._id) {
+		if(!req.params.username) {
 			res.status(400).send('username required');
 			return;
 		}
@@ -221,7 +221,7 @@ module.exports = function(app){
 			else if(!projectObj)
 				res.status(404).send('Project not found');
 			else {
-				User.findById(req.params._id,function(err, user){
+				User.findById(req.params.username,function(err, user){
 					if(err){
 						res.status(500).send('Internal Server Error');
 					}
@@ -251,7 +251,7 @@ module.exports = function(app){
 	deleteProject = function(req, res){
 		//La id del body es la del projecte, la de la url es del usuari
 
-		if(!req.params._id) {
+		if(!req.params.username) {
 			res.status(400).send('username required');
 			return;
 		}
@@ -260,7 +260,7 @@ module.exports = function(app){
 			res.status(400).send('project required');
 			return;
 		}
-		User.findById(req.params._id,function(err, user){
+		User.findById(req.params.username,function(err, user){
 			if(err){
 				res.status(500).send('Internal Server Error');
 			}
@@ -289,16 +289,16 @@ module.exports = function(app){
 	//returns all the paraments, except the password, of all users
 	app.get('/user/findAll', findAllUsers);
 	//returns all the paraments, except the password of the user with that id
-	app.get('/user/findByID/:_id', findUserByID);
+	app.get('/user/findByID/:username', findUserByID);
 	app.get('/user/findByName/:name', findUserByName);
-	//need to pass name, _id, password and email
+	//need to pass name, username, password and email
 	app.post('/user/add', addUser);
 	//need to pass the name and the password
 	app.post('/user/login', loginUser);
-	app.delete('/user/delete/:_id', deleteUser);
-	app.put('/user/edit/:_id', editUser);
-	app.put('/user/addProject/:_id', addProject);
-	app.put('/user/deleteProject/:_id', deleteProject)
+	app.delete('/user/delete/:username', deleteUser);
+	app.put('/user/edit/:username', editUser);
+	app.put('/user/addProject/:username', addProject);
+	app.put('/user/deleteProject/:username', deleteProject)
 
 }
 

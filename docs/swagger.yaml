@@ -26,12 +26,12 @@ paths:
         500:
           description: "Internal Server Error"
   
-  /user/findByID/{_id}:
+  /user/findByID/{username}:
     get:
       tags:
       - User
       parameters:
-        - name: _id
+        - name: username
           in: path
           description: ID de l'usuari
           required: true
@@ -78,12 +78,12 @@ paths:
         500:
           description: "Internal Server Error"
     
-  /user/delete/{_id}:
+  /user/delete/{username}:
     delete:
       tags:
       - User
       parameters:
-        - name: _id
+        - name: username
           in: path
           description: ID de l'usuari
           required: true
@@ -116,12 +116,12 @@ paths:
         500:
           description: Internal Server Error
     
-  /user/edit/{_id}:
+  /user/edit/{username}:
     put:
       tags: 
         - User
       parameters:
-        - name: _id
+        - name: username
           in: path
           description: ID de l'usuari
           required: true
@@ -141,12 +141,12 @@ paths:
         500:
           description: Internal Server Error
   
-  /user/addProject/{_id}:
+  /user/addProject/{username}:
     put:
       tags: 
         - User
       parameters:
-        - name: _id
+        - name: username
           in: path
           description: ID de l'usuari
           required: true
@@ -176,12 +176,12 @@ paths:
         500:
           description: "Internal Server Error"
   
-  /project/findByID/{_id}:
+  /project/findByID/{username}:
     get:
       tags:
       - Project
       parameters:
-        - name: _id
+        - name: username
           in: path
           required: true
           type: string
@@ -224,12 +224,12 @@ paths:
         500:
           description: "Internal Server Error"
 
-  /project/delete/{_id}:
+  /project/delete/{username}:
     delete:
       tags:
       - Project
       parameters:
-        - name: _id
+        - name: username
           in: path
           description: ID del projecte
           required: true
@@ -242,12 +242,12 @@ paths:
         500:
           description: Internal Server Error
           
-  /project/edit/{_id}:
+  /project/edit/{username}:
     put:
       tags: 
         - User
       parameters:
-        - name: _id
+        - name: username
           in: path
           required: true
           type: string
@@ -276,7 +276,7 @@ paths:
       - "application/json"
       responses:
         200:
-          description: "Succes. Returns _id of material"
+          description: "Succes. Returns username of material"
         500:
           description: "Internal Server Error"
   
@@ -296,12 +296,12 @@ paths:
         500:
           description: "Internal Server Error"
 
-/material/edit/{_id}:
+  /material/edit/{username}:
     put:
       tags: 
         - Material
       parameters:
-        - name: _id
+        - name: username
           in: path
           required: true
           type: string
@@ -326,7 +326,7 @@ definitions:
   CreateUser: 
     type: object
     properties:
-      _id:
+      username:
         type: string
       name:
         type: string
@@ -350,7 +350,7 @@ definitions:
   Login:
     type: object
     properties:
-      _id:
+      username:
         type: string
       password:
         type: string
