@@ -24,6 +24,34 @@ describe('find all users on the DB', function(){
 	});
 });
 
+describe('find users by name', function(){
+	before(function(done){
+		chai.request(global.baseUrl)
+			.post('user/add')
+			.send(user)
+			.end(function(err){
+				done();
+			});
+	});
+
+	after(function(done){
+		chai.request(global.baseUrl)
+			.delete('user/delete/' + user.username)
+			.end(function(err){
+				done();
+			});
+	});
+	
+	it('return status 200', function(done){
+		chai.request(global.baseUrl)
+			.get('user/findByName/'+user.name)
+			.end(function(err, res){
+				chai.expect(res).to.have.status(200);
+				done();
+			});
+	});
+});
+
 describe('add user', function(){
 
 	after(function(done){
