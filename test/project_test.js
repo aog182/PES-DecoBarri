@@ -244,6 +244,13 @@ describe('find project by address', function(){
 			});
 	});
 
+	after(function(done){ 	
+		chai.request(global.baseUrl) 	
+			.delete('project/delete/' + ID) 	
+			.end(function(err){ 	
+				done(); 	
+			}); 	
+	})
 	
 	it('return status 200', function(done){
 		chai.request(global.baseUrl)
