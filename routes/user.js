@@ -285,6 +285,23 @@ module.exports = function(app){
 		});
 	}
 
+	showMyProjects = function(req, res){
+
+		if(!req.params.username) {
+			res.status(400).send('username required');
+			return;
+		}
+
+		User.findById(req.params.username,{'password':0, '__v':0}, function(err, user){
+			if(err)
+				res.status(500).send('Internal Server Error');
+			if(!user)
+				res.status(404).send('User not found.');
+			else
+				res.status(200).send(user.projects);
+		});
+	}
+
 
 	//returns all the paraments, except the password, of all users
 	app.get('/user/findAll', findAllUsers);
@@ -298,7 +315,8 @@ module.exports = function(app){
 	app.delete('/user/delete/:username', deleteUser);
 	app.put('/user/edit/:username', editUser);
 	app.put('/user/addProject/:username', addProject);
-	app.put('/user/deleteProject/:username', deleteProject)
+	app.put('/user/deleteProject/:username', deleteProject);
+	app.get('/user/showMyProjects/:username', showMyProjects);
 
 }
 

@@ -11,7 +11,9 @@ var Project = new mongoose.Schema({
 			description: String,
 			author: String, 
 			date: String, 
-		    modifiable: Boolean}]
+		    modifiable: Boolean}],
+	tags : [{tag : String}]
+
 });
 
 module.exports = mongoose.model('Project', Project);
