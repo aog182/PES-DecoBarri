@@ -259,6 +259,39 @@ module.exports = function(app){
 		});
 	};
 
+	deleteNote = function(req, res){
+		if(!req.params._id){
+			res.status(400).send('_id required');
+			return;
+		}
+		if(!req.body.note_id){
+			res.status(400).send('note_id required');
+			return;
+		}
+
+		Project.findById(req.params._id, function(err, project){
+			if(err)
+				res.status(500).send('Internal Server Error');
+			else if(!project)
+				res.status(404).send('Project not found.');			
+			else{
+				if(!project.notes.find(o => o._id == req.body.note_id))
+					res.status(409).send('The user is not registered in this project');
+				else{
+					var note = {'_id':req.body.note_id};
+					project.notes.pull(note);
+					project.save(function(err){
+						if(err)
+							res.status(500).send('Internal Server Error');
+						else
+							res.status(200).send('User modified');
+					});
+				}
+			}
+		});
+	}
+
+
 	//returns all the paraments of all projects
 	app.get('/project/findAll', findAllProjects);
 	//returns all the paraments
@@ -275,5 +308,6 @@ module.exports = function(app){
 
 	app.delete('/project/delete/:_id', deleteProject);
 	app.post('/project/addNote/:_id', addNote);
+	app.put('/project/deleteNote/:_id', deleteNote);
 
 }

@@ -8,6 +8,7 @@ var User = new mongoose.Schema({
 	name: {type : String, required : true, trim:true},
 	password: {type : String, required : true},
 	email: {type : String, required : true, trim:true},
+	//img: { data: Buffer, contentType: String },
 	projects : [{_id : String}]
 });
 
