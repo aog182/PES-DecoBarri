@@ -99,24 +99,6 @@ module.exports = function(app){
 		});
 	}
 
-	findProjectByAddress = function(req, res){
-		if(!req.params.address){
-			res.status(400).send('address required');
-			return;
-		}
-
-		var regex = new RegExp(req.params.address, 'i');  // 'i' makes it case insensitive
-		Project.find({address:regex}, function(err, project){
-			if(err)
-				res.status(500).send('Internal Server Error');
-			else if (project && project.length != 0)
-				res.status(200).send(project);
-			else 
-				res.status(404).send("Project not found");
-		});
-	}
-
-
 	addProject = function(req,res){
 		if(!req.body.name){
 			return res.status(400).send('name required');
@@ -300,7 +282,6 @@ module.exports = function(app){
 	app.get('/project/findByTheme/:theme', findProjectByTheme);
 	app.get('/project/findByDescription/:description', findProjectByDescription);
 	app.get('/project/findByCity/:city', findProjectByCity);
-	app.get('/project/findByAddress/:address', findProjectByAddress);
 	//need to pass name, username, password and email
 	app.post('/project/add', addProject);
 

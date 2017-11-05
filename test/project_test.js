@@ -231,34 +231,3 @@ describe('find project by city', function(){
 			});
 	});
 });
-
-describe('find project by address', function(){
-	var ID;
-	before(function(done){
-		chai.request(global.baseUrl)
-			.post('project/add')
-			.send(project)
-			.end(function(err, res){
-				ID = res.body;
-				done();
-			});
-	});
-
-	after(function(done){ 	
-		chai.request(global.baseUrl) 	
-			.delete('project/delete/' + ID) 	
-			.end(function(err){ 	
-				done(); 	
-			}); 	
-	})
-	
-	it('return status 200', function(done){
-		chai.request(global.baseUrl)
-			.get('project/findByAddress/'+project.address)
-			.end(function(err, res){
-				chai.expect(res).to.have.status(200);
-				chai.expect(res.body.length).to.be.above(0);
-				done();
-			});
-	});
-});
