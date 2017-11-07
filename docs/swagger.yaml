@@ -296,12 +296,12 @@ paths:
         500:
           description: "Internal Server Error"
 
-  /material/edit/{username}:
+  /material/edit/{_id}: 
     put:
       tags: 
         - Material
       parameters:
-        - name: username
+        - name: _id
           in: path
           required: true
           type: string
@@ -319,6 +319,153 @@ paths:
           description: Param not the right type.
         404:
           description: Material not found
+        500:
+          description: Internal Server Error
+
+  /matGroupList/findAllLists:
+    get:
+      tags:
+      - MaterialGroupList
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: Succes.
+        500:
+          description: Internal Server Error
+          
+  /matGroupList/findAllMaterialsOfGroupWithID/{_id}:
+    get:
+      tags:
+      - MaterialGroupList
+      produces:
+      - "application/json"
+      parameters:
+        - name: _id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Succes."
+        500:
+          description: "Internal Server Error"
+          
+  /matGroupList/add:
+    post:
+      tags:
+      - MaterialGroupList
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/StructureMaterialGroupList'
+      responses:
+        200:
+          description: Success. Returns Material id
+        500:
+          description: "Internal Server Error"
+  
+  /matGroupList/addMaterialNeedList:
+    put:
+      tags: 
+        - MaterialGroupList
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/StructureAddMaterialToNeedList'
+      responses:
+        200:
+          description: Success
+        500:
+          description: Internal Server Error
+          
+  /matGroupList/addMaterialInventari:
+    put:
+      tags: 
+        - MaterialGroupList
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/StructureAddMaterialToInventari'
+      responses:
+        200:
+          description: Success
+        500:
+          description: Internal Server Error
+  
+  /matGroupList/edit/{_id}:
+    put:
+      tags: 
+        - MaterialGroupList
+      parameters:
+        - name: _id
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/StructureMaterialGroupList'
+      responses:
+        200:
+          description: Success
+        500:
+          description: Internal Server Error
+  
+  /matGroupList/delete/{_id}:
+    delete:
+      tags:
+      - MaterialGroupList
+      parameters:
+        - name: _id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Project deleted
+        404:
+          description: Project not found
+        500:
+          description: Internal Server Error
+          
+  
+  /matGroupList/deleteMaterialNeedList:
+    put:
+      tags: 
+        - MaterialGroupList
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/StructureAddMaterialToNeedList'
+      responses:
+        200:
+          description: Success
+        500:
+          description: Internal Server Error
+
+  /matGroupList/deleteMaterialInventari:
+    put:
+      tags: 
+        - MaterialGroupList
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/StructureAddMaterialToInventari'
+      responses:
+        200:
+          description: Success
         500:
           description: Internal Server Error
 
@@ -387,4 +534,28 @@ definitions:
       quantity:
         type: integer
       address:
+        type: string
+        
+  StructureMaterialGroupList:
+    type: object
+    properties:
+      project_id:
+        type: string
+
+  StructureAddMaterialToNeedList:
+    type: object
+    properties:
+      _id:
+        type: string
+      material_id:
+        type: string
+      urgent:
+        type: boolean
+
+  StructureAddMaterialToInventari:
+    type: object
+    properties:
+      _id:
+        type: string
+      material_id:
         type: string
