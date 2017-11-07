@@ -302,6 +302,52 @@ module.exports = function(app){
 		});
 	}
 
+	addContact = function(req, res){
+		//La id del body es la del projecte, la de la url es del usuari
+
+		if(!req.params.username) {
+			res.status(400).send('username required');
+			return;
+		}
+
+		/*if(!req.body.username) {
+			res.status(400).send('friendUsername required');
+			return;
+		}*/
+
+		User.findById(req.body.username,{'password':0, '__v':0},function(err, userObj){
+			if(err && err.code)
+				res.status(500).send('Internal Server Error');
+			else if(!userObj)
+				res.status(404).send('User not found');
+			else {
+				User.findById(req.params.username,{'password':0, '__v':0},function(err, user){
+					if(err){
+						res.status(500).send('Internal Server Error');
+					}
+					else if(!user){
+						res.status(404).send('User not found');
+					}
+					else{
+						var friend = {'_username':req.body.username};
+						//comrpovar si existeix, si ja existeix no s'afegeix
+						if(user.contactList.find(o => o._id == req.body.username))
+							res.status(409).send('That friend is already registred in your contactList');
+						else{
+							user.contactList.push(friend);
+							user.save(function(err){
+								if(err)
+									res.status(500).send('Internal Server Error');
+								else
+									res.status(200).send('User modified, friend registred');
+							});
+						}
+					}
+				});
+			}
+		});
+	}
+
 
 	//returns all the paraments, except the password, of all users
 	app.get('/user/findAll', findAllUsers);
@@ -317,6 +363,7 @@ module.exports = function(app){
 	app.put('/user/addProject/:username', addProject);
 	app.put('/user/deleteProject/:username', deleteProject);
 	app.get('/user/showMyProjects/:username', showMyProjects);
+	app.put('/user/addContact/:username', addContact);
 
 }
 
