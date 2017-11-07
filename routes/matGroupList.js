@@ -77,7 +77,8 @@ module.exports = function(app){
 				if(req.body.urgent)
 					matGroupList.urgent_need_list.push(req.body.material_id);
 				else
-					return res.status(403).send('urgent has to be true or false');
+					matGroupList.need_list.push(req.body.material_id);
+				}
 
 				matGroupList.save(function(err){
 					if(err)
