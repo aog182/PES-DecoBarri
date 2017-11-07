@@ -74,25 +74,10 @@ module.exports = function(app){
 			else if(!matGroupList)
 				res.status(404).send('Material Group List not found.');
 			else{
-				switch(req.body.urgent) {
-					case "True":
-					case "true":
-					case "1":
-					case "T":
-					case "t":
-						matGroupList.urgent_need_list.push(req.body.material_id);
-						break;
-					case "False":
-					case "false":
-					case "0":
-					case "F":
-					case "f":
-						matGroupList.need_list.push(req.body.material_id);
-						break;
-					default:
-						res.status(403).send('urgent has to be true or false');
-						return;
-				}
+				if(req.body.urgent)
+					matGroupList.urgent_need_list.push(req.body.material_id);
+				else
+					return res.status(403).send('urgent has to be true or false');
 
 				matGroupList.save(function(err){
 					if(err)
