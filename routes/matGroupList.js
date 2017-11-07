@@ -78,7 +78,6 @@ module.exports = function(app){
 					matGroupList.urgent_need_list.push(req.body.material_id);
 				else
 					matGroupList.need_list.push(req.body.material_id);
-				}
 
 				matGroupList.save(function(err){
 					if(err)
