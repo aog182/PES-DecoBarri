@@ -1,6 +1,4 @@
 var mongoose = require('mongoose');
-var bcrypt = require('bcrypt');
-
 
 var Projects_tags = new mongoose.Schema({
 	_id: {type : String, required : true, trim:true},
