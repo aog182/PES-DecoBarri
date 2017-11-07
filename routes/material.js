@@ -36,8 +36,8 @@ module.exports = function(app){
 					//Impossible arribar aqui, no busquem id
 					res.status(409).send('Material already registered');
 				else
-					res.status(500).send(err.message);
-					//res.status(500).send('Internal Server Error');
+					//res.status(500).send(err.message);
+					res.status(500).send('Internal Server Error');
 			}
 			else{
 				res.status(200).send(material._id);

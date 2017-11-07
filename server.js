@@ -22,9 +22,11 @@ require('./database/db');
 require('./models/user');
 require('./models/project');
 require('./models/material');
+require('./models/matGroupList');
 require('./routes/user')(app);
 require('./routes/project')(app);
 require('./routes/material')(app);
+require('./routes/matGroupList')(app);
  
 app.get('/', function (req, res) {
 	res.setHeader('Access-Control-Allow-Origin', '*');
