@@ -26,7 +26,7 @@ function checkPassword(user, password, callback){
 			return callback(error);
 		}
 		if(!isMath){
-			var error = new errorMessage('Password incorret',401);
+			var error = new errorMessage('Invalid password',401);
 			return callback(error);
 		}
 		return callback(null, isMath);

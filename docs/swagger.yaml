@@ -25,8 +25,28 @@ paths:
           description: "Successful operation"
         500:
           description: "Internal Server Error"
+        404:
+          description: User not found.
   
   /user/findByID/{username}:
+    get:
+      tags:
+      - User
+      parameters:
+        - name: username
+          in: path
+          description: ID de l'usuari
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+        500:
+          description: Internal Server Error
+        404:
+          description: User not found.
+          
+  /user/showMyProjects/{username}:
     get:
       tags:
       - User
@@ -59,6 +79,8 @@ paths:
           description: Success
         500:
           description: Internal Server Error
+        404:
+          description: User not found.
     
   /user/add:
     post:
@@ -74,9 +96,9 @@ paths:
         200:
           description: Success
         409:
-          description: User alredy registered
+          description: User alredy registered / Email already registered
         500:
-          description: "Internal Server Error"
+          description: Internal Server Error
     
   /user/delete/{username}:
     delete:
@@ -134,6 +156,31 @@ paths:
       responses:
         200:
           description: Success
+        409:
+          description: Email already registered
+        404:
+          description: User not found
+        500:
+          description: Internal Server Error
+          
+  /user/editPassword/{username}:
+    put:
+      tags: 
+        - User
+      parameters:
+        - name: username
+          in: path
+          description: ID de l'usuari
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EditPassword'
+      responses:
+        200:
+          description: Success
         401:
           description: Invalid password
         404:
@@ -160,9 +207,83 @@ paths:
         200:
           description: Success
         404:
-          description: User not found
+          description: User not found / Project not found
+        401:
+          description: Project already registered
         500:
           description: Internal Server Error
+
+  /user/deleteProject/{username}:
+    put:
+      tags: 
+        - User
+      parameters:
+        - name: username
+          in: path
+          description: ID de l'usuari
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AddProjectToUser'
+      responses:
+        200:
+          description: Success
+        404:
+          description: User not found / Project not registered
+        500:
+          description: Internal Server Error
+  
+  /user/addContact/{username}:
+    put:
+      tags: 
+        - User
+      parameters:
+        - name: username
+          in: path
+          description: ID de l'usuari
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AddContactToUser'
+      responses:
+        200:
+          description: Success
+        404:
+          description: User not found
+        401:
+          description: Contact already registered
+        500:
+          description: Internal Server Error
+
+  /user/deleteContact/{username}:
+    put:
+      tags: 
+        - User
+      parameters:
+        - name: username
+          in: path
+          description: ID de l'usuari
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AddContactToUser'
+      responses:
+        200:
+          description: Success
+        404:
+          description: User not found / User not registered
+        500:
+          description: Internal Server Error
+              
   
   /project/findAll:
     get:
@@ -487,11 +608,15 @@ definitions:
     properties:
       name:
         type: string
+      email:
+        type: string
+        
+  EditPassword: 
+    type: object
+    properties:
       old_password:
         type: string
       new_password:
-        type: string
-      email:
         type: string
         
   Login:
@@ -506,6 +631,12 @@ definitions:
     type: object
     properties:
       project_id:
+        type: string
+        
+  AddContactToUser:
+    type: object
+    properties:
+      username:
         type: string
 
   StructureProject: 
