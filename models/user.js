@@ -9,9 +9,8 @@ var User = new mongoose.Schema({
 	password: {type : String, required : true},
 	email: {type : String, required : true, trim:true},
 	//img: { data: Buffer, contentType: String },
-	projects : [{_id : String}],
-	contactList : [{_id : String}]
-
+	projects : [{type : String, required : true}],
+	contacts : [{type : String, required : true}]
 });
 
 User.pre('save', function(next){

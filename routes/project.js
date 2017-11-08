@@ -1,4 +1,5 @@
 var jwt = require('jsonwebtoken');
+var mongoose = require('mongoose');
 
 module.exports = function(app){
 	
@@ -108,6 +109,7 @@ module.exports = function(app){
 		}
 		
 		var project = new Project({
+			_id: mongoose.Types.ObjectId(),
 			name: req.body.name,
 			theme: req.body.theme,
 			description: req.body.description,
@@ -117,6 +119,7 @@ module.exports = function(app){
 
 		project.save(function(err){
 			if(err){
+				console.log(err);
 				if(err.code == 11000)
 					//Impossible arribar aqui, no busquem id
 					res.status(409).send('Project already registered');

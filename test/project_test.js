@@ -40,11 +40,12 @@ describe('add a project', function(){
 			.send(project)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
-				ID = res.body;
+				ID = res.text;
 				done();
 			});
 	});
 });
+
 
 describe('delete a project', function(){
 	var ID;
@@ -53,7 +54,7 @@ describe('delete a project', function(){
 			.post('project/add')
 			.send(project)
 			.end(function(err, res){
-				ID = res.body;
+				ID = res.text;
 				done();
 			});
 	});
@@ -85,7 +86,7 @@ describe('find project by id', function(){
 			.post('project/add')
 			.send(project)
 			.end(function(err, res){
-				ID = res.body;
+				ID = res.text;
 				done();
 			});
 	});
@@ -115,7 +116,7 @@ describe('find project by name', function(){
 			.post('project/add')
 			.send(project)
 			.end(function(err, res){
-				ID = res.body;
+				ID = res.text;
 				done();
 			});
 	});
@@ -133,7 +134,7 @@ describe('find project by name', function(){
 			.get('project/findByName/'+project.name)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
-				chai.expect(res.body.length).to.be.above(0);
+				chai.expect(res.text.length).to.be.above(0);
 				done();
 			});
 	});
@@ -146,7 +147,7 @@ describe('find project by theme', function(){
 			.post('project/add')
 			.send(project)
 			.end(function(err, res){
-				ID = res.body;
+				ID = res.text;
 				done();
 			});
 	});
@@ -164,7 +165,7 @@ describe('find project by theme', function(){
 			.get('project/findByName/'+project.name)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
-				chai.expect(res.body.length).to.be.above(0);
+				chai.expect(res.text.length).to.be.above(0);
 				done();
 			});
 	});
@@ -177,7 +178,7 @@ describe('find project by description', function(){
 			.post('project/add')
 			.send(project)
 			.end(function(err, res){
-				ID = res.body;
+				ID = res.text;
 				done();
 			});
 	});
@@ -195,7 +196,7 @@ describe('find project by description', function(){
 			.get('project/findByDescription/'+project.description)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
-				chai.expect(res.body.length).to.be.above(0);
+				chai.expect(res.text.length).to.be.above(0);
 				done();
 			});
 	});
@@ -208,7 +209,7 @@ describe('find project by city', function(){
 			.post('project/add')
 			.send(project)
 			.end(function(err, res){
-				ID = res.body;
+				ID = res.text;
 				done();
 			});
 	});
@@ -226,7 +227,7 @@ describe('find project by city', function(){
 			.get('project/findByDescription/'+project.description)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
-				chai.expect(res.body.length).to.be.above(0);
+				chai.expect(res.text.length).to.be.above(0);
 				done();
 			});
 	});

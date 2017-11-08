@@ -19,8 +19,8 @@ app.use(cors());
 app.set('port', (process.env.PORT || 5000));
 
 require('./database/db');
-require('./models/user');
 require('./models/project');
+require('./models/user');
 require('./models/material');
 require('./models/matGroupList');
 require('./routes/user')(app);

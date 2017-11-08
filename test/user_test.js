@@ -347,7 +347,7 @@ describe('login failed id wrong', function(){
 	});
 });
 
-describe('edit a user that exists and password correct', function(){
+describe('edit a user that exists', function(){
 	before(function(done){
 		chai.request(global.baseUrl)
 			.post('user/add')
@@ -367,8 +367,6 @@ describe('edit a user that exists and password correct', function(){
 
 	var new_user = {
 		name : 'albert',
-		old_password : user.password,
-		new_password : 'abcd',
 		email : 'albert@email.com'
 	};
 
@@ -378,42 +376,6 @@ describe('edit a user that exists and password correct', function(){
 			.send(new_user)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
-				done();
-			});
-	});
-});
-
-describe('edit a user that exists and password wrong', function(){
-	before(function(done){
-		chai.request(global.baseUrl)
-			.post('user/add')
-			.send(user)
-			.end(function(err){
-				done();
-			});
-	});
-
-	after(function(done){
-		chai.request(global.baseUrl)
-			.delete('user/delete/' + user.username)
-			.end(function(err){
-				done();
-			});
-	});
-
-	var new_user = {
-		name : 'albert',
-		old_password : user.password+'a',
-		new_password : 'abcd',
-		email : 'albert@email.com'
-	};
-
-	it('returns status 401', function(done){
-		chai.request(global.baseUrl)
-			.put('user/edit/' + user.username)
-			.send(new_user)
-			.end(function(err, res){
-				chai.expect(res).to.have.status(401);
 				done();
 			});
 	});
@@ -434,6 +396,108 @@ describe('edit a user that does not exist', function(){
 			.send(new_user)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(404);
+				done();
+			});
+	});
+});
+
+describe('edit password user that exists', function(){
+	before(function(done){
+		chai.request(global.baseUrl)
+			.post('user/add')
+			.send(user)
+			.end(function(err){
+				done();
+			});
+	});
+
+	after(function(done){
+		chai.request(global.baseUrl)
+			.delete('user/delete/' + user.username)
+			.end(function(err){
+				done();
+			});
+	});
+
+	var data = {
+		new_password : 'albert',
+		old_password : user.password
+	};
+
+	it('returns status 200', function(done){
+		chai.request(global.baseUrl)
+			.put('user/editPassword/' + user.username)
+			.send(data)
+			.end(function(err, res){
+				chai.expect(res).to.have.status(200);
+				done();
+			});
+	});
+});
+
+describe('edit password user that does not exist', function(){
+	before(function(done){
+		chai.request(global.baseUrl)
+			.post('user/add')
+			.send(user)
+			.end(function(err){
+				done();
+			});
+	});
+
+	after(function(done){
+		chai.request(global.baseUrl)
+			.delete('user/delete/' + user.username)
+			.end(function(err){
+				done();
+			});
+	});
+
+	var data = {
+		new_password : 'albert',
+		old_password : user.password
+	};
+
+	it('returns status 404', function(done){
+		chai.request(global.baseUrl)
+			.put('user/editPassword/' + user.username+'aa')
+			.send(data)
+			.end(function(err, res){
+				chai.expect(res).to.have.status(404);
+				done();
+			});
+	});
+});
+
+describe('edit password user that exists and wrong password', function(){
+	before(function(done){
+		chai.request(global.baseUrl)
+			.post('user/add')
+			.send(user)
+			.end(function(err){
+				done();
+			});
+	});
+
+	after(function(done){
+		chai.request(global.baseUrl)
+			.delete('user/delete/' + user.username)
+			.end(function(err){
+				done();
+			});
+	});
+
+	var data = {
+		new_password : 'albert',
+		old_password : user.password+'aaa'
+	};
+
+	it('returns status 401', function(done){
+		chai.request(global.baseUrl)
+			.put('user/editPassword/' + user.username)
+			.send(data)
+			.end(function(err, res){
+				chai.expect(res).to.have.status(401);
 				done();
 			});
 	});
@@ -500,7 +564,9 @@ describe('edit a user that exists and email duplicated', function(){
 });
 
 
-//FALTA: addProject, borrar project
+
+
+//FALTA: addProject, borrar project, showprojects
 
 
 
