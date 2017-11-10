@@ -1,17 +1,11 @@
 module.exports = function(app){
 
 	var serviceUser = require('../services/user');
-
-	sendRes = function(res, err, data){
-		if(err)
-			res.status(err.code).send(err.message);
-		else
-			res.status(200).send(data);
-	}
+	var sendResponse = require('./sendResponse');
 
 	findAllUsers = function(req, res){
 		serviceUser.findAllUsers(function(err, users){
-			sendRes(res, err, users);
+			sendResponse.sendRes(res, err, users);
 		});
 	}
 
@@ -22,7 +16,7 @@ module.exports = function(app){
 		}
 
 		serviceUser.findUserByID(req.params.username, function(err, user){
-			sendRes(res, err, user);
+			sendResponse.sendRes(res, err, user);
 		});
 	}
 
@@ -33,7 +27,7 @@ module.exports = function(app){
 		}
 
 		serviceUser.findUsersByName(req.params.name, function(err, users){
-			sendRes(res, err, users);
+			sendResponse.sendRes(res, err, users);
 		});
 	}
 
@@ -59,7 +53,7 @@ module.exports = function(app){
 							req.body.name,
 							req.body.password,
 							req.body.email, function(err, data){
-			sendRes(res, err, data);
+			sendResponse.sendRes(res, err, data);
 		});
 	}
 
@@ -70,7 +64,7 @@ module.exports = function(app){
 		}
 
 		serviceUser.deleteUser(req.params.username, function(err, data){
-			sendRes(res, err, data);
+			sendResponse.sendRes(res, err, data);
 		});
 	}
 
@@ -85,7 +79,7 @@ module.exports = function(app){
 		}
 
 		serviceUser.loginUser(req.body.username,req.body.password, function(err, data){
-			sendRes(res, err, data);
+			sendResponse.sendRes(res, err, data);
 		});
 	}
 	
@@ -109,7 +103,7 @@ module.exports = function(app){
 		};
 
 		serviceUser.editInfoUser(req.params.username, new_data, function(err, data){
-			sendRes(res, err, data);
+			sendResponse.sendRes(res, err, data);
 		});
 	}
 
@@ -128,7 +122,7 @@ module.exports = function(app){
 		}
 		serviceUser.editPasswordUser(req.params.username, 
 			req.body.old_password, req.body.new_password, function(err, data){
-			sendRes(res, err, data);
+			sendResponse.sendRes(res, err, data);
 		});
 	}
 
@@ -146,7 +140,7 @@ module.exports = function(app){
 		}
 
 		serviceUser.addProject(req.params.username, req.body.project_id, function(err, data){
-			sendRes(res, err, data);
+			sendResponse.sendRes(res, err, data);
 		});
 	}
 
@@ -163,7 +157,7 @@ module.exports = function(app){
 			return;
 		}
 		serviceUser.deleteProject(req.params.username, req.body.project_id, function(err, data){
-			sendRes(res, err, data);
+			sendResponse.sendRes(res, err, data);
 		});
 	}
 
@@ -186,7 +180,7 @@ module.exports = function(app){
 		}
 
 		serviceUser.addContact(req.params.username, req.body.username, function(err, data){
-			sendRes(res, err, data);
+			sendResponse.sendRes(res, err, data);
 		});
 	}
 
@@ -203,7 +197,7 @@ module.exports = function(app){
 			return;
 		}
 		serviceUser.deleteContact(req.params.username, req.body.username, function(err, data){
-			sendRes(res, err, data);
+			sendResponse.sendRes(res, err, data);
 		});
 	}
 
@@ -215,7 +209,7 @@ module.exports = function(app){
 		}
 
 		serviceUser.showMyProjects(req.params.username, function(err, data){
-			sendRes(res, err, data);
+			sendResponse.sendRes(res, err, data);
 		});
 	}
 

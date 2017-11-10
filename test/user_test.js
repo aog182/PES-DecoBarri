@@ -566,7 +566,7 @@ describe('edit a user that exists and email duplicated', function(){
 
 
 
-//FALTA: addProject, borrar project, showprojects
+//FALTA: addProject, deleteproject, addcontact, deleteContact, showprojects
 
 
 

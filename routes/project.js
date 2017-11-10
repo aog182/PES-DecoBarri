@@ -1,18 +1,11 @@
-var jwt = require('jsonwebtoken');
-var mongoose = require('mongoose');
-
 module.exports = function(app){
-	
-	var db = require('../database/db');
-	var Project = db.model('Project');
-	var User = db.model('User');
+
+	var serviceProject = require('../services/project');
+	var sendResponse = require('./sendResponse');
 
 	findAllProjects = function(req, res){
-		Project.find({},function(err, projects){
-			if(err)
-				res.status(500).send('Internal Server Error');
-			else
-				return res.send(projects);
+		serviceProject.findAllProjects(function(err, projects){
+			sendResponse.sendRes(res, err, projects);
 		});
 	}
 
@@ -22,13 +15,8 @@ module.exports = function(app){
 			return;
 		}
 
-		Project.findById(req.params._id, function(err, project){
-			if(err)
-				res.status(500).send('Internal Server Error');
-			if(!project)
-				res.status(404).send('Project not found.');
-			else
-				res.status(200).send(project);
+		serviceProject.findProjectByID(req.params._id, function(err, project){
+			sendResponse.sendRes(res, err, project);
 		});
 	}
 
@@ -38,14 +26,9 @@ module.exports = function(app){
 			return;
 		}
 
-		var regex = new RegExp(req.params.name, 'i');  // 'i' makes it case insensitive
-		Project.find({name:regex}, function(err, project){
-			if(err)
-				res.status(500).send('Internal Server Error');
-			else if (project && project.length != 0)
-				res.status(200).send(project);
-			else 
-				res.status(404).send("Project not found");
+		var name = new RegExp(req.params.name, 'i');  // 'i' makes it case insensitive
+		serviceProject.findProjectByName(name, function(err, project){
+			sendResponse.sendRes(res, err, project);
 		});
 	}
 
@@ -55,14 +38,9 @@ module.exports = function(app){
 			return;
 		}
 
-		var regex = new RegExp(req.params.theme, 'i');  // 'i' makes it case insensitive
-		Project.find({theme:regex}, function(err, project){
-			if(err)
-				res.status(500).send('Internal Server Error');
-			else if (project && project.length != 0)
-				res.status(200).send(project);
-			else 
-				res.status(404).send("Project not found");
+		var theme = new RegExp(req.params.theme, 'i');  // 'i' makes it case insensitive
+		serviceProject.findProjectByTheme(theme, function(err, project){
+			sendResponse.sendRes(res, err, project);
 		});
 	}
 
@@ -72,14 +50,9 @@ module.exports = function(app){
 			return;
 		}
 
-		var regex = new RegExp(req.params.description, 'i');  // 'i' makes it case insensitive
-		Project.find({description:regex}, function(err, project){
-			if(err)
-				res.status(500).send('Internal Server Error');
-			else if (project && project.length != 0)
-				res.status(200).send(project);
-			else 
-				res.status(404).send("Project not found");
+		var description = new RegExp(req.params.city, 'i');  // 'i' makes it case insensitive
+		serviceProject.findProjectByDescription(description, function(err, project){
+			sendResponse.sendRes(res, err, project);
 		});
 	}
 
@@ -89,14 +62,9 @@ module.exports = function(app){
 			return;
 		}
 
-		var regex = new RegExp(req.params.city, 'i');  // 'i' makes it case insensitive
-		Project.find({city:regex}, function(err, project){
-			if(err)
-				res.status(500).send('Internal Server Error');
-			else if (project && project.length != 0)
-				res.status(200).send(project);
-			else 
-				res.status(404).send("Project not found");
+		var city = new RegExp(req.params.city, 'i');  // 'i' makes it case insensitive
+		serviceProject.findProjectByCity(city, function(err, project){
+			sendResponse.sendRes(res, err, project);
 		});
 	}
 
@@ -107,28 +75,13 @@ module.exports = function(app){
 		if(!req.body.city){
 			return res.status(400).send('city required');
 		}
-		
-		var project = new Project({
-			_id: mongoose.Types.ObjectId(),
-			name: req.body.name,
-			theme: req.body.theme,
-			description: req.body.description,
-			city: req.body.city,
-			address: req.body.address
-		});
 
-		project.save(function(err){
-			if(err){
-				console.log(err);
-				if(err.code == 11000)
-					//Impossible arribar aqui, no busquem id
-					res.status(409).send('Project already registered');
-				else
-					res.status(500).send('Internal Server Error');
-			}
-			else{
-				res.status(200).send(project._id);
-			}
+		serviceProject.addProject(	req.body.name,
+									req.body.theme,
+									req.body.description,
+									req.body.city,
+									req.body.address, function(err, id){
+										sendResponse.sendRes(res, err, id);
 		});		
 	}
 
@@ -146,24 +99,13 @@ module.exports = function(app){
 			return;
 		}
 
-		Project.findById(req.params._id, function(err, project){
-			if(err)
-				res.status(500).send('Internal Server Error');
-			else if(!project)
-				res.status(404).send('Project not found.');
-			else{
-				project.name = req.body.name;
-				project.theme = req.body.theme;
-				project.description = req.body.description;
-				project.city = req.body.city;
-				project.address = req.body.address;
-				project.save(function(err){
-					if(err)
-						res.status(500).send('Internal Server Error');
-					else
-						res.status(200).send('Project modified');
-				});	
-			}
+		serviceProject.editProject(	req.params._id,
+									req.body.name, 
+									req.body.theme,
+									req.body.description,
+									req.body.city,
+									req.body.address, function(err, data){
+										sendResponse.sendRes(res, err, data);
 		});
 	}
 
@@ -173,19 +115,8 @@ module.exports = function(app){
 			return;
 		}
 
-		Project.findById(req.params._id, function(err, project){
-			if(err)
-				res.status(500).send('Internal Server Error');
-			else if(!project)
-				res.status(404).send('Project not found.');			
-			else{
-				project.remove(function(err){
-					if(err)
-						res.status(500).send('Internal Server Error');
-					else
-						res.status(200).send('Project deleted');
-				});
-			}
+		serviceProject.deleteProject(req.params._id, function(err, data){
+			sendResponse.sendRes(res, err, data);
 		});
 	}
 
@@ -211,36 +142,12 @@ module.exports = function(app){
 			return;
 		}
 
-		User.findById(req.body.author,function(err, project){
-			if(err){
-				res.status(500).send('Internal Server Error');
-			}
-			else if(!user){
-				res.status(404).send('User not found');
-			}
-			else{
-				Project.findById(req.params._id, function(err, project){
-					if(err)
-						res.status(500).send('Internal Server Error');
-					else if(!project)
-						res.status(404).send('Project not found.');			
-					else{
-						var date = new Date();
-						var note = {'title':req.body.title, 
-									'description':req.body.title,
-									'author':req.body.author,
-									'modifiable': req.body.modifiable,
-									'date': date};
-						project.notes.push(note);
-						project.save(function(err){
-							if(err)
-								res.status(500).send('Internal Server Error');
-							else
-								res.status(200).send('Project modified');
-						});
-					}
-				});
-			}
+		serviceProject.addNote(	req.params._id,
+								req.body.title,
+								req.body.description,
+								req.body.author,
+								req.body.modifiable, function(err, data){
+			sendResponse.sendRes(res, err, data);
 		});
 	};
 
@@ -254,26 +161,9 @@ module.exports = function(app){
 			return;
 		}
 
-		Project.findById(req.params._id, function(err, project){
-			if(err)
-				res.status(500).send('Internal Server Error');
-			else if(!project)
-				res.status(404).send('Project not found.');			
-			else{
-				if(!project.notes.find(o => o._id == req.body.note_id))
-					res.status(409).send('The user is not registered in this project');
-				else{
-					var note = {'_id':req.body.note_id};
-					project.notes.pull(note);
-					project.save(function(err){
-						if(err)
-							res.status(500).send('Internal Server Error');
-						else
-							res.status(200).send('User modified');
-					});
-				}
-			}
-		});
+		serviceProject.deleteNote(req.params._id, req.body.note_id, function(err, data){
+			sendResponse.sendRes(res, err, data);
+		})
 	}
 
 
