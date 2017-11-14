@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "backend",
   "main": "server.js",
+  "engines": {
+    "node": "8.9.1"
+  },
   "scripts": {
     "test": "mocha",
     "start": "node server.js"

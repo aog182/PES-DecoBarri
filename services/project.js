@@ -52,6 +52,9 @@ function findProjectByCity(name, callback){
 }
 
 function findProjectByDescription(description, callback){
+	//https://www.npmjs.com/package/string-similarity
+	//https://www.npmjs.com/package/similarity
+	//https://www.npmjs.com/package/nearest-neighbor
 	findProjectByParameter({'description':description}, function(err, projects){
 		callback(err, projects);
 	});
