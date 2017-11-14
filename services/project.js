@@ -1,6 +1,7 @@
 var db = require('../database/db');
 var Project = db.model('Project');
 var mongoose = require('mongoose');
+var stringSimilarity = require('string-similarity');
 
 var errorMessage = require('./error');
 var serviceUser = require('./user');
@@ -33,31 +34,44 @@ function findProjectByID(id, callback){
 	});
 }
 
-function findProjectByName(name, callback){
+function findProjectsByName(name, callback){
 	findProjectByParameter({'name':name}, function(err, projects){
 		callback(err, projects);
 	});
 }
 
-function findProjectByTheme(name, callback){
+function findProjectsByTheme(name, callback){
 	findProjectByParameter({'theme':theme}, function(err, projects){
 		callback(err, projects);
 	});
 }
 
-function findProjectByCity(name, callback){
+function findProjectsByCity(city, callback){
 	findProjectByParameter({'city':city}, function(err, projects){
 		callback(err, projects);
 	});
 }
 
-function findProjectByDescription(description, callback){
-	//https://www.npmjs.com/package/string-similarity
-	//https://www.npmjs.com/package/similarity
-	//https://www.npmjs.com/package/nearest-neighbor
-	findProjectByParameter({'description':description}, function(err, projects){
-		callback(err, projects);
+function findProjectsByDescription(description, elements, callback){
+	var results = [];
+	findAllProjects(function(err, projects){
+		if(err)
+			return callback(err);		
+
+		for (var i = 0; i < projects.length; i++) {
+			if(projects[i].description){
+				value = stringSimilarity.compareTwoStrings(description, projects[i].description);
+				results.push([value, projects[i]]);
+			}
+		}
+		results.sort(sortFunction);
+		results = results.slice(0, elements);
+		return callback(null, results);
 	});
+
+	function sortFunction(a,b){
+		return (a[0] > b[0]) ? -1 : 1;
+	}
 }
 
 function addProject(name, theme, description, city, address, callback){
@@ -172,10 +186,10 @@ function deleteNote(idProject, idNote, callback){
 
 module.exports.findAllProjects = findAllProjects;
 module.exports.findProjectByID = findProjectByID;
-module.exports.findProjectByName = findProjectByName;
-module.exports.findProjectByTheme = findProjectByTheme;
-module.exports.findProjectByCity = findProjectByCity;
-module.exports.findProjectByDescription = findProjectByDescription;
+module.exports.findProjectsByName = findProjectsByName;
+module.exports.findProjectsByTheme = findProjectsByTheme;
+module.exports.findProjectsByCity = findProjectsByCity;
+module.exports.findProjectsByDescription = findProjectsByDescription;
 module.exports.addProject = addProject;
 module.exports.deleteProject = deleteProject;
 module.exports.editProject = editProject;

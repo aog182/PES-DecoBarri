@@ -20,50 +20,56 @@ module.exports = function(app){
 		});
 	}
 
-	findProjectByName = function(req, res){
+	findProjectsByName = function(req, res){
 		if(!req.params.name){
 			res.status(400).send('name required');
 			return;
 		}
 
 		var name = new RegExp(req.params.name, 'i');  // 'i' makes it case insensitive
-		serviceProject.findProjectByName(name, function(err, project){
+		serviceProject.findProjectsByName(name, function(err, project){
 			sendResponse.sendRes(res, err, project);
 		});
 	}
 
-	findProjectByTheme = function(req, res){
+	findProjectsByTheme = function(req, res){
 		if(!req.params.theme){
 			res.status(400).send('theme required');
 			return;
 		}
 
 		var theme = new RegExp(req.params.theme, 'i');  // 'i' makes it case insensitive
-		serviceProject.findProjectByTheme(theme, function(err, project){
+		serviceProject.findProjectsByTheme(theme, function(err, project){
 			sendResponse.sendRes(res, err, project);
 		});
 	}
 
-	findProjectByDescription = function(req, res){
-		if(!req.params.description){
+	findProjectsByDescription = function(req, res){
+		if(!req.body.description){
 			res.status(400).send('description required');
 			return;
 		}
 
-		var description = new RegExp(req.params.city, 'i');  // 'i' makes it case insensitive
-		serviceProject.findProjectByDescription(description, function(err, project){
+		if(!req.body.elements){
+			res.status(400).send('elements required');
+			return;
+		}
+
+		serviceProject.findProjectsByDescription(req.body.description,
+												req.body.elements, 
+												function(err, project){
 			sendResponse.sendRes(res, err, project);
 		});
 	}
 
-	findProjectByCity = function(req, res){
+	findProjectsByCity = function(req, res){
 		if(!req.params.city){
 			res.status(400).send('city required');
 			return;
 		}
 
 		var city = new RegExp(req.params.city, 'i');  // 'i' makes it case insensitive
-		serviceProject.findProjectByCity(city, function(err, project){
+		serviceProject.findProjectsByCity(city, function(err, project){
 			sendResponse.sendRes(res, err, project);
 		});
 	}
@@ -171,10 +177,10 @@ module.exports = function(app){
 	app.get('/project/findAll', findAllProjects);
 	//returns all the paraments
 	app.get('/project/findByID/:_id', findProjectByID);
-	app.get('/project/findByName/:name', findProjectByName);
-	app.get('/project/findByTheme/:theme', findProjectByTheme);
-	app.get('/project/findByDescription/:description', findProjectByDescription);
-	app.get('/project/findByCity/:city', findProjectByCity);
+	app.get('/project/findByName/:name', findProjectsByName);
+	app.get('/project/findByTheme/:theme', findProjectsByTheme);
+	app.post('/project/findByDescription/', findProjectsByDescription);
+	app.get('/project/findByCity/:city', findProjectsByCity);
 	//need to pass name, username, password and email
 	app.post('/project/add', addProject);
 
