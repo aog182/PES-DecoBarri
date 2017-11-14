@@ -40,7 +40,7 @@ module.exports = function(app){
 					res.status(500).send('Internal Server Error');
 			}
 			else{
-				res.status(200).send(material._id);
+				res.status(200).send(""+material._id);
 			}
 		});		
 	}
