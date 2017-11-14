@@ -4,7 +4,7 @@ var chaiHttp = require('chai-http');
 
 chai.use(chaiHttp);
 
-require('../config');
+require('../../config');
 
 var project = {
 	_id: "",
