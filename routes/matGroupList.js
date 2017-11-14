@@ -23,7 +23,7 @@ module.exports = function(app){
 		MatGroupList.findById(req.params._id, function(err, matGroupList){
 			if(err)
 				res.status(500).send('Internal Server Error');
-			if(!matGroupList)
+			else if(!matGroupList)
 				res.status(404).send('Material Group List not found.');
 			else
 				res.status(200).send(matGroupList);
@@ -49,7 +49,7 @@ module.exports = function(app){
 					res.status(500).send('Internal Server Error');
 			}
 			else{
-				res.status(200).send(matGroupList._id);
+				res.status(200).send(""+matGroupList._id);
 			}
 		});		
 	}
@@ -60,17 +60,18 @@ module.exports = function(app){
 			return;
 		}
 		if(!req.body.material_id) {
-			res.status(400).send('material_id required');
+			res.status(401).send('material_id required');
 			return;
 		}
 		if(!req.body.urgent) {
-			res.status(400).send('urgent param required');
+			res.status(402).send('urgent param required');
 			return;
 		}
 
 		MatGroupList.findById(req.body._id, function(err, matGroupList){
 			if(err)
-				res.status(500).send('Internal Server Error');
+				res.status(500).send(err);
+				//res.status(500).send('Internal Server Error');
 			else if(!matGroupList)
 				res.status(404).send('Material Group List not found.');
 			else{
@@ -81,6 +82,7 @@ module.exports = function(app){
 
 				matGroupList.save(function(err){
 					if(err)
+						//res.status(500).send(err);
 						res.status(500).send('Internal Server Error');
 					else
 						res.status(200).send('Material Added to NeedList');
@@ -101,7 +103,8 @@ module.exports = function(app){
 
 		MatGroupList.findById(req.body._id, function(err, matGroupList){
 			if(err)
-				res.status(500).send('Internal Server Error');
+				res.status(500).send(err);
+				//res.status(500).send('Internal Server Error');
 			else if(!matGroupList)
 				res.status(404).send('Material Group List not found.');
 			else{
@@ -109,6 +112,7 @@ module.exports = function(app){
 
 				matGroupList.save(function(err){
 					if(err)
+						//res.status(500).send(err);
 						res.status(500).send('Internal Server Error');
 					else
 						res.status(200).send('Material Added to Inventari');
@@ -152,12 +156,14 @@ module.exports = function(app){
 
 		MatGroupList.findById(req.params._id, function(err, matGroupList){
 			if(err)
-				res.status(500).send('Internal Server Error');
+				res.status(500).send(err);
+				//res.status(500).send('Internal Server Error');
 			else if(!matGroupList)
 				res.status(404).send('Material Group List not found.');			
 			else{
 				matGroupList.remove(function(err){
 					if(err)
+						//res.status(500).send(err);
 						res.status(500).send('Internal Server Error');
 					else
 						res.status(200).send('Material Group List deleted');
@@ -166,10 +172,27 @@ module.exports = function(app){
 		});
 	}
 
+	deleteAllMaterialGroupLists = function(req,res){
+		if(req.params.sure != "true") {
+			//return res.status(400).send(req.params.sure);
+			return res.status(400).send('You sure? You must say true');
+			
+		}
+
+		MatGroupList.remove(function(err, matGroupList){
+			if(err)
+				res.status(500).send('Internal Server Error');		
+			else{
+				res.status(200).send('Material Group List deleted');
+			}
+		});
+
+	}
+
 	deleteMaterialNeedList = function(req,res){
 		if(!req.body._id) {
-			res.status(400).send(req.body._id);
-			//res.status(400).send('_id required');
+			//res.status(400).send(req.body._id);
+			res.status(400).send('_id required');
 			return;
 		}
 		if(!req.body.material_id) {
@@ -195,6 +218,7 @@ module.exports = function(app){
 			}
 		});
 	}
+
 
 	deleteMaterialInventari = function(req,res){
 		if(!req.body._id) {
@@ -238,6 +262,8 @@ module.exports = function(app){
 	app.put('/matGroupList/edit/:_id', editMatGroupList);
 
 	app.delete('/matGroupList/delete/:_id', deleteMatGroupList);
+
+	app.delete('/matGroupList/deleteAll/:sure', deleteAllMaterialGroupLists);
 
 	app.put('/matGroupList/deleteMaterialNeedList', deleteMaterialNeedList);
 
