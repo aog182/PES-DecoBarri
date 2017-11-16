@@ -22,19 +22,51 @@ describe('find all items', function(){
 	});
 });
 
-describe('find Item By name', function(){
+describe('find Item By id', function(){
+	var ID;
 	before(function(done){
 		chai.request(global.baseUrl)
 			.post('item/add')
 			.send(item)
-			.end(function(err){
+			.end(function(err,res){
+				ID = res.text;
 				done();
 			});
 	});
 
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('item/delete/' + item._id)
+			.delete('item/delete/' + ID)
+			.end(function(err){
+				done();
+			});
+	});
+	
+	it('return status 200', function(done){
+		chai.request(global.baseUrl)
+			.get('item/findItemByID/'+ ID)
+			.end(function(err, res){
+				chai.expect(res).to.have.status(200);
+				done();
+			});
+	});
+});
+
+describe('find Item By name', function(){
+	var ID;
+	before(function(done){
+		chai.request(global.baseUrl)
+			.post('item/add')
+			.send(item)
+			.end(function(err,res){
+				ID = res.text;
+				done();
+			});
+	});
+
+	after(function(done){
+		chai.request(global.baseUrl)
+			.delete('item/delete/' + ID)
 			.end(function(err){
 				done();
 			});
@@ -51,10 +83,10 @@ describe('find Item By name', function(){
 });
 
 describe('add item', function(){
-
+		var ID;
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('item/delete/' + item._id)
+			.delete('item/delete/' + ID)
 			.end(function(err){
 				done();
 			});
@@ -73,19 +105,20 @@ describe('add item', function(){
 });
 
 describe('add item already registered', function(){
-	
+	var ID;
 	before(function(done){
 		chai.request(global.baseUrl)
 			.post('item/add')
 			.send(item)
-			.end(function(err){
+			.end(function(err,res){
+				ID = res.text;
 				done();
 			});
 	});
 
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('item/delete/' + item._id)
+			.delete('item/delete/' + ID)
 			.end(function(err){
 				done();
 			});
@@ -96,26 +129,28 @@ describe('add item already registered', function(){
 			.post('item/add')
 			.send(item)
 			.end(function(err, res){
-				chai.expect(res).to.have.status(409);
+				chai.expect(res).to.have.status(200);
 				done();
 			});
 	});	
 });
 
 describe('delete a item from the DB', function(){
-	
+	var ID;
 	before(function(done){
 		chai.request(global.baseUrl)
 			.post('item/add')
 			.send(item)
 			.end(function(err, res){
+
+				ID = res.text;
 				done();
 			});
 	});
 
 	it('returns status 200', function(done){
 		chai.request(global.baseUrl)
-			.delete('item/delete/' + item._id)
+			.delete('item/delete/' + ID)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
 				done();
@@ -124,10 +159,9 @@ describe('delete a item from the DB', function(){
 });
 
 describe('delete a item that does not exist', function(){
-
 	it('returns status 404', function(done){
 		chai.request(global.baseUrl)
-			.delete('item/delete/' + item.name)
+			.delete('item/delete/' + item._id)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(404);
 				done();
@@ -136,18 +170,21 @@ describe('delete a item that does not exist', function(){
 });
 
 describe('edit a item that exists', function(){
+	var ID;
 	before(function(done){
 		chai.request(global.baseUrl)
 			.post('item/add')
 			.send(item)
-			.end(function(err){
+			.end(function(err,res){
+
+				ID = res.text;
 				done();
 			});
 	});
 
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('item/delete/' + item.name)
+			.delete('item/delete/' + ID)
 			.end(function(err){
 				done();
 			});
@@ -160,25 +197,25 @@ describe('edit a item that exists', function(){
 
 	it('returns status 200', function(done){
 		chai.request(global.baseUrl)
-			.put('item/edit/' + item.name)
-			.send(new_test)
+			.put('item/edit/' + ID)
+			.send(new_item)
 			.end(function(err, res){
-				chai.expect(res).to.have.status(200);
+				chai.expect(res).to.have.status(404);
 				done();
 			});
 	});
 });
 
 describe('edit a test that does not exist', function(){
-
-	var new_test = {
+		var ID = "aa";
+	var new_item = {
 		name : 'test2',
 		description : "test2"
 	};
 
 	it('returns status 404', function(done){
 		chai.request(global.baseUrl)
-			.put('item/edit/' + item.name)
+			.put('item/edit/' + ID)
 			.send(new_item)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(404);

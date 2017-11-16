@@ -53,7 +53,7 @@ module.exports = function(app){
 			return res.status(400).send('name required');
 		}
 
-		serviceItem.editProject(req.body._id,
+		serviceItem.editItem(req.body._id,
 								req.body.name,
 								req.body.description, function(err, data){
 									sendResponse.sendRes(res, err, data);
