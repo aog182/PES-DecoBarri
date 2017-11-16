@@ -4,7 +4,7 @@ var chaiHttp = require('chai-http');
 
 chai.use(chaiHttp);
 
-require('../config');
+require('../../config');
 
 var project = {
 	name: "PES",
@@ -190,10 +190,16 @@ describe('find project by description', function(){
 				done();
 			});
 	});
+
+	var data = {
+		description: project.description,
+		elements: 2
+	}
 	
 	it('return status 200', function(done){
 		chai.request(global.baseUrl)
-			.get('project/findByDescription/'+project.description)
+			.post('project/findByDescription/')
+			.send(data)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
 				chai.expect(res.text.length).to.be.above(0);
@@ -224,7 +230,7 @@ describe('find project by city', function(){
 	
 	it('return status 200', function(done){
 		chai.request(global.baseUrl)
-			.get('project/findByDescription/'+project.description)
+			.get('project/findByCity/'+project.city)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
 				chai.expect(res.text.length).to.be.above(0);
