@@ -23,10 +23,13 @@ require('./models/project');
 require('./models/user');
 require('./models/material');
 require('./models/matGroupList');
+require('./models/item');
+require('./models/projects_tags');
 require('./routes/user')(app);
 require('./routes/project')(app);
 require('./routes/material')(app);
 require('./routes/matGroupList')(app);
+require('./routes/item')(app);
  
 app.get('/', function (req, res) {
 	res.setHeader('Access-Control-Allow-Origin', '*');
