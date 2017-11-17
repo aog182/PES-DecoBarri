@@ -1,5 +1,6 @@
 var express = require('express')
 var app = express()
+var server = require('http').createServer(app);
 var cors = require('cors')
 var bodyParser = require('body-parser')
 var expressJWT = require('express-jwt')
@@ -45,6 +46,8 @@ require('./routes/project')(app);
 require('./routes/material')(app);
 require('./routes/matGroupList')(app);
 require('./routes/item')(app);
+
+require('./services/chat')(server);
  
 app.get('/', function (req, res) {
 	res.setHeader('Access-Control-Allow-Origin', '*');
@@ -57,8 +60,20 @@ app.post('/a', function(req, res) {
 	var response = "hola " + req.body.message.nombre;
 	res.json(response);
 });
+
+app.get('/chat', function(req,res){
+	res.sendFile('/home/albert/Documents/sublimeText/PES-DecoBarri-Backend/test-chat/index.html');
+});
+
+app.get('/main.js', function(req,res){
+	res.sendFile('/home/albert/Documents/sublimeText/PES-DecoBarri-Backend/test-chat/main.js');
+});
+
+app.get('/style.css', function(req,res){
+	res.sendFile('/home/albert/Documents/sublimeText/PES-DecoBarri-Backend/test-chat/style.css');
+});
  
 
-app.listen(app.get('port'), function() {
+server.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });

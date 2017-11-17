@@ -9,6 +9,7 @@ var User = new mongoose.Schema({
 	password: {type : String, required : true},
 	email: {type : String, required : true, trim:true},
 	//img: { data: Buffer, contentType: String },
+	delete_date: {type : String},
 	projects : [{type : String, required : true}],
 	contacts : [{type : String, required : true}]
 });
