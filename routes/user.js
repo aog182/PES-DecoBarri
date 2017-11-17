@@ -1,5 +1,7 @@
 module.exports = function(app){
 
+	var jwt_decode = require('jwt-decode');
+
 	var serviceUser = require('../services/user');
 	var sendResponse = require('./sendResponse');
 
@@ -244,5 +246,5 @@ use
 show collectionss
 https://docs.mongodb.com/manual/tutorial/project-fields-from-query-results/
 Authorization
-Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFsYmVydEx1dGgiLCJpYXQiOjE1MDc5MjAwNjB9.eukhPGfPXkScnw5lAo0EK-CJ1if8uYTthUcI-CuU4ms
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJhbGJlcnRMdXRoIiwiaWF0IjoxNTEwODQ2NjUwfQ.3Jz7bXkyJlCfRnBFU2OY6meVevh4fxe8sJ4evLrfgLI
 */

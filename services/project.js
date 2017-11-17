@@ -64,6 +64,7 @@ function findProjectsByDescription(description, elements, callback){
 				results.push([value, projects[i]]);
 			}
 		}
+		//ordenar per value en ordre decreixent 
 		results.sort(sortFunction);
 		results = results.slice(0, elements);
 		return callback(null, results);

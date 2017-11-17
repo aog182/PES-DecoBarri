@@ -16,6 +16,21 @@ app.use(cors());
 
 //app.use(expressJWT({secret:global.secret}).unless({path:['/user/login','/user/add']}));
  
+/*
+app.use(function(err, req, res, next){
+	if(err){
+		if(err.name == 'UnauthorizedError')
+			return res.status(403).send('Forbidden')
+	}
+});
+
+if(req.headers.authorization){
+	//el header es de la forma-> name: authorization, value: Bearer token
+	var token = req.headers.authorization.split(' ')[1];
+	var decoded = jwt_decode(token);
+	console.log(decoded._id);
+}*/
+
 app.set('port', (process.env.PORT || 5000));
 
 require('./database/db');
