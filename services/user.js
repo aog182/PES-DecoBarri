@@ -185,13 +185,14 @@ function loginUser(username, password, callback){
 }
 
 function addProject(username, project_id, callback){
-	serviceProject.findProjectByID(project_id, function(err, project){
+	findUserByID(username, function(err, user){
 		if(err)
 			return callback(err);
-		findUserByID(username, function(err, user){
+
+		serviceProject.addMember(username,project_id, function(err, message){
 			if(err)
 				return callback(err);
-
+			
 			var index = user.projects.indexOf(project_id);
 			if(index == -1){
 				user.projects.addToSet(project_id);
@@ -215,22 +216,27 @@ function deleteProject(username, project_id, callback){
 	findUserByID(username, function(err, user){
 		if(err)
 			return callback(err);
-		
-		var index = user.projects.indexOf(project_id);
-		if(index != -1){
-			user.projects.remove(project_id);			
-			user.save(function(err){
-				if(err){
-					var error = new errorMessage('Internal Server Error',500);
-					return callback(error);
-				}
-				return callback(null, 'User modified');
-			});
-		}
-		else{
-			var error = new errorMessage('Project not registered',404);
-			return callback(error);
-		}
+
+		serviceProject.deleteMember(username, project_id, function(err, message){
+			if(err)
+				return callback(err);
+
+			var index = user.projects.indexOf(project_id);
+			if(index != -1){
+				user.projects.remove(project_id);			
+				user.save(function(err){
+					if(err){
+						var error = new errorMessage('Internal Server Error',500);
+						return callback(error);
+					}
+					return callback(null, 'User modified');
+				});
+			}
+			else{
+				var error = new errorMessage('Project not registered',404);
+				return callback(error);
+			}
+		})
 	});
 }
 

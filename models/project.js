@@ -7,6 +7,7 @@ var Project = new mongoose.Schema({
 	description: {type : String, required : false, trim:true},
 	city: {type : String, required : true, trim:true},
 	address: {type : String, required : false},
+	members : [{type : String}],
 	notes : [{
 			_id: {type : String, required : true},
 			title : {type : String, required : true, trim:true},

@@ -183,6 +183,52 @@ function deleteNote(idProject, idNote, callback){
 	});
 }
 
+function addMember(username, project_id, callback){
+	findProjectByID(project_id, function(err, project){
+		if(err)
+			return callback(err);
+
+		var index = project.members.indexOf(username);
+		if(index == -1){
+			project.members.push(username);
+			project.save(function(err){
+				if(err){
+					var error = new errorMessage('Internal Server Error',500);
+					return callback(error);
+				}
+				return callback(null, 'Project added');
+			});
+		}
+		else{
+			var error = new errorMessage('Member already registered',401);
+			return callback(error);
+		}
+	});
+}
+
+function deleteMember(username, project_id, callback){
+	findProjectByID(project_id, function(err, project){
+		if(err)
+			return callback(err);
+
+		var index = project.members.indexOf(username);
+		if(index != -1){
+			project.members.remove(project_id);			
+			project.save(function(err){
+				if(err){
+					var error = new errorMessage('Internal Server Error',500);
+					return callback(error);
+				}
+				return callback(null, 'Project modified');
+			});
+		}
+		else{
+			var error = new errorMessage('Member not registered',404);
+			return callback(error);
+		}
+	});
+}
+
 
 
 module.exports.findAllProjects = findAllProjects;
@@ -196,3 +242,5 @@ module.exports.deleteProject = deleteProject;
 module.exports.editProject = editProject;
 module.exports.addNote = addNote;
 module.exports.deleteNote = deleteNote;
+module.exports.addMember = addMember;
+module.exports.deleteMember = deleteMember;
