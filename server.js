@@ -62,17 +62,16 @@ app.post('/a', function(req, res) {
 });
 
 app.get('/chat', function(req,res){
-	res.sendFile('/home/albert/Documents/sublimeText/PES-DecoBarri-Backend/test-chat/index.html');
+	res.sendFile(process.env.PWD + '/test-chat/index.html');
 });
 
 app.get('/main.js', function(req,res){
-	res.sendFile('/home/albert/Documents/sublimeText/PES-DecoBarri-Backend/test-chat/main.js');
+	res.sendFile(process.env.PWD + '/test-chat/main.js');
 });
 
 app.get('/style.css', function(req,res){
-	res.sendFile('/home/albert/Documents/sublimeText/PES-DecoBarri-Backend/test-chat/style.css');
+	res.sendFile(process.env.PWD + '/test-chat/style.css');
 });
- 
 
 server.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
