@@ -3,174 +3,174 @@ module.exports = function(app){
 	var serviceProject = require('../services/project');
 	var sendResponse = require('./sendResponse');
 
-	findAllProjects = function(req, res){
-		serviceProject.findAllProjects(function(err, projects){
-			sendResponse.sendRes(res, err, projects);
-		});
-	}
+    var findAllProjects = function (req, res) {
+        serviceProject.findAllProjects(function (err, projects) {
+            sendResponse.sendRes(res, err, projects);
+        });
+    }
 
-	findProjectByID = function(req, res){
-		if(!req.params._id){
-			res.status(400).send('_id required');
-			return;
-		}
+    var findProjectByID = function (req, res) {
+        if (!req.params._id) {
+            res.status(400).send('_id required');
+            return;
+        }
 
-		serviceProject.findProjectByID(req.params._id, function(err, project){
-			sendResponse.sendRes(res, err, project);
-		});
-	}
+        serviceProject.findProjectByID(req.params._id, function (err, project) {
+            sendResponse.sendRes(res, err, project);
+        });
+    }
 
-	findProjectsByName = function(req, res){
-		if(!req.params.name){
-			res.status(400).send('name required');
-			return;
-		}
+    var findProjectsByName = function (req, res) {
+        if (!req.params.name) {
+            res.status(400).send('name required');
+            return;
+        }
 
-		var name = new RegExp(req.params.name, 'i');  // 'i' makes it case insensitive
-		serviceProject.findProjectsByName(name, function(err, project){
-			sendResponse.sendRes(res, err, project);
-		});
-	}
+        var name = new RegExp(req.params.name, 'i');  // 'i' makes it case insensitive
+        serviceProject.findProjectsByName(name, function (err, project) {
+            sendResponse.sendRes(res, err, project);
+        });
+    }
 
-	findProjectsByTheme = function(req, res){
-		if(!req.params.theme){
-			res.status(400).send('theme required');
-			return;
-		}
+    var findProjectsByTheme = function (req, res) {
+        if (!req.params.theme) {
+            res.status(400).send('theme required');
+            return;
+        }
 
-		var theme = new RegExp(req.params.theme, 'i');  // 'i' makes it case insensitive
-		serviceProject.findProjectsByTheme(theme, function(err, project){
-			sendResponse.sendRes(res, err, project);
-		});
-	}
+        var theme = new RegExp(req.params.theme, 'i');  // 'i' makes it case insensitive
+        serviceProject.findProjectsByTheme(theme, function (err, project) {
+            sendResponse.sendRes(res, err, project);
+        });
+    }
 
-	findProjectsByDescription = function(req, res){
-		if(!req.body.description){
-			res.status(400).send('description required');
-			return;
-		}
+    var findProjectsByDescription = function (req, res) {
+        if (!req.body.description) {
+            res.status(400).send('description required');
+            return;
+        }
 
-		if(!req.body.elements){
-			res.status(400).send('elements required');
-			return;
-		}
+        if (!req.body.elements) {
+            res.status(400).send('elements required');
+            return;
+        }
 
-		serviceProject.findProjectsByDescription(req.body.description,
-												req.body.elements, 
-												function(err, project){
-			sendResponse.sendRes(res, err, project);
-		});
-	}
+        serviceProject.findProjectsByDescription(req.body.description,
+            req.body.elements,
+            function (err, project) {
+                sendResponse.sendRes(res, err, project);
+            });
+    }
 
-	findProjectsByCity = function(req, res){
-		if(!req.params.city){
-			res.status(400).send('city required');
-			return;
-		}
+    var findProjectsByCity = function (req, res) {
+        if (!req.params.city) {
+            res.status(400).send('city required');
+            return;
+        }
 
-		var city = new RegExp(req.params.city, 'i');  // 'i' makes it case insensitive
-		serviceProject.findProjectsByCity(city, function(err, project){
-			sendResponse.sendRes(res, err, project);
-		});
-	}
+        var city = new RegExp(req.params.city, 'i');  // 'i' makes it case insensitive
+        serviceProject.findProjectsByCity(city, function (err, project) {
+            sendResponse.sendRes(res, err, project);
+        });
+    }
 
-	addProject = function(req,res){
-		if(!req.body.name){
-			return res.status(400).send('name required');
-		}
-		if(!req.body.city){
-			return res.status(400).send('city required');
-		}
+    var addProject = function (req, res) {
+        if (!req.body.name) {
+            return res.status(400).send('name required');
+        }
+        if (!req.body.city) {
+            return res.status(400).send('city required');
+        }
 
-		serviceProject.addProject(	req.body.name,
-									req.body.theme,
-									req.body.description,
-									req.body.city,
-									req.body.address, function(err, id){
-										sendResponse.sendRes(res, err, id);
-		});		
-	}
+        serviceProject.addProject(req.body.name,
+            req.body.theme,
+            req.body.description,
+            req.body.city,
+            req.body.address, function (err, id) {
+                sendResponse.sendRes(res, err, id);
+            });
+    }
 
-	editProject = function(req, res) {
-		if(!req.params._id) {
-			res.status(400).send('_id required');
-			return;
-		}
-		if(!req.body.name) {
-			res.status(400).send("name required");
-			return;
-		}
-		if(!req.body.city) {
-			res.status(400).send("city required");
-			return;
-		}
+    var editProject = function (req, res) {
+        if (!req.params._id) {
+            res.status(400).send('_id required');
+            return;
+        }
+        if (!req.body.name) {
+            res.status(400).send("name required");
+            return;
+        }
+        if (!req.body.city) {
+            res.status(400).send("city required");
+            return;
+        }
 
-		serviceProject.editProject(	req.params._id,
-									req.body.name, 
-									req.body.theme,
-									req.body.description,
-									req.body.city,
-									req.body.address, function(err, data){
-										sendResponse.sendRes(res, err, data);
-		});
-	}
+        serviceProject.editProject(req.params._id,
+            req.body.name,
+            req.body.theme,
+            req.body.description,
+            req.body.city,
+            req.body.address, function (err, data) {
+                sendResponse.sendRes(res, err, data);
+            });
+    }
 
-	deleteProject = function(req, res){
-		if(!req.params._id){
-			res.status(400).send('_id required');
-			return;
-		}
+    var deleteProject = function (req, res) {
+        if (!req.params._id) {
+            res.status(400).send('_id required');
+            return;
+        }
 
-		serviceProject.deleteProject(req.params._id, function(err, data){
-			sendResponse.sendRes(res, err, data);
-		});
-	}
+        serviceProject.deleteProject(req.params._id, function (err, data) {
+            sendResponse.sendRes(res, err, data);
+        });
+    }
 
-	addNote = function(req, res){
-		if(!req.params._id){
-			res.status(400).send('_id required');
-			return;
-		}
-		if(!req.body.title){
-			res.status(400).send('title required');
-			return;
-		}
-		if(!req.body.description){
-			res.status(400).send('description required');
-			return;
-		}
-		if(!req.body.author){
-			res.status(400).send('author required');
-			return;
-		}
-		if(!req.body.modifiable){
-			res.status(400).send('modifiable required');
-			return;
-		}
+    var addNote = function (req, res) {
+        if (!req.params._id) {
+            res.status(400).send('_id required');
+            return;
+        }
+        if (!req.body.title) {
+            res.status(400).send('title required');
+            return;
+        }
+        if (!req.body.description) {
+            res.status(400).send('description required');
+            return;
+        }
+        if (!req.body.author) {
+            res.status(400).send('author required');
+            return;
+        }
+        if (!req.body.modifiable) {
+            res.status(400).send('modifiable required');
+            return;
+        }
 
-		serviceProject.addNote(	req.params._id,
-								req.body.title,
-								req.body.description,
-								req.body.author,
-								req.body.modifiable, function(err, data){
-			sendResponse.sendRes(res, err, data);
-		});
-	};
+        serviceProject.addNote(req.params._id,
+            req.body.title,
+            req.body.description,
+            req.body.author,
+            req.body.modifiable, function (err, data) {
+                sendResponse.sendRes(res, err, data);
+            });
+    };
 
-	deleteNote = function(req, res){
-		if(!req.params._id){
-			res.status(400).send('_id required');
-			return;
-		}
-		if(!req.body.note_id){
-			res.status(400).send('note_id required');
-			return;
-		}
+    var deleteNote = function (req, res) {
+        if (!req.params._id) {
+            res.status(400).send('_id required');
+            return;
+        }
+        if (!req.body.note_id) {
+            res.status(400).send('note_id required');
+            return;
+        }
 
-		serviceProject.deleteNote(req.params._id, req.body.note_id, function(err, data){
-			sendResponse.sendRes(res, err, data);
-		})
-	}
+        serviceProject.deleteNote(req.params._id, req.body.note_id, function (err, data) {
+            sendResponse.sendRes(res, err, data);
+        })
+    }
 
 
 	//returns all the paraments of all projects

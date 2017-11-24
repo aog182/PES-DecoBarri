@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var MatGroupList = new mongoose.Schema({
+var MatProjectList = new mongoose.Schema({
 	project_id : {type: mongoose.Schema.Types.ObjectId, ref: 'Project'},
 	//llista materials que el pojecte necessita urgentment
 	urgent_need_list : [{type: mongoose.Schema.Types.ObjectId, ref: 'Material'}], 
@@ -10,5 +10,5 @@ var MatGroupList = new mongoose.Schema({
 	inventari : [{type: mongoose.Schema.Types.ObjectId, ref: 'Material'}] 
 });
 
-module.exports = mongoose.model('MatGroupList', MatGroupList);
+module.exports = mongoose.model('MatProjectList', MatProjectList);
 

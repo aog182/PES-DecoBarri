@@ -44,7 +44,7 @@ require('./models/projects_tags');
 require('./routes/user')(app);
 require('./routes/project')(app);
 require('./routes/material')(app);
-require('./routes/matGroupList')(app);
+require('./routes/matProjectList')(app);
 require('./routes/item')(app);
 
 require('./services/chat')(server);

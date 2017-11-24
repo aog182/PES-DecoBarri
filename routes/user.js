@@ -209,7 +209,7 @@ module.exports = function(app){
 			res.status(400).send('Username required');
 			return;
 		}
-
+s
 		serviceUser.showMyProjects(req.params.username, function(err, data){
 			sendResponse.sendRes(res, err, data);
 		});

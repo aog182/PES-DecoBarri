@@ -75,6 +75,12 @@ function findProjectsByDescription(description, elements, callback){
 	}
 }
 
+function hasProjectID_MaterialGroupList(project_id, callback) {
+    findProjectByID(project_id, function(err, project){
+    		callback(null, project.material_id === null);
+    });
+}
+
 function addProject(name, theme, description, city, address, callback){
 	var project = new Project({
 		_id: mongoose.Types.ObjectId(),
@@ -229,6 +235,31 @@ function deleteMember(username, project_id, callback){
 	});
 }
 
+function addMaterialGroupList(project_id, _id, callback) {
+    findProjectByID(project_id, function(err, project){
+        if(project.material_id === null) {
+
+        	project.material_id = _id;
+        	return callback (null);
+        }
+        else {
+            var error = new errorMessage('The Project already has a Material Group List', 401);
+            return callback(error);
+		}
+    });
+}
+
+function deleteMaterialGroupList(project_id, callback) {
+    findProjectByID(project_id, function(err, project){
+        if (project.material_id !== null) {
+            project.material_id = null;
+            return callback(null);
+        } else {
+            var error = new errorMessage('The Project does not have a Material Group List', 402);
+            return callback(error);
+        }
+    });
+}
 
 
 module.exports.findAllProjects = findAllProjects;
@@ -237,6 +268,7 @@ module.exports.findProjectsByName = findProjectsByName;
 module.exports.findProjectsByTheme = findProjectsByTheme;
 module.exports.findProjectsByCity = findProjectsByCity;
 module.exports.findProjectsByDescription = findProjectsByDescription;
+module.exports.hasProjectID_MaterialGroupList = hasProjectID_MaterialGroupList;
 module.exports.addProject = addProject;
 module.exports.deleteProject = deleteProject;
 module.exports.editProject = editProject;
@@ -244,3 +276,5 @@ module.exports.addNote = addNote;
 module.exports.deleteNote = deleteNote;
 module.exports.addMember = addMember;
 module.exports.deleteMember = deleteMember;
+module.exports.addMaterialGroupList = addMaterialGroupList;
+module.exports.deleteMaterialGroupList = deleteMaterialGroupList;
