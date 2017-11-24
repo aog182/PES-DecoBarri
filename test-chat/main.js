@@ -56,15 +56,20 @@ $(function() {
     var message = $inputMessage.val();
     // Prevent markup from being injected into the message
     message = cleanInput(message);
+
+    var data = {
+      to: "a",
+      message: message
+    }
     // if there is a non-empty message and a socket connection
-    if (message && connected) {
+    if (message) {
       $inputMessage.val('');
       addChatMessage({
-        username: username,
+        from: username,
         message: message
       });
       // tell server to execute 'new message' and send along one parameter
-      socket.emit('new message', message);
+      socket.emit('new message', data);
     }
   }
 
@@ -85,14 +90,14 @@ $(function() {
     }
 
     var $usernameDiv = $('<span class="username"/>')
-      .text(data.username)
-      .css('color', getUsernameColor(data.username));
+      .text(data.from)
+      .css('color', getUsernameColor(data.from));
     var $messageBodyDiv = $('<span class="messageBody">')
       .text(data.message);
 
     var typingClass = data.typing ? 'typing' : '';
     var $messageDiv = $('<li class="message"/>')
-      .data('username', data.username)
+      .data('username', data.from)
       .addClass(typingClass)
       .append($usernameDiv, $messageBodyDiv);
 
@@ -151,10 +156,14 @@ $(function() {
 
   // Updates the typing event
   function updateTyping () {
+    var data = {
+      to : "a"
+    };
+
     if (connected) {
       if (!typing) {
         typing = true;
-        socket.emit('typing');
+        socket.emit('typing', data);
       }
       lastTypingTime = (new Date()).getTime();
 
@@ -162,7 +171,7 @@ $(function() {
         var typingTimer = (new Date()).getTime();
         var timeDiff = typingTimer - lastTypingTime;
         if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
-          socket.emit('stop typing');
+          socket.emit('stop typing', data);
           typing = false;
         }
       }, TYPING_TIMER_LENGTH);
@@ -172,7 +181,7 @@ $(function() {
   // Gets the 'X is typing' messages of a user
   function getTypingMessages (data) {
     return $('.typing.message').filter(function (i) {
-      return $(this).data('username') === data.username;
+      return $(this).data('username') === data.from;
     });
   }
 
@@ -191,6 +200,10 @@ $(function() {
   // Keyboard events
 
   $window.keydown(function (event) {
+    var data = {
+      to : "a"
+    };
+
     // Auto-focus the current input when a key is typed
     if (!(event.ctrlKey || event.metaKey || event.altKey)) {
       $currentInput.focus();
@@ -199,7 +212,7 @@ $(function() {
     if (event.which === 13) {
       if (username) {
         sendMessage();
-        socket.emit('stop typing');
+        socket.emit('stop typing', data);
         typing = false;
       } else {
         setUsername();
@@ -243,13 +256,13 @@ $(function() {
 
   // Whenever the server emits 'user joined', log it in the chat body
   socket.on('user joined', function (data) {
-    log(data.username + ' joined');
+    log(data.from + ' joined');
     addParticipantsMessage(data);
   });
 
   // Whenever the server emits 'user left', log it in the chat body
   socket.on('user left', function (data) {
-    log(data.username + ' left');
+    log(data.from + ' left');
     addParticipantsMessage(data);
     removeChatTyping(data);
   });
@@ -265,6 +278,7 @@ $(function() {
   });
 
   socket.on('disconnect', function () {
+    socket.emit('disconnect');
     log('you have been disconnected');
   });
 

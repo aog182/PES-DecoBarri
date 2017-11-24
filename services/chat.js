@@ -1,6 +1,7 @@
 module.exports = function(server){
 	var io = require('socket.io')(server)
 
+	var users = new Map();
 
 	var numUsers = 0;
 
@@ -10,10 +11,14 @@ module.exports = function(server){
 	  // when the client emits 'new message', this listens and executes
 	  socket.on('new message', function (data) {
 	    // we tell the client to execute 'new message'
-	    socket.broadcast.emit('new message', {
-	      username: socket.username,
-	      message: data
-	    });
+
+	    var to_socketID = users.get(data.to);
+	    if(to_socketID){
+		    socket.broadcast.to(to_socketID).emit('new message', {
+		      from: socket.username,
+		      message: data.message
+		    });
+		}
 	  });
 
 	  // when the client emits 'add user', this listens and executes
@@ -23,28 +28,30 @@ module.exports = function(server){
 	    // we store the username in the socket session for this client
 	    socket.username = username;
 	    ++numUsers;
+	    users.set(username, socket.id);
+
 	    addedUser = true;
-	    socket.emit('login', {
+
+	    socket.broadcast.emit('login', {
 	      numUsers: numUsers
 	    });
-	    // echo globally (all clients) that a person has connected
 	    socket.broadcast.emit('user joined', {
-	      username: socket.username,
+	      from: socket.username,
 	      numUsers: numUsers
 	    });
 	  });
 
-	  // when the client emits 'typing', we broadcast it to others
-	  socket.on('typing', function () {
-	    socket.broadcast.emit('typing', {
-	      username: socket.username
+	  socket.on('typing', function (data) {
+	    var to_socketID = users.get(data.to);
+	    socket.broadcast.to(to_socketID).emit('typing', {
+	      from: socket.username
 	    });
 	  });
 
-	  // when the client emits 'stop typing', we broadcast it to others
-	  socket.on('stop typing', function () {
-	    socket.broadcast.emit('stop typing', {
-	      username: socket.username
+	  socket.on('stop typing', function (data) {
+	    var to_socketID = users.get(data.to);
+	    socket.broadcast.to(to_socketID).emit('stop typing', {
+	      from: socket.username
 	    });
 	  });
 
@@ -53,9 +60,10 @@ module.exports = function(server){
 	    if (addedUser) {
 	      --numUsers;
 
-	      // echo globally that this client has left
+	      users.delete(socket.username);
+
 	      socket.broadcast.emit('user left', {
-	        username: socket.username,
+	        from: socket.username,
 	        numUsers: numUsers
 	      });
 	    }
