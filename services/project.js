@@ -7,13 +7,14 @@ var errorMessage = require('./error');
 var serviceUser = require('./user');
 
 function findProjectByParameter(parameter, callback){
+    var error;
 	Project.find(parameter, function(err, projects){
 		if(err){
-			var error = new errorMessage('Internal Server Error',500);
+			error = new errorMessage('Internal Server Error',500);
 			return callback(error);
 		}
-		if(projects.length == 0){
-			var error = new errorMessage('Projects not found', 404);
+		if(projects.length === 0){
+			error = new errorMessage('Projects not found', 404);
 			return callback(error);
 		}
 		return callback(null, projects);
@@ -93,7 +94,7 @@ function addProject(name, theme, description, city, address, callback){
 
 	project.save(function(err){
 		if(err){
-			console.log(err);
+			//console.log(err);
 			var error = new errorMessage('Internal Server Error',500);
 			return callback(error);
 		}

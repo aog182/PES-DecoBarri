@@ -38,7 +38,7 @@ require('./database/db');
 require('./models/project');
 require('./models/user');
 require('./models/material');
-require('./models/matGroupList');
+require('./models/matProjectList');
 require('./models/item');
 require('./models/projects_tags');
 require('./routes/user')(app);

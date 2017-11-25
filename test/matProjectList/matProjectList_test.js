@@ -35,10 +35,9 @@ before(function(done){
 		.post('project/add')
 		.send(project)
 		.end(function(err, res){
-			if(err) throw err;
 			project['_id'] = res.text;
 			matProjectList['project_id'] = project['_id'];
-			done();
+			done(err);
 		});
 });
 before(function(done){
@@ -46,7 +45,6 @@ before(function(done){
 		.post('material/add')
 		.send(material_urgent)
 		.end(function(err, res){
-			if(err) throw err;
 			material_urgent['_id'] = res.text;
 			done();
 		});
@@ -56,7 +54,6 @@ before(function(done){
 		.post('material/add')
 		.send(material_no_urgent)
 		.end(function(err, res){
-			if(err) throw err;
 			material_no_urgent['_id'] = res.text;
 			done();
 		});
@@ -86,6 +83,24 @@ after(function(done){
 
 
 describe('find all material Project Lists on the DB', function(){
+    var ID;
+    before(function(done){
+        chai.request(global.baseUrl)
+            .post('matProjectList/add')
+            .send(matProjectList)
+            .end(function(err, res){
+                ID = res.text;
+                done();
+            });
+    });
+
+    after(function(done){
+        chai.request(global.baseUrl)
+            .delete('matProjectList/delete/' + ID)
+            .end(function(err){
+                done(err);
+            });
+    });
 	it('return status 200', function(done){
 		chai.request(global.baseUrl)
 			.get('matProjectList/findAllLists')
@@ -154,7 +169,6 @@ describe('add a Material to Need List', function(){
 		material_id : "",
 		urgent : "true"
 	};
-
 	before(function(done){
 		chai.request(global.baseUrl)
 			.post('matProjectList/add')
@@ -170,7 +184,6 @@ describe('add a Material to Need List', function(){
 		chai.request(global.baseUrl)
 			.delete('matProjectList/delete/' + material_data['_id'])
 			.end(function(err){
-				if(err) throw err;
 				done(err);
 			});
 	});
@@ -180,7 +193,6 @@ describe('add a Material to Need List', function(){
 			.put('matProjectList/addMaterialNeedList')
 			.send(material_data)
 			.end(function(err, res){
-				if(err) done(err);
 				chai.expect(res).to.have.status(200);
 				done(err);
 			});
@@ -217,8 +229,7 @@ describe('add a Material to Inventari', function(){
 			.put('matProjectList/addMaterialInventari')
 			.send(material_data)
 			.end(function(err, res){
-				//console.log("id: " + material_data['_id']);
-				if(err) done(err);
+				if(err) console.log(err);
 				chai.expect(res).to.have.status(200);
 				done(err);
 			});
@@ -256,7 +267,6 @@ describe('edit a Material Project List', function(){
 			.send(matProjectList_data)
 			.end(function(err, res){
 				//console.log("id: " + matProjectList_data['_id']);
-				//if(err) done(err);
 				chai.expect(res).to.have.status(200);
 				done(err);
 			});
@@ -279,7 +289,7 @@ describe('delete a Material Project List', function(){
 			.delete('matProjectList/delete/' + ID)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
-				done();
+				done(err);
 			});
 	});
 });
@@ -307,7 +317,6 @@ describe('delete a Material from Need List', function(){
 			.put('matProjectList/addMaterialNeedList')
 			.send(material_data)
 			.end(function(err, res){
-				if(err) done(err);
 				chai.expect(res).to.have.status(200);
 				done(err);
 			});
@@ -317,7 +326,6 @@ describe('delete a Material from Need List', function(){
 		chai.request(global.baseUrl)
 			.delete('matProjectList/delete/' + material_data['_id'])
 			.end(function(err){
-				if(err) throw err;
 				done(err);
 			});
 	});
@@ -327,7 +335,6 @@ describe('delete a Material from Need List', function(){
 			.put('matProjectList/deleteMaterialNeedList')
 			.send(material_data)
 			.end(function(err, res){
-				if(err) done(err);
 				chai.expect(res).to.have.status(200);
 				done(err);
 			});
@@ -357,7 +364,6 @@ describe('delete a Material from Inventari', function(){
 			.put('matProjectList/addMaterialInventari')
 			.send(material_data)
 			.end(function(err, res){
-				if(err) done(err);
 				chai.expect(res).to.have.status(200);
 				done(err);
 			});
@@ -367,7 +373,6 @@ describe('delete a Material from Inventari', function(){
 		chai.request(global.baseUrl)
 			.delete('matProjectList/delete/' + material_data['_id'])
 			.end(function(err){
-				if(err) throw err;
 				done(err);
 			});
 	});
@@ -377,7 +382,6 @@ describe('delete a Material from Inventari', function(){
 			.put('matProjectList/deleteMaterialInventari')
 			.send(material_data)
 			.end(function(err, res){
-				if(err) done(err);
 				chai.expect(res).to.have.status(200);
 				done(err);
 			});
