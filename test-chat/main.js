@@ -57,10 +57,6 @@ $(function() {
     // Prevent markup from being injected into the message
     message = cleanInput(message);
 
-    var data = {
-      to: "a",
-      message: message
-    }
     // if there is a non-empty message and a socket connection
     if (message) {
       $inputMessage.val('');
@@ -69,7 +65,7 @@ $(function() {
         message: message
       });
       // tell server to execute 'new message' and send along one parameter
-      socket.emit('new message', data);
+      socket.emit('new message user', 'a', message);
     }
   }
 
@@ -156,14 +152,10 @@ $(function() {
 
   // Updates the typing event
   function updateTyping () {
-    var data = {
-      to : "a"
-    };
-
     if (connected) {
       if (!typing) {
         typing = true;
-        socket.emit('typing', data);
+        socket.emit('typing', 'a');
       }
       lastTypingTime = (new Date()).getTime();
 
@@ -171,7 +163,7 @@ $(function() {
         var typingTimer = (new Date()).getTime();
         var timeDiff = typingTimer - lastTypingTime;
         if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
-          socket.emit('stop typing', data);
+          socket.emit('stop typing', 'a');
           typing = false;
         }
       }, TYPING_TIMER_LENGTH);
@@ -200,10 +192,6 @@ $(function() {
   // Keyboard events
 
   $window.keydown(function (event) {
-    var data = {
-      to : "a"
-    };
-
     // Auto-focus the current input when a key is typed
     if (!(event.ctrlKey || event.metaKey || event.altKey)) {
       $currentInput.focus();
@@ -212,7 +200,7 @@ $(function() {
     if (event.which === 13) {
       if (username) {
         sendMessage();
-        socket.emit('stop typing', data);
+        socket.emit('stop typing', 'a');
         typing = false;
       } else {
         setUsername();
@@ -239,7 +227,10 @@ $(function() {
   // Socket events
 
   // Whenever the server emits 'login', log the login message
-  socket.on('login', function (data) {
+  socket.on('login', function (numUsers) {
+    var data = {
+      numUsers:numUsers
+    }
     connected = true;
     // Display the welcome message
     var message = "Welcome to Socket.IO Chat – ";
@@ -250,30 +241,46 @@ $(function() {
   });
 
   // Whenever the server emits 'new message', update the chat body
-  socket.on('new message', function (data) {
+  socket.on('new message user', function (from, message) {
+    var data = {
+      from:from,
+      message:message
+    };
     addChatMessage(data);
   });
 
   // Whenever the server emits 'user joined', log it in the chat body
-  socket.on('user joined', function (data) {
+  socket.on('user joined', function (from) {
+    var data = {
+      from:from
+    }
     log(data.from + ' joined');
     addParticipantsMessage(data);
   });
 
   // Whenever the server emits 'user left', log it in the chat body
-  socket.on('user left', function (data) {
+  socket.on('user left', function (from) {
+    var data = {
+      from:from
+    }
     log(data.from + ' left');
     addParticipantsMessage(data);
     removeChatTyping(data);
   });
 
   // Whenever the server emits 'typing', show the typing message
-  socket.on('typing', function (data) {
+  socket.on('typing', function (from) {
+    var data = {
+      from:from
+    }
     addChatTyping(data);
   });
 
   // Whenever the server emits 'stop typing', kill the typing message
-  socket.on('stop typing', function (data) {
+  socket.on('stop typing', function (from) {
+    var data = {
+      from:from
+    }
     removeChatTyping(data);
   });
 
