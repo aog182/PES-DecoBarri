@@ -213,7 +213,7 @@ function deleteMember(username, project_id, callback){
 
 		var index = project.members.indexOf(username);
 		if(index != -1){
-			project.members.remove(project_id);			
+			project.members.remove(username);			
 			project.save(function(err){
 				if(err){
 					var error = new errorMessage('Internal Server Error',500);
