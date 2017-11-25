@@ -99,7 +99,7 @@ function addMaterialNeedList(id, material_id, urgent, callback){
 function addMaterialInventari(id, material_id, callback){
     var error;
     if(!id) {
-        console.log(id);
+        //console.log(id);
         error = new errorMessage('Material Project List _id required', 400);
         return callback(error);
     }
