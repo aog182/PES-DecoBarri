@@ -32,8 +32,6 @@ module.exports = function(app){
 	};
 
 	var addMaterialInventari = function(req,res){
-        console.log(req.body._id);
-
         serviceMatProjectList.addMaterialInventari(req.body._id, req.body.material_id,
             function(err) {
                 console.log(req.body._id);

@@ -10,22 +10,12 @@ module.exports = function(app){
     }
 
     var findProjectByID = function (req, res) {
-        if (!req.params._id) {
-            res.status(400).send('_id required');
-            return;
-        }
-
         serviceProject.findProjectByID(req.params._id, function (err, project) {
             sendResponse.sendRes(res, err, project);
         });
     }
 
     var findProjectsByName = function (req, res) {
-        if (!req.params.name) {
-            res.status(400).send('name required');
-            return;
-        }
-
         var name = new RegExp(req.params.name, 'i');  // 'i' makes it case insensitive
         serviceProject.findProjectsByName(name, function (err, project) {
             sendResponse.sendRes(res, err, project);
@@ -33,11 +23,6 @@ module.exports = function(app){
     }
 
     var findProjectsByTheme = function (req, res) {
-        if (!req.params.theme) {
-            res.status(400).send('theme required');
-            return;
-        }
-
         var theme = new RegExp(req.params.theme, 'i');  // 'i' makes it case insensitive
         serviceProject.findProjectsByTheme(theme, function (err, project) {
             sendResponse.sendRes(res, err, project);
@@ -63,11 +48,6 @@ module.exports = function(app){
     }
 
     var findProjectsByCity = function (req, res) {
-        if (!req.params.city) {
-            res.status(400).send('city required');
-            return;
-        }
-
         var city = new RegExp(req.params.city, 'i');  // 'i' makes it case insensitive
         serviceProject.findProjectsByCity(city, function (err, project) {
             sendResponse.sendRes(res, err, project);
@@ -92,10 +72,6 @@ module.exports = function(app){
     }
 
     var editProject = function (req, res) {
-        if (!req.params._id) {
-            res.status(400).send('_id required');
-            return;
-        }
         if (!req.body.name) {
             res.status(400).send("name required");
             return;
@@ -116,21 +92,12 @@ module.exports = function(app){
     }
 
     var deleteProject = function (req, res) {
-        if (!req.params._id) {
-            res.status(400).send('_id required');
-            return;
-        }
-
         serviceProject.deleteProject(req.params._id, function (err, data) {
             sendResponse.sendRes(res, err, data);
         });
     }
 
     var addNote = function (req, res) {
-        if (!req.params._id) {
-            res.status(400).send('_id required');
-            return;
-        }
         if (!req.body.title) {
             res.status(400).send('title required');
             return;
@@ -158,10 +125,6 @@ module.exports = function(app){
     };
 
     var deleteNote = function (req, res) {
-        if (!req.params._id) {
-            res.status(400).send('_id required');
-            return;
-        }
         if (!req.body.note_id) {
             res.status(400).send('note_id required');
             return;
