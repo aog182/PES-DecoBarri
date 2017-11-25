@@ -42,7 +42,7 @@ function findAllUsers(callback){
 function findUserByID(username, callback){
 	findUsersByParameter({'_id': username},{'password':0, '__v':0}, function(err, user){
 		if(err)
-			return callback(err, user);
+			return callback(err);
 		
 		callback(err, user[0]);
 	});
@@ -51,7 +51,7 @@ function findUserByID(username, callback){
 function findUserByID_Password(username, callback){
 	findUsersByParameter({'_id': username},{'__v':0}, function(err, user){
 		if(err)
-			return callback(err, user);
+			return callback(err);
 		
 		callback(err, user[0]);
 	});
@@ -67,7 +67,7 @@ function findUsersByName(name, callback){
 function findUserByEmail(email, callback){
 	findUsersByParameter({'email': email},{'password':0, '__v':0}, function(err, user){
 		if(err)
-			return callback(err, user);
+			return callback(err);
 		
 		callback(err, user[0]);
 	});
