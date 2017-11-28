@@ -55,13 +55,13 @@ module.exports = function(app){
         });
     }
 
-    var findProjectByLocation = function(req, res){
+    /*var findProjectByLocation = function(req, res){
     	var location = new RegExp(req.params.location, 'i');  // 'i' makes it case insensitive
 		serviceProject.findRPojectByLocation(location, function(err, project){
 			sendResponse.sendRes(res, err, project);
 
 		});
-	}
+	}*/
 
     var addProject = function (req, res) {
         if (!req.body.name) {
@@ -141,7 +141,13 @@ module.exports = function(app){
 
         serviceProject.deleteNote(req.params._id, req.body.note_id, function (err, data) {
             sendResponse.sendRes(res, err, data);
-        })
+        });
+    }
+
+    var getMaterials = function(req, res){
+    	serviceProject.getMaterials(req.params._id, function(err, data){
+    		sendResponse.sendRes(res, err, data);
+    	});
     }
 
 
@@ -153,7 +159,8 @@ module.exports = function(app){
 	app.get('/project/findByTheme/:theme', findProjectsByTheme);
 	app.post('/project/findByDescription/', findProjectsByDescription);
 	app.get('/project/findByCity/:city', findProjectsByCity);
-	app.get('/project/findByLocation/:location', findProjectsByLocation);
+	//app.get('/project/findByLocation/:location', findProjectsByLocation);
+	app.get('/project/getMaterials/:_id', getMaterials);
 	//need to pass name, username, password and email
 	app.post('/project/add', addProject);
 

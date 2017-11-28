@@ -285,6 +285,15 @@ function deleteMaterialGroupList(project_id, callback) {
     });
 }
 
+/*function getMaterials(project_id, callback){
+	findProjectByID(project_id, function(err, project){
+		if (project.material_id == null){
+			var error = new errorMessage('The project does not have any material', 402);
+		}
+		else return callback(error, project.material_id);
+	})
+}*/
+
 
 module.exports.findAllProjects = findAllProjects;
 module.exports.findProjectByID = findProjectByID;
@@ -292,7 +301,7 @@ module.exports.findProjectsByName = findProjectsByName;
 module.exports.findProjectsByTheme = findProjectsByTheme;
 module.exports.findProjectsByCity = findProjectsByCity;
 module.exports.findProjectsByDescription = findProjectsByDescription;
-module.exports.findProjectByLocation = findProjectByLocation;
+//module.exports.findProjectByLocation = findProjectByLocation;
 module.exports.hasProjectID_MaterialGroupList = hasProjectID_MaterialGroupList;
 module.exports.addProject = addProject;
 module.exports.deleteProject = deleteProject;
@@ -303,3 +312,4 @@ module.exports.addMember = addMember;
 module.exports.deleteMember = deleteMember;
 module.exports.addMaterialGroupList = addMaterialGroupList;
 module.exports.deleteMaterialGroupList = deleteMaterialGroupList;
+//module.exports.getMaterials = getMaterials;
