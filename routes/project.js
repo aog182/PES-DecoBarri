@@ -74,6 +74,17 @@ module.exports = function(app){
 		});
 	}
 
+	findProjectByLocation = function(req, res){
+		if(!req.params.location){
+			res.status(400).send('location required');
+		}
+
+		serviceProject.findRPojectByLocation(req.params.location, function(err, project){
+			sendResponse.sendRes(res, err, project);
+
+		});
+	}
+
 	addProject = function(req,res){
 		if(!req.body.name){
 			return res.status(400).send('name required');
@@ -181,6 +192,7 @@ module.exports = function(app){
 	app.get('/project/findByTheme/:theme', findProjectsByTheme);
 	app.post('/project/findByDescription/', findProjectsByDescription);
 	app.get('/project/findByCity/:city', findProjectsByCity);
+	app.get('/project/findByLocation/:location', findProjectsByLocation);
 	//need to pass name, username, password and email
 	app.post('/project/add', addProject);
 

@@ -15,7 +15,9 @@ var Project = new mongoose.Schema({
 			author: {type : String, required : true, trim:true}, 
 			date: {type : String, required : true, trim:true}, 
 		    modifiable: {type : Boolean, required : true, trim:true}}],
-	tags : [{tag : String}]
+	tags : [{tag : String}],
+	location : [{lat : {type : Integer}, 
+				lng : {type : Integer}}]
 
 });
 

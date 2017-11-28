@@ -75,6 +75,29 @@ function findProjectsByDescription(description, elements, callback){
 	}
 }
 
+function findProjectByLocation(location, elements, callback){
+	var results = [];
+	findAllProjects(function(err,projects){
+		if(err)return callback(err);
+		var distance, result;
+		for (var i = projects.length - 1; i >= 0; i--) {
+			if(projects[i].location){
+				distance.lat = projects[i].location.lat - location.lat;
+				distance.lng = projects[i].location.lng - location.lng;
+				result = Math.sqrt(Math.pow(distance.lat)+Math.pow(distance.lng));
+				results.push([result, projects[i]]);
+			}
+		}
+		results.sort(sortFunction);
+		results = results.slice(0, elements);
+		return callback(null, results);
+	});
+
+	function sortFunction(a,b){
+		return (a[0] > b[0]) ? -1 : 1;
+	}
+}
+
 function addProject(name, theme, description, city, address, callback){
 	var project = new Project({
 		_id: mongoose.Types.ObjectId(),
@@ -237,6 +260,7 @@ module.exports.findProjectsByName = findProjectsByName;
 module.exports.findProjectsByTheme = findProjectsByTheme;
 module.exports.findProjectsByCity = findProjectsByCity;
 module.exports.findProjectsByDescription = findProjectsByDescription;
+module.exports.findProjectByLocation = findProjectByLocation;
 module.exports.addProject = addProject;
 module.exports.deleteProject = deleteProject;
 module.exports.editProject = editProject;

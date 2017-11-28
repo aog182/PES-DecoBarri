@@ -11,7 +11,8 @@ var project = {
 	theme: "Software",
 	description: "Programming project",
 	city: "Barcelona",
-	address: "c/ Jordi Girona"
+	address: "c/ Jordi Girona",
+	location: {10,10}
 }
 
 describe('find all projects on the DB', function(){
@@ -231,6 +232,37 @@ describe('find project by city', function(){
 	it('return status 200', function(done){
 		chai.request(global.baseUrl)
 			.get('project/findByCity/'+project.city)
+			.end(function(err, res){
+				chai.expect(res).to.have.status(200);
+				chai.expect(res.text.length).to.be.above(0);
+				done();
+			});
+	});
+});
+
+describe('find project by location', function(){
+	var ID;
+	before(function(done){
+		chai.request(global.baseUrl)
+			.post('project/add')
+			.send(project)
+			.end(function(err, res){
+				ID = res.text;
+				done();
+			});
+	});
+
+	after(function(done){
+		chai.request(global.baseUrl)
+			.delete('project/delete/' + ID)
+			.end(function(err){
+				done();
+			});
+	});
+	
+	it('return status 200', function(done){
+		chai.request(global.baseUrl)
+			.get('project/findByLocation/'+project.location)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
 				chai.expect(res.text.length).to.be.above(0);
