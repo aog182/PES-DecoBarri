@@ -7,13 +7,14 @@ var errorMessage = require('./error');
 var serviceUser = require('./user');
 
 function findProjectByParameter(parameter, callback){
+    var error;
 	Project.find(parameter, function(err, projects){
 		if(err){
-			var error = new errorMessage('Internal Server Error',500);
+			error = new errorMessage('Internal Server Error',500);
 			return callback(error);
 		}
-		if(projects.length == 0){
-			var error = new errorMessage('Projects not found', 404);
+		if(projects.length === 0){
+			error = new errorMessage('Projects not found', 404);
 			return callback(error);
 		}
 		return callback(null, projects);
@@ -98,6 +99,12 @@ function findProjectByLocation(location, elements, callback){
 	}
 }
 
+function hasProjectID_MaterialGroupList(project_id, callback) {
+    findProjectByID(project_id, function(err, project){
+    		callback(null, project.material_id === null);
+    });
+}
+
 function addProject(name, theme, description, city, address, callback){
 	var project = new Project({
 		_id: mongoose.Types.ObjectId(),
@@ -110,7 +117,7 @@ function addProject(name, theme, description, city, address, callback){
 
 	project.save(function(err){
 		if(err){
-			console.log(err);
+			//console.log(err);
 			var error = new errorMessage('Internal Server Error',500);
 			return callback(error);
 		}
@@ -236,7 +243,7 @@ function deleteMember(username, project_id, callback){
 
 		var index = project.members.indexOf(username);
 		if(index != -1){
-			project.members.remove(project_id);			
+			project.members.remove(username);			
 			project.save(function(err){
 				if(err){
 					var error = new errorMessage('Internal Server Error',500);
@@ -252,6 +259,31 @@ function deleteMember(username, project_id, callback){
 	});
 }
 
+function addMaterialGroupList(project_id, _id, callback) {
+    findProjectByID(project_id, function(err, project){
+        if(project.material_id === null) {
+
+        	project.material_id = _id;
+        	return callback (null);
+        }
+        else {
+            var error = new errorMessage('The Project already has a Material Group List', 401);
+            return callback(error);
+		}
+    });
+}
+
+function deleteMaterialGroupList(project_id, callback) {
+    findProjectByID(project_id, function(err, project){
+        if (project.material_id !== null) {
+            project.material_id = null;
+            return callback(null);
+        } else {
+            var error = new errorMessage('The Project does not have a Material Group List', 402);
+            return callback(error);
+        }
+    });
+}
 
 
 module.exports.findAllProjects = findAllProjects;
@@ -261,6 +293,7 @@ module.exports.findProjectsByTheme = findProjectsByTheme;
 module.exports.findProjectsByCity = findProjectsByCity;
 module.exports.findProjectsByDescription = findProjectsByDescription;
 module.exports.findProjectByLocation = findProjectByLocation;
+module.exports.hasProjectID_MaterialGroupList = hasProjectID_MaterialGroupList;
 module.exports.addProject = addProject;
 module.exports.deleteProject = deleteProject;
 module.exports.editProject = editProject;
@@ -268,3 +301,5 @@ module.exports.addNote = addNote;
 module.exports.deleteNote = deleteNote;
 module.exports.addMember = addMember;
 module.exports.deleteMember = deleteMember;
+module.exports.addMaterialGroupList = addMaterialGroupList;
+module.exports.deleteMaterialGroupList = deleteMaterialGroupList;

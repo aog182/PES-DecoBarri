@@ -12,22 +12,12 @@ module.exports = function(app){
 	}
 
 	findUserByID = function(req, res){
-		if(!req.params.username){
-			res.status(400).send('Username required');
-			return;
-		}
-
 		serviceUser.findUserByID(req.params.username, function(err, user){
 			sendResponse.sendRes(res, err, user);
 		});
 	}
 
 	findUsersByName = function(req, res){
-		if(!req.params.name){
-			res.status(400).send('Name required');
-			return;
-		}
-
 		serviceUser.findUsersByName(req.params.name, function(err, users){
 			sendResponse.sendRes(res, err, users);
 		});
@@ -60,11 +50,6 @@ module.exports = function(app){
 	}
 
 	deleteUser = function(req, res){
-		if(!req.params.username){
-			res.status(400).send('Username required');
-			return;
-		}
-
 		serviceUser.deleteUser(req.params.username, function(err, data){
 			sendResponse.sendRes(res, err, data);
 		});
@@ -86,10 +71,6 @@ module.exports = function(app){
 	}
 	
 	editInfoUser = function(req, res) {
-		if(!req.params.username) {
-			res.status(400).send('Username required');
-			return;
-		}
 		if(!req.body.name) {
 			res.status(400).send('Name required');
 			return;
@@ -110,10 +91,6 @@ module.exports = function(app){
 	}
 
 	editPassword = function(req, res){
-		if(!req.params.username) {
-			res.status(400).send('Username required');
-			return;
-		}
 		if(!req.body.new_password) {
 			res.status(400).send('New password required');
 			return;
@@ -130,12 +107,6 @@ module.exports = function(app){
 
 	addProject = function(req, res){
 		//La id del body es la del projecte, la de la url es del usuari
-
-		if(!req.params.username) {
-			res.status(400).send('Username required');
-			return;
-		}
-
 		if(!req.body.project_id) {
 			res.status(400).send('Project required');
 			return;
@@ -148,12 +119,6 @@ module.exports = function(app){
 
 	deleteProject = function(req, res){
 		//La id del body es la del projecte, la de la url es del usuari
-
-		if(!req.params.username) {
-			res.status(400).send('Username required');
-			return;
-		}
-
 		if(!req.body.project_id) {
 			res.status(400).send('Project required');
 			return;
@@ -165,12 +130,6 @@ module.exports = function(app){
 
 	addContact = function(req, res){
 		//El username del body es el del contacto
-
-		if(!req.params.username) {
-			res.status(400).send('Username required');
-			return;
-		}
-
 		if(!req.body.username) {
 			res.status(400).send('Username contact required');
 			return;
@@ -188,12 +147,6 @@ module.exports = function(app){
 
 	deleteContact = function(req, res){
 		//El username del body es el del contacto
-
-		if(!req.params.username) {
-			res.status(400).send('Username required');
-			return;
-		}
-
 		if(!req.body.username) {
 			res.status(400).send('Username contact required');
 			return;
@@ -204,12 +157,6 @@ module.exports = function(app){
 	}
 
 	showMyProjects = function(req, res){
-
-		if(!req.params.username) {
-			res.status(400).send('Username required');
-			return;
-		}
-
 		serviceUser.showMyProjects(req.params.username, function(err, data){
 			sendResponse.sendRes(res, err, data);
 		});

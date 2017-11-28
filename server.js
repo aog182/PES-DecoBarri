@@ -38,13 +38,13 @@ require('./database/db');
 require('./models/project');
 require('./models/user');
 require('./models/material');
-require('./models/matGroupList');
+require('./models/matProjectList');
 require('./models/item');
 require('./models/projects_tags');
 require('./routes/user')(app);
 require('./routes/project')(app);
 require('./routes/material')(app);
-require('./routes/matGroupList')(app);
+require('./routes/matProjectList')(app);
 require('./routes/item')(app);
 
 require('./services/chat')(server);

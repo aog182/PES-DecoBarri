@@ -18,6 +18,7 @@ var Project = new mongoose.Schema({
 	tags : [{tag : String}],
 	location : [{lat : {type : Integer}, 
 				lng : {type : Integer}}]
+    material_id : {type: mongoose.Schema.Types.ObjectId, ref: 'Material'}
 
 });
 

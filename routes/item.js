@@ -10,22 +10,12 @@ module.exports = function(app){
 	}
 
 	findItemByID = function(req, res){
-		if(!req.params._id){
-			res.status(400).send('_id required');
-			return;
-		}
-
 		serviceItem.findItemByID(req.params._id, function(err, item){
 			sendResponse.sendRes(res, err, item);
 		});
 	}
 
 	findItemByName = function(req, res){
-		if(!req.params.name){
-			res.status(400).send('name required');
-			return;
-		}
-
 		var name = new RegExp(req.params.name, 'i');  // 'i' makes it case insensitive
 		serviceItem.findItemByName(name, function(err, item){
 			sendResponse.sendRes(res, err, item);
@@ -44,11 +34,6 @@ module.exports = function(app){
 	}
 
 	editItem = function(req, res) {
-		if(!req.params._id) {
-			res.status(400).send('_id required');
-			return;
-		}
-
 		if(!req.body.name){
 			return res.status(400).send('name required');
 		}
@@ -61,11 +46,6 @@ module.exports = function(app){
 	}
 
 	deleteItem = function(req, res){
-		if(!req.params._id){
-			res.status(400).send('_id required');
-			return;
-		}
-
 		serviceItem.deleteItem(req.params._id, function(err, data){
 			sendResponse.sendRes(res, err, data);
 		});
