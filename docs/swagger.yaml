@@ -333,6 +333,7 @@ paths:
     post:
       tags:
       - Project
+      description: Creates a project and a Material Project List linked to it.
       parameters:
         - name: body
           in: body
@@ -349,6 +350,7 @@ paths:
     delete:
       tags:
       - Project
+      description: Deletes the project and the Material Project List linked to it.
       parameters:
         - name: username
           in: path
@@ -400,7 +402,7 @@ paths:
           description: "Succes. Returns username of material"
         500:
           description: "Internal Server Error"
-  
+
   /material/add:
     post:
       tags:
@@ -443,10 +445,10 @@ paths:
         500:
           description: Internal Server Error
 
-  /matGroupList/findAllLists:
+  /matProjectList/findAllLists:
     get:
       tags:
-      - MaterialGroupList
+      - MaterialProjectList
       produces:
       - "application/json"
       responses:
@@ -455,10 +457,10 @@ paths:
         500:
           description: Internal Server Error
           
-  /matGroupList/findAllMaterialsOfGroupWithID/{_id}:
+  /matProjectList/findAllMaterialsOfProjectWithID/{_id}:
     get:
       tags:
-      - MaterialGroupList
+      - MaterialProjectList
       produces:
       - "application/json"
       parameters:
@@ -471,27 +473,11 @@ paths:
           description: "Succes."
         500:
           description: "Internal Server Error"
-          
-  /matGroupList/add:
-    post:
-      tags:
-      - MaterialGroupList
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/StructureMaterialGroupList'
-      responses:
-        200:
-          description: Success. Returns Material id
-        500:
-          description: "Internal Server Error"
-  
-  /matGroupList/addMaterialNeedList:
+
+  /matProjectList/addMaterialNeedList:
     put:
       tags: 
-        - MaterialGroupList
+        - MaterialProjectList
       parameters:
         - name: body
           in: body
@@ -504,10 +490,10 @@ paths:
         500:
           description: Internal Server Error
           
-  /matGroupList/addMaterialInventari:
+  /matProjectList/addMaterialInventari:
     put:
       tags: 
-        - MaterialGroupList
+        - MaterialProjectList
       parameters:
         - name: body
           in: body
@@ -520,48 +506,10 @@ paths:
         500:
           description: Internal Server Error
   
-  /matGroupList/edit/{_id}:
+  /matProjectList/deleteMaterialNeedList:
     put:
       tags: 
-        - MaterialGroupList
-      parameters:
-        - name: _id
-          in: path
-          required: true
-          type: string
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/StructureMaterialGroupList'
-      responses:
-        200:
-          description: Success
-        500:
-          description: Internal Server Error
-  
-  /matGroupList/delete/{_id}:
-    delete:
-      tags:
-      - MaterialGroupList
-      parameters:
-        - name: _id
-          in: path
-          required: true
-          type: string
-      responses:
-        200:
-          description: Project deleted
-        404:
-          description: Project not found
-        500:
-          description: Internal Server Error
-          
-  
-  /matGroupList/deleteMaterialNeedList:
-    put:
-      tags: 
-        - MaterialGroupList
+        - MaterialProjectList
       parameters:
         - name: body
           in: body
@@ -574,10 +522,10 @@ paths:
         500:
           description: Internal Server Error
 
-  /matGroupList/deleteMaterialInventari:
+  /matProjectList/deleteMaterialInventari:
     put:
       tags: 
-        - MaterialGroupList
+        - MaterialProjectList
       parameters:
         - name: body
           in: body
@@ -667,7 +615,7 @@ definitions:
       address:
         type: string
         
-  StructureMaterialGroupList:
+  StructureMaterialProjectList:
     type: object
     properties:
       project_id:

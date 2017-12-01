@@ -75,15 +75,15 @@ module.exports = function(app){
 
 	app.get('/matProjectList/findMaterialsOfProjectWithID/:_id', findMaterialsOfProjectWithID);
 
-	app.post('/matProjectList/add', addMatProjectList);
+	//app.post('/matProjectList/add', addMatProjectList);
 
 	app.put('/matProjectList/addMaterialNeedList', addMaterialNeedList);
 
 	app.put('/matProjectList/addMaterialInventari', addMaterialInventari);
 
-	app.put('/matProjectList/edit/:_id', editMatProjectList);
+	//app.put('/matProjectList/edit/:_id', editMatProjectList);
 
-	app.delete('/matProjectList/delete/:_id', deleteMatProjectList);
+	//app.delete('/matProjectList/delete/:_id', deleteMatProjectList);
 
 	app.delete('/matProjectList/deleteAll/:sure', deleteAllMaterialProjectLists);
 

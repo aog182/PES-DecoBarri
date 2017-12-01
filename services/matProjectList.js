@@ -155,18 +155,18 @@ function deleteMatProjectList(id, callback){
     var error;
     if(!id) {
         error = new errorMessage('Material Project List _id required', 400);
-        return callback(error);
+        return callback(error, null, null);
     }
 
     findMaterialsOfProjectWithID(id, function(err, matProjectList){
         if(err)
-            return callback(err);
+            return callback(err, null, null);
 
         matProjectList.remove(function(err){
             if(err){
                 error = new errorMessage('Internal Server Error', 500);
             }
-            return callback(error, 'Material Project List deleted.');
+            return callback(error, matProjectList);
         });
     });
 }

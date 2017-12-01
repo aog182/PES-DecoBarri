@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var Integer = require("asn1/lib/ber/types").Integer;
 
 var Project = new mongoose.Schema({
 	_id: {type : String, required : true},
@@ -15,10 +16,11 @@ var Project = new mongoose.Schema({
 			author: {type : String, required : true, trim:true}, 
 			date: {type : String, required : true, trim:true}, 
 		    modifiable: {type : Boolean, required : true, trim:true}}],
-	tags : [{tag : String}],
+	tags : [{tag : String}]//,
 	//location : [{lat : {type : Integer}, 
 				//lng : {type : Integer}}]
     //material_id : [{type: mongoose.Schema.Types.ObjectId, ref: 'Material'}]
+
 
 });
 

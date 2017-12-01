@@ -2,6 +2,7 @@ var db = require('../database/db');
 var Project = db.model('Project');
 var mongoose = require('mongoose');
 var stringSimilarity = require('string-similarity');
+var serviceMatProjectList = require('../services/matProjectList');
 
 var errorMessage = require('./error');
 var serviceUser = require('./user');
@@ -106,14 +107,24 @@ function hasProjectID_MaterialGroupList(project_id, callback) {
 }
 
 function addProject(name, theme, description, city, address, callback){
-	var project = new Project({
+    var project = new Project({
 		_id: mongoose.Types.ObjectId(),
 		name: name,
 		theme: theme,
 		description: description,
 		city: city,
-		address: address
+		address: address,
+        material_id: null
 	});
+
+    serviceMatProjectList.addMatProjectList(_id,function(err, material_id) {
+        if (err) {
+            var error = new errorMessage('Internal Server Error',500);
+            return callback(error, null);
+        }
+        else
+            project.material_id = material_id;
+    });
 
 	project.save(function(err){
 		if(err){
@@ -126,12 +137,23 @@ function addProject(name, theme, description, city, address, callback){
 }
 
 function deleteProject(id, callback){
+    var material;
 	findProjectByID(id, function(err, project){
 		if(err)
 			return callback(err);
 
-		project.remove(function(err){
+		serviceMatProjectList.deleteMatProjectList(project.material_id, function(err2, material2)  {
+            material = material2;
+            if(err2) {
+                var error = new errorMessage('Internal Server Error', 500)
+				material = material2;
+                return callback(error);
+            }
+        });
+
+        project.remove(function(err){
 			if(err){
+				serviceMatProjectList.addMatProjectList(material.project_id, null)
 				var error = new errorMessage('Internal Server Error',500);
 				return callback(error);
 			}
