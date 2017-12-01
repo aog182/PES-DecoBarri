@@ -12,7 +12,8 @@ var project = {
 	description: "Programming project",
 	city: "Barcelona",
 	address: "c/ Jordi Girona",
-	location: {10,10}
+	location: [10,10],
+	material_id: [1]
 }
 
 describe('find all projects on the DB', function(){
@@ -262,7 +263,7 @@ describe('find project by city', function(){
 	
 	it('return status 200', function(done){
 		chai.request(global.baseUrl)
-			.get('project/findByLocation/'+project.location)
+			.get('project/findProjectsByLocation/'+project.location)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
 				done();

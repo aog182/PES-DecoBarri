@@ -76,15 +76,15 @@ function findProjectsByDescription(description, elements, callback){
 	}
 }
 
-function findProjectByLocation(location, elements, callback){
+function findProjectsByLocation(location, elements, callback){
 	var results = [];
 	findAllProjects(function(err,projects){
 		if(err)return callback(err);
 		var distance, result;
 		for (var i = projects.length - 1; i >= 0; i--) {
-			if(projects[i].location){
-				distance.lat = projects[i].location.lat - location.lat;
-				distance.lng = projects[i].location.lng - location.lng;
+			if(projects[i].location[0]){
+				distance.lat = projects[i].location[0] - location[0];
+				distance.lng = projects[i].location[1] - location[1];
 				result = Math.sqrt(Math.pow(distance.lat)+Math.pow(distance.lng));
 				results.push([result, projects[i]]);
 			}
@@ -285,14 +285,14 @@ function deleteMaterialGroupList(project_id, callback) {
     });
 }
 
-/*function getMaterials(project_id, callback){
+function getMaterials(project_id, callback){
 	findProjectByID(project_id, function(err, project){
 		if (project.material_id == null){
 			var error = new errorMessage('The project does not have any material', 402);
 		}
 		else return callback(error, project.material_id);
-	})
-}*/
+	});
+}
 
 
 module.exports.findAllProjects = findAllProjects;
@@ -301,7 +301,7 @@ module.exports.findProjectsByName = findProjectsByName;
 module.exports.findProjectsByTheme = findProjectsByTheme;
 module.exports.findProjectsByCity = findProjectsByCity;
 module.exports.findProjectsByDescription = findProjectsByDescription;
-//module.exports.findProjectByLocation = findProjectByLocation;
+module.exports.findProjectsByLocation = findProjectsByLocation;
 module.exports.hasProjectID_MaterialGroupList = hasProjectID_MaterialGroupList;
 module.exports.addProject = addProject;
 module.exports.deleteProject = deleteProject;
@@ -312,4 +312,4 @@ module.exports.addMember = addMember;
 module.exports.deleteMember = deleteMember;
 module.exports.addMaterialGroupList = addMaterialGroupList;
 module.exports.deleteMaterialGroupList = deleteMaterialGroupList;
-//module.exports.getMaterials = getMaterials;
+module.exports.getMaterials = getMaterials;
