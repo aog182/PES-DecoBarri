@@ -4,6 +4,7 @@ var User = db.model('User');
 var serviceProject = require('./project');
 var errorMessage = require('./error');
 var jwt = require('jsonwebtoken');
+var mongoose = require('mongoose');
 
 function findUsersByParameter(parameter, fields, callback){
 	User.find(parameter,fields, function(err, users){
@@ -34,13 +35,13 @@ function checkPassword(user, password, callback){
 }
 
 function findAllUsers(callback){
-	findUsersByParameter({}, {'password':0, '__v':0}, function(err, user){
+	findUsersByParameter({}, {'password':0, '__v':0, '_id':0}, function(err, user){
 		callback(err, user);
 	});
 }
 
 function findUserByID(username, callback){
-	findUsersByParameter({'_id': username},{'password':0, '__v':0}, function(err, user){
+	findUsersByParameter({'username': username},{'password':0, '__v':0, '_id':0}, function(err, user){
 		if(err)
 			return callback(err);
 		
@@ -49,7 +50,7 @@ function findUserByID(username, callback){
 }
 
 function findUserByID_Password(username, callback){
-	findUsersByParameter({'_id': username},{'__v':0}, function(err, user){
+	findUsersByParameter({'username': username},{'__v':0, '_id':0}, function(err, user){
 		if(err)
 			return callback(err);
 		
@@ -59,13 +60,13 @@ function findUserByID_Password(username, callback){
 
 
 function findUsersByName(name, callback){
-	findUsersByParameter({'name': name},{'password':0, '__v':0}, function(err, users){
+	findUsersByParameter({'name': name},{'password':0, '__v':0, '_id':0}, function(err, users){
 		callback(err, users);
 	});
 }
 
 function findUserByEmail(email, callback){
-	findUsersByParameter({'email': email},{'password':0, '__v':0}, function(err, user){
+	findUsersByParameter({'email': email},{'password':0, '__v':0, '_id':0}, function(err, user){
 		if(err)
 			return callback(err);
 		
@@ -76,33 +77,43 @@ function findUserByEmail(email, callback){
 function addUser(username, name, password, email, callback){
 	
 	var new_user = new User({
-		_id: username, 
+		_id: mongoose.Types.ObjectId(),
+		username: username, 
 		name: name,
 		password: password,
 		email: email
 	});
 
-	findUserByEmail(email, function(err, user){
+	findUserByID(username, function(err, user){
 		if(err){
-			if(err.code == 500)
+			if(err.code != 404)
 				return callback(err);
-			
-			new_user.save(function(err){
-				if(err){
-					if(err.code == 11000){
-						var error = new errorMessage('Username already registered',409);
+			else{
+				findUserByEmail(email, function(err, user){
+					if(err){
+						if(err.code != 404)
+							return callback(err);
+						else{
+							new_user.save(function(err){
+								if(err){
+									var error = new errorMessage('Internal Server Error',500);
+									return callback(error);						
+								}
+								
+								var myToken = jwt.sign({username: username}, global.secret)
+								return callback(null, myToken);					
+							});
+						}
+					}
+					else {
+						var error = new errorMessage('Email already registered',409);
 						return callback(error);
 					}
-					var error = new errorMessage('Internal Server Error',500);
-					return callback(error);						
-				}
-				
-				var myToken = jwt.sign({_id: username}, global.secret)
-				return callback(null, myToken);					
-			});
+				});
+			}
 		}
-		else{
-			var error = new errorMessage('Email already registered',409);
+		else {
+			var error = new errorMessage('Username already registered',409);
 			return callback(error);
 		}
 	});
@@ -128,7 +139,7 @@ function editInfoUser(username, new_data, callback){
 		if(err)
 			return callback(err);			
 		//SELECT * FROM users WHERE users._id != username AND users.email = email
-		User.find({"_id": {"$ne": username},"email": new_data.email}, function(err, users){
+		User.find({"username": {"$ne": username},"email": new_data.email}, function(err, users){
 			if(err){
 				var error = new errorMessage('Internal Server Error',500);
 				return callback(error);
@@ -178,7 +189,7 @@ function loginUser(username, password, callback){
 			if(err)
 				return callback(err);
 
-			var myToken = jwt.sign({_id: username}, global.secret)
+			var myToken = jwt.sign({username: username}, global.secret)
 			callback(null, myToken);
 		});
 	});
@@ -289,7 +300,7 @@ function deleteContact(username, usernameContact, callback){
 }
 
 function showMyProjects(username, callback){
-	findUsersByParameter({'_id': username},{'projects':1}, function(err, projects){
+	findUsersByParameter({'username': username},{'projects':1}, function(err, projects){
 		if(err)
 			return callback(err);
 		
