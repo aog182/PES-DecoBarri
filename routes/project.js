@@ -150,6 +150,18 @@ module.exports = function(app){
     	});
     }
 
+    var getNotes = function(req, res){
+        serviceProject.getNotes(req.params._id, function(err, data){
+            sendResponse.sendRes(res, err, data);
+        });
+    }
+
+    var getMembers = function(req, res){
+        serviceProject.getMembers(req.params._id, function(err, data){
+            sendResponse.sendRes(res, err, data);
+        });
+    }  
+
 
 	//returns all the paraments of all projects
 	app.get('/project/findAll', findAllProjects);
@@ -161,7 +173,9 @@ module.exports = function(app){
 	app.get('/project/findByCity/:city', findProjectsByCity);
 	app.get('/project/findProjectsByLocation/:location', findProjectsByLocation);
 	app.get('/project/getMaterials/:_id', getMaterials);
-	//need to pass name, username, password and email
+	app.get('/project/getNotes/:_id', getNotes);
+    app.get('/project/getMembers/:_id', getMembers);
+    //need to pass name, username, password and email
 	app.post('/project/add', addProject);
 
 	app.put('/project/edit/:_id', editProject);

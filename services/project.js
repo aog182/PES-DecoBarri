@@ -259,9 +259,34 @@ function deleteMember(username, project_id, callback){
 	});
 }
 
+function getMembers(id, callback){
+	var result = new Array();
+	findProjectByID(id, function(err, project){
+		if(err)
+			return callback(err);
+
+		for (var i = 0; i < project.members.length; i++){
+			serviceUser.getNamePictureDeactivated(project.members[i], function(err, data){
+				//if(err)
+					//return callback(err);
+				if(!err){
+					result.push(data);
+
+					//esperar que busqui tots el contactes per tornar el resultat
+					//si es fa fora del for, s'executa abans i no retorna res
+					if(i == project.members.length)
+						callback(null, result);
+				}
+			});		
+		}
+	});
+}
+
 function addMaterialGroupList(project_id, _id, callback) {
     findProjectByID(project_id, function(err, project){
-        if(project.material_id === null) {
+    	if(err)
+    		return callback(err);
+        else if(project.material_id === null) {
 
         	project.material_id = _id;
         	return callback (null);
@@ -275,7 +300,9 @@ function addMaterialGroupList(project_id, _id, callback) {
 
 function deleteMaterialGroupList(project_id, callback) {
     findProjectByID(project_id, function(err, project){
-        if (project.material_id !== null) {
+    	if(err)
+    		return callback(err);
+        else if (project.material_id !== null) {
             project.material_id = null;
             return callback(null);
         } else {
@@ -287,10 +314,23 @@ function deleteMaterialGroupList(project_id, callback) {
 
 function getMaterials(project_id, callback){
 	findProjectByID(project_id, function(err, project){
-		if (project.material_id == null){
+		if(err)
+			return callback(err);
+		else if (project.material_id == null){
 			var error = new errorMessage('The project does not have any material', 402);
 		}
-		else return callback(error, project.material_id);
+		else return callback(null, project.material_id);
+	});
+}
+
+function getNotes(project_id, callback){
+	findProjectByID(project_id, function(err, project){
+		if(err)
+			return callback(err);
+		else if (project.notes == null){
+			var error = new errorMessage('The project does not have any note', 402);
+		}
+		else return callback(null, project.notes);
 	});
 }
 
@@ -313,3 +353,5 @@ module.exports.deleteMember = deleteMember;
 module.exports.addMaterialGroupList = addMaterialGroupList;
 module.exports.deleteMaterialGroupList = deleteMaterialGroupList;
 module.exports.getMaterials = getMaterials;
+module.exports.getNotes = getNotes;
+module.exports.getMembers = getMembers;
