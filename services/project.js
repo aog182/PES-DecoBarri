@@ -76,22 +76,25 @@ function findProjectsByDescription(description, elements, callback){
 	}
 }
 
-function findProjectsByLocation(location, elements, callback){
+function findProjectsByLocation(lat, lng, callback){
 	var results = [];
 	findAllProjects(function(err,projects){
-		if(err)return callback(err);
-		var distance, result;
+		if(err)
+			return callback(err);
+		
+		var latit, longit, result;
 		for (var i = projects.length - 1; i >= 0; i--) {
-			if(projects[i].location[0]){
-				distance.lat = projects[i].location[0] - location[0];
-				distance.lng = projects[i].location[1] - location[1];
-				result = Math.sqrt(Math.pow(distance.lat)+Math.pow(distance.lng));
-				results.push([result, projects[i]]);
+			if(projects[i].lat){
+				latit = (+projects[i].lat) - (+lat);
+				longit = (+projects[i].lng) - (+lng);
+				result = Math.sqrt(Math.pow(latit)+Math.pow(longit));
+				results.push([toString(result), projects[i]]);
 			}
 		}
+		//ordenar de mas cercano a mas lejano
 		results.sort(sortFunction);
-		results = results.slice(0, elements);
 		return callback(null, results);
+		
 	});
 
 	function sortFunction(a,b){
@@ -105,19 +108,20 @@ function hasProjectID_MaterialGroupList(project_id, callback) {
     });
 }
 
-function addProject(name, theme, description, city, address, callback){
+function addProject(name, theme, description, city, address, lat, lng, callback){
 	var project = new Project({
 		_id: mongoose.Types.ObjectId(),
 		name: name,
 		theme: theme,
 		description: description,
 		city: city,
-		address: address
+		address: address, 
+		lat: lat,
+		lng: lng
 	});
 
 	project.save(function(err){
 		if(err){
-			//console.log(err);
 			var error = new errorMessage('Internal Server Error',500);
 			return callback(error);
 		}
@@ -334,6 +338,16 @@ function getNotes(project_id, callback){
 	});
 }
 
+function getItems(project_id, callback){
+	findProjectByID(project_id, function(err, project){
+		if(err)
+			return callback(err);
+		else if (project.items_list == null){
+			var error = new errorMessage('The project does not have any item', 402);
+		}
+		else return callback(null, project.items_list);
+	});
+}
 
 module.exports.findAllProjects = findAllProjects;
 module.exports.findProjectByID = findProjectByID;
@@ -355,3 +369,4 @@ module.exports.deleteMaterialGroupList = deleteMaterialGroupList;
 module.exports.getMaterials = getMaterials;
 module.exports.getNotes = getNotes;
 module.exports.getMembers = getMembers;
+module.exports.getItems = getItems;

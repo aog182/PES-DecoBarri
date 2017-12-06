@@ -12,8 +12,8 @@ var project = {
 	description: "Programming project",
 	city: "Barcelona",
 	address: "c/ Jordi Girona",
-	location: [10,10],
-	material_id: [1]
+	lat: "10",
+	lng: "10"
 }
 
 describe('find all projects on the DB', function(){
@@ -240,36 +240,6 @@ describe('find project by city', function(){
 			});
 	});
 });
-
-/*describe('find project by location', function(){
-	var ID;
-	before(function(done){
-		chai.request(global.baseUrl)
-			.post('project/add')
-			.send(project)
-			.end(function(err, res){
-				ID = res.text;
-				done();
-			});
-	});
-
-	after(function(done){
-		chai.request(global.baseUrl)
-			.delete('project/delete/' + ID)
-			.end(function(err){
-				done();
-			});
-	});
-	
-	it('return status 200', function(done){
-		chai.request(global.baseUrl)
-			.get('project/findProjectsByLocation/'+project.location)
-			.end(function(err, res){
-				chai.expect(res).to.have.status(200);
-				done();
-			});
-	});
-});*/
 
 /*describe('get project materials', function(){
 	var ID;
