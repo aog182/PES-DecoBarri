@@ -21,7 +21,9 @@ var Project = new mongoose.Schema({
     material_id : [{
     		mat_id: {type : String, required : false}}],
     items_list : [{
-    		item_id: {type : String, requiered : false}}]
+    		_id: {type : String, requiered : true},
+    		name: {type : String, required : true},
+    		description: {type : String, required : true}}]
 
 });
 

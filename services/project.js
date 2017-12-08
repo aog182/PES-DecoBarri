@@ -345,7 +345,29 @@ function getItems(project_id, callback){
 		else if (project.items_list == null){
 			var error = new errorMessage('The project does not have any item', 402);
 		}
-		else return callback(null, project.items_list);
+		else{
+			return callback(null, project.items_list);
+		} 
+	});
+}
+
+function addItem(id, name, description, callback){
+	findProjectByID(id, function(err, project){
+		if(err)return callback(err);
+		
+		var item = {'_id': mongoose.Types.ObjectId(),
+					'name':name, 
+					'description':description};
+
+		project.items_list.push(item);
+
+		project.save(function(err){
+			if(err){
+				var error = new errorMessage('Internal Server Error',500);
+				return callback(error);
+			}
+			return callback(null, item._id);
+		});
 	});
 }
 
@@ -370,3 +392,4 @@ module.exports.getMaterials = getMaterials;
 module.exports.getNotes = getNotes;
 module.exports.getMembers = getMembers;
 module.exports.getItems = getItems;
+module.exports.addItem = addItem;

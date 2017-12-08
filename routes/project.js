@@ -176,11 +176,28 @@ module.exports = function(app){
         });
     }  
 
-     var getItems = function(req, res){
+    var getItems = function(req, res){
         serviceProject.getItems(req.params._id, function(err, data){
             sendResponse.sendRes(res, err, data);
         });
-    } 
+    }
+
+    var addItem = function (req, res) {
+        if (!req.body.name) {
+            res.status(400).send('name required');
+            return;
+        }
+        if (!req.body.description) {
+            res.status(400).send('description required');
+            return;
+        }
+
+        serviceProject.addItem(req.params._id,
+            req.body.name,
+            req.body.description, function (err, data) {
+                sendResponse.sendRes(res, err, data);
+            });
+    }; 
 
 	//returns all the paraments of all projects
 	app.get('/project/findAll', findAllProjects);
@@ -203,5 +220,7 @@ module.exports = function(app){
 	app.delete('/project/delete/:_id', deleteProject);
 	app.post('/project/addNote/:_id', addNote);
 	app.put('/project/deleteNote/:_id', deleteNote);
+
+    app.post('/project/addItem/:_id', addItem);
 
 }
