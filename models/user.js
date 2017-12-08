@@ -5,9 +5,11 @@ var SALT_WORK_FACTOR = 10;
 
 var User = new mongoose.Schema({
 	_id: {type : String, required : true, trim:true},
+	username: {type : String, required : true, trim:true},
 	name: {type : String, required : true, trim:true},
 	password: {type : String, required : true},
 	email: {type : String, required : true, trim:true},
+	deactivated: {type : String, trim:true}, 
 	//img: { data: Buffer, contentType: String },
 	delete_date: {type : String},
 	projects : [{type : String, required : true}],

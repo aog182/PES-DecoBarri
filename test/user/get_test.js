@@ -47,7 +47,7 @@ describe('get a user by the username', function(){
 			.get('user/findByID/' + user.username)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
-				chai.expect(res.body._id).to.equal(user.username);
+				chai.expect(res.body.username).to.equal(user.username);
 				chai.expect(res.body.name).to.equal(user.name);
 				chai.expect(res.body.email).to.equal(user.email);
 				chai.expect(res.body).to.not.have.property('password');

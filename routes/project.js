@@ -55,13 +55,19 @@ module.exports = function(app){
         });
     }
 
-    /*var findProjectByLocation = function(req, res){
-    	var location = new RegExp(req.params.location, 'i');  // 'i' makes it case insensitive
-		serviceProject.findRPojectByLocation(location, function(err, project){
+    var findProjectsByLocation = function(req, res){
+        if (!req.body.lat) {
+            return res.status(400).send('lat required');
+        }
+        if (!req.body.lng) {
+            return res.status(400).send('lng required');
+        }
+
+		serviceProject.findProjectsByLocation(req.body.lat, req.body.lng, function(err, project){
 			sendResponse.sendRes(res, err, project);
 
 		});
-	}*/
+	}
 
     var addProject = function (req, res) {
         if (!req.body.name) {
@@ -70,12 +76,20 @@ module.exports = function(app){
         if (!req.body.city) {
             return res.status(400).send('city required');
         }
+        if (!req.body.lat) {
+            return res.status(400).send('lat required');
+        }
+        if (!req.body.lng) {
+            return res.status(400).send('lng required');
+        }
 
         serviceProject.addProject(req.body.name,
             req.body.theme,
             req.body.description,
             req.body.city,
-            req.body.address, function (err, id) {
+            req.body.address, 
+            req.body.lat,
+            req.body.lng, function (err, id) {
                 sendResponse.sendRes(res, err, id);
             });
     }
@@ -150,6 +164,40 @@ module.exports = function(app){
     	});
     }
 
+    var getNotes = function(req, res){
+        serviceProject.getNotes(req.params._id, function(err, data){
+            sendResponse.sendRes(res, err, data);
+        });
+    }
+
+    var getMembers = function(req, res){
+        serviceProject.getMembers(req.params._id, function(err, data){
+            sendResponse.sendRes(res, err, data);
+        });
+    }  
+
+    var getItems = function(req, res){
+        serviceProject.getItems(req.params._id, function(err, data){
+            sendResponse.sendRes(res, err, data);
+        });
+    }
+
+    var addItem = function (req, res) {
+        if (!req.body.name) {
+            res.status(400).send('name required');
+            return;
+        }
+        if (!req.body.description) {
+            res.status(400).send('description required');
+            return;
+        }
+
+        serviceProject.addItem(req.params._id,
+            req.body.name,
+            req.body.description, function (err, data) {
+                sendResponse.sendRes(res, err, data);
+            });
+    }; 
 
 	//returns all the paraments of all projects
 	app.get('/project/findAll', findAllProjects);
@@ -159,9 +207,12 @@ module.exports = function(app){
 	app.get('/project/findByTheme/:theme', findProjectsByTheme);
 	app.post('/project/findByDescription/', findProjectsByDescription);
 	app.get('/project/findByCity/:city', findProjectsByCity);
-	//app.get('/project/findByLocation/:location', findProjectsByLocation);
+	app.post('/project/findProjectsByLocation/', findProjectsByLocation);
 	app.get('/project/getMaterials/:_id', getMaterials);
-	//need to pass name, username, password and email
+	app.get('/project/getNotes/:_id', getNotes);
+    app.get('/project/getMembers/:_id', getMembers);
+    app.get('/project/getItems/:_id', getItems);
+    //need to pass name, username, password and email
 	app.post('/project/add', addProject);
 
 	app.put('/project/edit/:_id', editProject);
@@ -169,5 +220,7 @@ module.exports = function(app){
 	app.delete('/project/delete/:_id', deleteProject);
 	app.post('/project/addNote/:_id', addNote);
 	app.put('/project/deleteNote/:_id', deleteNote);
+
+    app.post('/project/addItem/:_id', addItem);
 
 }

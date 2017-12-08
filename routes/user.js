@@ -156,6 +156,12 @@ module.exports = function(app){
 		});
 	}
 
+	getContacts = function(req, res){
+		serviceUser.getContacts(req.params.username,function(err, data){
+			sendResponse.sendRes(res, err, data);
+		});
+	}
+
 	showMyProjects = function(req, res){
 		serviceUser.showMyProjects(req.params.username, function(err, data){
 			sendResponse.sendRes(res, err, data);
@@ -179,6 +185,7 @@ module.exports = function(app){
 	app.put('/user/deleteProject/:username', deleteProject);
 	app.put('/user/addContact/:username', addContact);
 	app.put('/user/deleteContact/:username', deleteContact);
+	app.get('/user/getContacts/:username', getContacts);
 	app.get('/user/showMyProjects/:username', showMyProjects);
 
 }

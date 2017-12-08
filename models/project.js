@@ -8,7 +8,7 @@ var Project = new mongoose.Schema({
 	description: {type : String, required : false, trim:true},
 	city: {type : String, required : true, trim:true},
 	address: {type : String, required : false},
-	members : [{type : String}],
+	members : [{type : String, required : false}],
 	notes : [{
 			_id: {type : String, required : true},
 			title : {type : String, required : true, trim:true},
@@ -16,11 +16,16 @@ var Project = new mongoose.Schema({
 			author: {type : String, required : true, trim:true}, 
 			date: {type : String, required : true, trim:true}, 
 		    modifiable: {type : Boolean, required : true, trim:true}}],
-	tags : [{tag : String}]//,
-	//location : [{lat : {type : Integer}, 
-				//lng : {type : Integer}}]
-    //material_id : [{type: mongoose.Schema.Types.ObjectId, ref: 'Material'}]
-
+	tags : [{tag : String, required : false}],
+	lat: {type : String, required: true},
+	lng: {type : String, required: true}, 
+    //material_id : [{
+    //		mat_id: {type : String, required : false}}],
+    items_list : [{
+    		_id: {type : String, requiered : true},
+    		name: {type : String, required : true},
+    		description: {type : String, required : true}}],
+	material_id : [{type: mongoose.Schema.Types.ObjectId, ref: 'Material'}]
 
 });
 

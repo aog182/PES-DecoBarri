@@ -4,6 +4,7 @@ var User = db.model('User');
 var serviceProject = require('./project');
 var errorMessage = require('./error');
 var jwt = require('jsonwebtoken');
+var mongoose = require('mongoose');
 
 function findUsersByParameter(parameter, fields, callback){
 	User.find(parameter,fields, function(err, users){
@@ -34,22 +35,26 @@ function checkPassword(user, password, callback){
 }
 
 function findAllUsers(callback){
-	findUsersByParameter({}, {'password':0, '__v':0}, function(err, user){
+	findUsersByParameter({'deactivated': null}, {'password':0, '__v':0, '_id':0}, function(err, user){
 		callback(err, user);
 	});
 }
 
 function findUserByID(username, callback){
-	findUsersByParameter({'_id': username},{'password':0, '__v':0}, function(err, user){
+	findUsersByParameter({'username': username},{'password':0, '__v':0, '_id':0}, function(err, user){
 		if(err)
 			return callback(err);
+		if(user.deactivated){
+			var error = new errorMessage('User deactivated',403);
+			return callback(error);
+		}
 		
 		callback(err, user[0]);
 	});
 }
 
 function findUserByID_Password(username, callback){
-	findUsersByParameter({'_id': username},{'__v':0}, function(err, user){
+	findUsersByParameter({'username': username}, function(err, user){
 		if(err)
 			return callback(err);
 		
@@ -59,13 +64,13 @@ function findUserByID_Password(username, callback){
 
 
 function findUsersByName(name, callback){
-	findUsersByParameter({'name': name},{'password':0, '__v':0}, function(err, users){
+	findUsersByParameter({'name': name,'deactivated': null},{'password':0, '__v':0, '_id':0}, function(err, users){
 		callback(err, users);
 	});
 }
 
 function findUserByEmail(email, callback){
-	findUsersByParameter({'email': email},{'password':0, '__v':0}, function(err, user){
+	findUsersByParameter({'email': email,'deactivated': null},{'password':0, '__v':0, '_id':0}, function(err, user){
 		if(err)
 			return callback(err);
 		
@@ -76,59 +81,78 @@ function findUserByEmail(email, callback){
 function addUser(username, name, password, email, callback){
 	
 	var new_user = new User({
-		_id: username, 
+		_id: mongoose.Types.ObjectId(),
+		username: username, 
 		name: name,
 		password: password,
-		email: email
+		email: email,
+		deactivated: null
 	});
 
-	findUserByEmail(email, function(err, user){
+	findUserByID(username, function(err, user){
 		if(err){
-			if(err.code == 500)
+			//si no existe ningun usuario registrado (404) o dado de baja (403) con el mismo username
+			if(err.code == 403){
+				var error = new errorMessage('Username already registered',409);
+				return callback(error);
+			}
+			else if(err.code != 404)
 				return callback(err);
-			
-			new_user.save(function(err){
-				if(err){
-					if(err.code == 11000){
-						var error = new errorMessage('Username already registered',409);
+			else{
+				findUserByEmail(email, function(err, user){
+					if(err){
+						if(err.code != 404)
+							return callback(err);
+						else{
+							new_user.save(function(err){
+								if(err){
+									var error = new errorMessage('Internal Server Error',500);
+									return callback(error);						
+								}
+								
+								var myToken = jwt.sign({username: username}, global.secret)
+								return callback(null, myToken);					
+							});
+						}
+					}
+					else {
+						var error = new errorMessage('Email already registered',409);
 						return callback(error);
 					}
-					var error = new errorMessage('Internal Server Error',500);
-					return callback(error);						
-				}
-				
-				var myToken = jwt.sign({_id: username}, global.secret)
-				return callback(null, myToken);					
-			});
+				});
+			}
 		}
-		else{
-			var error = new errorMessage('Email already registered',409);
+		else {
+			var error = new errorMessage('Username already registered',409);
 			return callback(error);
 		}
 	});
 }
 
 function deleteUser(username,callback){
-	findUserByID(username, function(err, user){
+	findUserByID_Password(username, function(err, user){
 		if(err)
 			return callback(err);
 
-		user.remove(function(err){
+		var date = new Date();
+		user.deactivated = date;
+		user.save(function(err){
 			if(err){
+				console.log(err);
 				var error = new errorMessage('Internal Server Error',500);
 				return callback(error);
-			}					
-			return callback(null, 'User Deleted');
+			}
+			return callback(null, 'User deactivated');
 		});
 	});
 }
 
 function editInfoUser(username, new_data, callback){
-	findUserByID(username, function(err, user){
+	findUserByID_Password(username, function(err, user){
 		if(err)
 			return callback(err);			
 		//SELECT * FROM users WHERE users._id != username AND users.email = email
-		User.find({"_id": {"$ne": username},"email": new_data.email}, function(err, users){
+		User.find({"username": {"$ne": username},"email": new_data.email}, function(err, users){
 			if(err){
 				var error = new errorMessage('Internal Server Error',500);
 				return callback(error);
@@ -178,14 +202,14 @@ function loginUser(username, password, callback){
 			if(err)
 				return callback(err);
 
-			var myToken = jwt.sign({_id: username}, global.secret)
+			var myToken = jwt.sign({username: username}, global.secret)
 			callback(null, myToken);
 		});
 	});
 }
 
 function addProject(username, project_id, callback){
-	findUserByID(username, function(err, user){
+	findUserByID_Password(username, function(err, user){
 		if(err)
 			return callback(err);
 
@@ -213,7 +237,7 @@ function addProject(username, project_id, callback){
 }
 
 function deleteProject(username, project_id, callback){
-	findUserByID(username, function(err, user){
+	findUserByID_Password(username, function(err, user){
 		if(err)
 			return callback(err);
 
@@ -241,7 +265,7 @@ function deleteProject(username, project_id, callback){
 }
 
 function addContact(username, usernameContact, callback){
-	findUserByID(username, function(err, user){
+	findUserByID_Password(username, function(err, user){
 		if(err)
 			return callback(err);
 		findUserByID(usernameContact, function(err, userContact){
@@ -252,6 +276,7 @@ function addContact(username, usernameContact, callback){
 				user.contacts.addToSet(usernameContact);
 				user.save(function(err){
 					if(err){
+						console.log("ENTRA");
 						var error = new errorMessage('Internal Server Error',500);
 						return callback(error);
 					}
@@ -267,7 +292,7 @@ function addContact(username, usernameContact, callback){
 }
 
 function deleteContact(username, usernameContact, callback){
-	findUserByID(username, function(err, user){
+	findUserByID_Password(username, function(err, user){
 		if(err)
 			return callback(err);
 		var index = user.contacts.indexOf(usernameContact);
@@ -278,7 +303,7 @@ function deleteContact(username, usernameContact, callback){
 					var error = new errorMessage('Internal Server Error',500);
 					return callback(error);
 				}
-				return callback(null, 'Contact deleted');
+				return callback(null, 'Contact deactivated');
 			});
 		}
 		else{
@@ -288,8 +313,40 @@ function deleteContact(username, usernameContact, callback){
 	});
 }
 
+function getNamePictureDeactivated(username, callback){
+	//Quan estiguin les imatges ha de retornar picture tambe
+	findUsersByParameter({'username': username},{'username':1,'name':1,'deactivated':1}, function(err, user){
+		if(err)
+			return callback(err);	
+		callback(err, user[0]);
+	});
+}
+
+function getContacts(username, callback){
+	var result = new Array();
+	findUserByID(username, function(err, user){
+		if(err)
+			return callback(err);
+		
+		for (var i = 0; i < user.contacts.length; i++) {
+			getNamePictureDeactivated(user.contacts[i], function(err, data){
+				//if(err)
+					//return callback(err);
+				if(!err){
+					result.push(data);
+
+					//esperar que busqui tots el contactes per tornar el resultat
+					//si es fa fora del for, s'executa abans i no retorna res
+					if(i == user.contacts.length)
+						callback(null, result);
+				}
+			});
+		}
+	});
+}
+
 function showMyProjects(username, callback){
-	findUsersByParameter({'_id': username},{'projects':1}, function(err, projects){
+	findUsersByParameter({'username': username},{'projects':1}, function(err, projects){
 		if(err)
 			return callback(err);
 		
@@ -310,3 +367,5 @@ module.exports.deleteProject = deleteProject;
 module.exports.addContact = addContact;
 module.exports.deleteContact = deleteContact;
 module.exports.showMyProjects = showMyProjects;
+module.exports.getContacts = getContacts;
+module.exports.getNamePictureDeactivated = getNamePictureDeactivated;
