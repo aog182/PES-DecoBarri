@@ -138,7 +138,7 @@ function deleteUser(username,callback){
 		user.deactivated = date;
 		user.save(function(err){
 			if(err){
-				console.log(err);
+				//console.log(err);
 				var error = new errorMessage('Internal Server Error',500);
 				return callback(error);
 			}
@@ -276,7 +276,7 @@ function addContact(username, usernameContact, callback){
 				user.contacts.addToSet(usernameContact);
 				user.save(function(err){
 					if(err){
-						console.log("ENTRA");
+						//console.log("ENTRA");
 						var error = new errorMessage('Internal Server Error',500);
 						return callback(error);
 					}

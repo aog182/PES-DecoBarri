@@ -1,4 +1,5 @@
 var jwt = require('jsonwebtoken');
+var mongoose = require('mongoose');
 
 module.exports = function(app){
 	
@@ -23,6 +24,7 @@ module.exports = function(app){
 		}
 		
 		var material = new Material({
+            _id: mongoose.Types.ObjectId(),
 			name: req.body.name,
 			description: req.body.description,
 			urgent: req.body.urgent,

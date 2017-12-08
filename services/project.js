@@ -122,22 +122,32 @@ function addProject(name, theme, description, city, address, lat, lng, callback)
         material_id: null
 	});
 
-    serviceMatProjectList.addMatProjectList(_id,function(err, material_id) {
-        if (err) {
-            var error = new errorMessage('Internal Server Error',500);
-            return callback(error, null);
-        }
-        else
-            project.material_id = material_id;
-    });
-
 	project.save(function(err){
 		if(err){
 			var error = new errorMessage('Internal Server Error',500);
 			return callback(error);
 		}
-		callback(null, project._id);
+
+        serviceMatProjectList.addMatProjectList(project._id,function(err, material_id) {
+            if (err) {
+                var error = new errorMessage('Internal Server Error',500);
+                return callback(error, null);
+            }
+            else {
+                project.material_id = material_id;
+                project.save();
+                callback(null, project._id);
+            }
+        });
 	});
+}
+
+function getMaterialProjectListID(id, callback) {
+    findProjectByID(id, function(err, project){
+        if(err)
+            return callback(err);
+        return callback(null, "" + project.material_id);
+    });
 }
 
 function deleteProject(id, callback){
@@ -149,9 +159,11 @@ function deleteProject(id, callback){
 		serviceMatProjectList.deleteMatProjectList(project.material_id, function(err2, material2)  {
             material = material2;
             if(err2) {
-                var error = new errorMessage('Internal Server Error', 500)
-				material = material2;
-                return callback(error);
+            	if (err2.code !== 404) { //No fa falta esborrar el que no existeix
+                    var error = new errorMessage('Internal Server Error', 500)
+                    material = material2;
+                    //return callback(error); //El callback es crida des de dins de deleteMatProjectList
+                }
             }
         });
 
@@ -161,7 +173,7 @@ function deleteProject(id, callback){
 				var error = new errorMessage('Internal Server Error',500);
 				return callback(error);
 			}
-			callback(null, 'Project deleted');
+			return callback(null, 'Project deleted');
 		});
 	});
 }
@@ -402,6 +414,7 @@ module.exports.findProjectsByDescription = findProjectsByDescription;
 module.exports.findProjectsByLocation = findProjectsByLocation;
 module.exports.hasProjectID_MaterialGroupList = hasProjectID_MaterialGroupList;
 module.exports.addProject = addProject;
+module.exports.getMaterialProjectListID = getMaterialProjectListID;
 module.exports.deleteProject = deleteProject;
 module.exports.editProject = editProject;
 module.exports.addNote = addNote;

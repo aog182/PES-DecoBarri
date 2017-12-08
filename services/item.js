@@ -48,7 +48,7 @@ function addItem(name, description, callback){
 
 	item.save(function(err){
 		if(err){
-			console.log(err);
+			//console.log(err);
 			var error = new errorMessage('Internal Server Error',500);
 			return callback(error);
 		}
