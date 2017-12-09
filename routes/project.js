@@ -8,27 +8,27 @@ module.exports = function(app){
         serviceProject.findAllProjects(function (err, projects) {
             sendResponse.sendRes(res, err, projects);
         });
-    }
+    };
 
     var findProjectByID = function (req, res) {
         serviceProject.findProjectByID(req.params._id, function (err, project) {
             sendResponse.sendRes(res, err, project);
         });
-    }
+    };
 
     var findProjectsByName = function (req, res) {
         var name = new RegExp(req.params.name, 'i');  // 'i' makes it case insensitive
         serviceProject.findProjectsByName(name, function (err, project) {
             sendResponse.sendRes(res, err, project);
         });
-    }
+    };
 
     var findProjectsByTheme = function (req, res) {
         var theme = new RegExp(req.params.theme, 'i');  // 'i' makes it case insensitive
         serviceProject.findProjectsByTheme(theme, function (err, project) {
             sendResponse.sendRes(res, err, project);
         });
-    }
+    };
 
     var findProjectsByDescription = function (req, res) {
         if (!req.body.description) {
@@ -46,14 +46,14 @@ module.exports = function(app){
             function (err, project) {
                 sendResponse.sendRes(res, err, project);
             });
-    }
+    };
 
     var findProjectsByCity = function (req, res) {
         var city = new RegExp(req.params.city, 'i');  // 'i' makes it case insensitive
         serviceProject.findProjectsByCity(city, function (err, project) {
             sendResponse.sendRes(res, err, project);
         });
-    }
+    };
 
     var findProjectsByLocation = function(req, res){
         if (!req.body.lat) {
@@ -65,9 +65,8 @@ module.exports = function(app){
 
 		serviceProject.findProjectsByLocation(req.body.lat, req.body.lng, function(err, project){
 			sendResponse.sendRes(res, err, project);
-
 		});
-	}
+	};
 
     var addProject = function (req, res) {
         if (!req.body.name) {
@@ -92,7 +91,7 @@ module.exports = function(app){
             req.body.lng, function (err, id) {
                 sendResponse.sendRes(res, err, id);
             });
-    }
+    };
 
     var getMaterialProjectListID = function (req, res) {
         serviceProject.getMaterialProjectListID(req.params._id, function(err,matProjectList_ID) {
@@ -118,13 +117,13 @@ module.exports = function(app){
             req.body.address, function (err, data) {
                 sendResponse.sendRes(res, err, data);
             });
-    }
+    };
 
     var deleteProject = function (req, res) {
         serviceProject.deleteProject(req.params._id, function (err, data) {
             sendResponse.sendRes(res, err, data);
         });
-    }
+    };
 
     var addNote = function (req, res) {
         if (!req.body.title) {
@@ -162,31 +161,31 @@ module.exports = function(app){
         serviceProject.deleteNote(req.params._id, req.body.note_id, function (err, data) {
             sendResponse.sendRes(res, err, data);
         });
-    }
+    };
 
     var getMaterials = function(req, res){
     	serviceProject.getMaterials(req.params._id, function(err, data){
     		sendResponse.sendRes(res, err, data);
     	});
-    }
+    };
 
     var getNotes = function(req, res){
         serviceProject.getNotes(req.params._id, function(err, data){
             sendResponse.sendRes(res, err, data);
         });
-    }
+    };
 
     var getMembers = function(req, res){
         serviceProject.getMembers(req.params._id, function(err, data){
             sendResponse.sendRes(res, err, data);
         });
-    }  
+    };
 
     var getItems = function(req, res){
         serviceProject.getItems(req.params._id, function(err, data){
             sendResponse.sendRes(res, err, data);
         });
-    }
+    };
 
     var addItem = function (req, res) {
         if (!req.body.name) {
@@ -230,4 +229,4 @@ module.exports = function(app){
 
     app.post('/project/addItem/:_id', addItem);
 
-}
+};

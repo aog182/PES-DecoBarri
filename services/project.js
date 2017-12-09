@@ -42,7 +42,7 @@ function findProjectsByName(name, callback){
 	});
 }
 
-function findProjectsByTheme(name, callback){
+function findProjectsByTheme(theme, callback){
 	findProjectByParameter({'theme':theme}, function(err, projects){
 		callback(err, projects);
 	});
@@ -62,7 +62,7 @@ function findProjectsByDescription(description, elements, callback){
 
 		for (var i = 0; i < projects.length; i++) {
 			if(projects[i].description){
-				value = stringSimilarity.compareTwoStrings(description, projects[i].description);
+				var value = stringSimilarity.compareTwoStrings(description, projects[i].description);
 				results.push([value, projects[i]]);
 			}
 		}
@@ -158,20 +158,13 @@ function deleteProject(id, callback){
 
 		serviceMatProjectList.deleteMatProjectList(project.material_id, function(err2, material2)  {
             material = material2;
-            if(err2) {
-            	if (err2.code !== 404) { //No fa falta esborrar el que no existeix
-                    var error = new errorMessage('Internal Server Error', 500)
-                    material = material2;
-                    //return callback(error); //El callback es crida des de dins de deleteMatProjectList
-                }
-            }
+            //El callback d'error, si hi fos es crida des de DINS de deleteMatProjectList
         });
 
         project.remove(function(err){
 			if(err){
-				serviceMatProjectList.addMatProjectList(material.project_id, null)
-				var error = new errorMessage('Internal Server Error',500);
-				return callback(error);
+				serviceMatProjectList.addMatProjectList(material.project_id, null);
+                //El callback d'error, si hi fos es crida des de DINS d'addMatProjectList
 			}
 			return callback(null, 'Project deleted');
 		});
@@ -199,7 +192,7 @@ function editProject(id, name, theme, description, city, address, callback){
 }
 
 function addNote(id, title, description, author, modifiable, callback){
-	serviceUser.findUserByID(author, function(err, user){
+	serviceUser.findUserByID(author, function(err){
 		if(err)
 			return callback(err);
 		else{
@@ -234,7 +227,7 @@ function deleteNote(idProject, idNote, callback){
 			return callback(err);
 		
 		var index = project.notes.findIndex(note => note._id == idNote);
-		if(index != -1){
+		if(index !== -1){
 			project.notes.remove(idNote);			
 			project.save(function(err){
 				if(err){
@@ -257,7 +250,7 @@ function addMember(username, project_id, callback){
 			return callback(err);
 
 		var index = project.members.indexOf(username);
-		if(index == -1){
+		if(index === -1){
 			project.members.push(username);
 			project.save(function(err){
 				if(err){
@@ -280,7 +273,7 @@ function deleteMember(username, project_id, callback){
 			return callback(err);
 
 		var index = project.members.indexOf(username);
-		if(index != -1){
+		if(index !== -1){
 			project.members.remove(username);			
 			project.save(function(err){
 				if(err){
@@ -298,7 +291,7 @@ function deleteMember(username, project_id, callback){
 }
 
 function getMembers(id, callback){
-	var result = new Array();
+	var result = [];
 	findProjectByID(id, function(err, project){
 		if(err)
 			return callback(err);
@@ -378,6 +371,7 @@ function getItems(project_id, callback){
 			return callback(err);
 		else if (project.items_list == null){
 			var error = new errorMessage('The project does not have any item', 402);
+            return callback(error);
 		}
 		else{
 			return callback(null, project.items_list);

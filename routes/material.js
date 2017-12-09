@@ -1,62 +1,65 @@
-var jwt = require('jsonwebtoken');
-var mongoose = require('mongoose');
+var serviceMaterial = require('../services/material');
+var sendResponse = require('./sendResponse');
 
 module.exports = function(app){
-	
-	var db = require('../database/db');
-	var Material = db.model('Material');
 
-	findAllMaterials = function(req, res){
-		Material.find({},function(err, materials){
-			if(err)
-				res.status(500).send('Internal Server Error');
-			else
-				return res.status(200).send(materials);
-		});
-	}
+	var findAllMaterials = function(req, res){
+		serviceMaterial.findAllMaterials(function (err, material) {
+            sendResponse.sendRes(res, err, material);
+        });
+	};
 
-	addMaterial = function(req,res){
-		if(!req.body.name){
-			return res.status(400).send('name required');
-		}
-		if(!req.body.urgent){
-			return res.status(400).send('urgent required');
-		}
-		
-		var material = new Material({
-            _id: mongoose.Types.ObjectId(),
-			name: req.body.name,
-			description: req.body.description,
-			urgent: req.body.urgent,
-			quantity: req.body.quantity,
-			address: req.body.address
-		});
+    var findMaterialByID = function (req, res) {
+        serviceMaterial.findMaterialByID(req.params._id, function (err, material) {
+            sendResponse.sendRes(res, err, material);
+        });
+    };
 
-		material.save(function(err){
-			if(err){
-				if(err.code == 11000)
-					//Impossible arribar aqui, no busquem id
-					res.status(409).send('Material already registered');
-				else
-					//res.status(500).send(err.message);
-					res.status(500).send('Internal Server Error');
-			}
-			else{
-				res.status(200).send(""+material._id);
-			}
-		});		
-	}
+    var findMaterialsByName = function (req, res) {
+        var name = new RegExp(req.params.name, 'i');  // 'i' makes it case insensitive
+        serviceMaterial.findMaterialsByName(name, function (err, material) {
+            sendResponse.sendRes(res, err, material);
+        });
+    };
+    var addMaterial = function (req, res) {findAllMaterials
+        if (!req.body.name) {
+            return res.status(400).send('name required');
+        }
+        if (!req.body.urgent) {
+            return res.status(400).send('urgent required');
+        }
+        if (!req.body.quantity) {
+            return res.status(400).send('urgent required');
+        }
+        if (!Boolean(req.body.urgent)) {
+            return res.status(401).send("urgent must be a boolean");
+        }
+        if (!Number(req.body.quantity)) {
+            return res.status(401).send("quantity must be a number");
+        }
+        if (req.body.quantity < 0) {
+            return res.status(401).send("quantity must be a number over 0");
+        }
 
-	editMaterial = function(req, res) {
+        serviceMaterial.addMaterial(req.body.name,
+            req.body.description,
+            req.body.urgent,
+            req.body.quantity,
+            req.body.address, function (err, id) {
+                sendResponse.sendRes(res, err, id);
+            });
+    };
+
+	var editMaterial = function(req, res) {
 		if(!req.params._id) {
 			res.status(400).send('_id required');
 			return;
 		}
-		if(!req.body.name) {
+		else if(!req.body.name) {
 			res.status(400).send("name required");
 			return;
 		}
-		if(!req.body.urgent) {
+		else if(!req.body.urgent) {
 			res.status(400).send("urgent required");
 			return;
 		}
@@ -64,7 +67,7 @@ module.exports = function(app){
 			res.status(401).send("urgent must be a boolean");
 			return;
 		}
-		if(!req.body.quantity) {
+		else if(!req.body.quantity) {
 			res.status(400).send("quantity required");
 			return;
 		}
@@ -77,51 +80,26 @@ module.exports = function(app){
 			return;
 		}
 
+        serviceMaterial.editMaterial(req.params._id,req.body.name,
+            req.body.description,
+            req.body.urgent,
+            req.body.quantity,
+            req.body.address, function (err, data) {
+                sendResponse.sendRes(res, err, data);
+            });
+	};
 
-		Material.findById(req.params._id, function(err, material){
-			if(err)
-				res.status(500).send('Internal Server Error');
-			else if(!material)
-				res.status(404).send('Material not found.');
-			else{
-				material.name = req.body.name;
-				material.description = req.body.description;
-				material.urgent = req.body.urgent;
-				material.quantity = req.body.quantity;
-				material.address = req.body.address;
-				material.save(function(err){
-					if(err)
-						res.status(500).send('Internal Server Error');
-					else
-						res.status(200).send('Material modified');
-				});	
-			}
-		});
-	}
-
-	deleteMaterial = function(req, res){
-		if(!req.params._id){
-			res.status(400).send('_id required');
-			return;
-		}
-
-		Material.findById(req.params._id, function(err, material){
-			if(err)
-				res.status(500).send('Internal Server Error');
-			else if(!material)
-				res.status(404).send('Material not found.');			
-			else{
-				material.remove(function(err){
-					if(err)
-						res.status(500).send('Internal Server Error');
-					else
-						res.status(200).send('Material deleted');
-				});
-			}
-		});
-	}
+	var deleteMaterial = function(req, res){
+        serviceMaterial.deleteMaterial(req.params._id, function (err, data) {
+            sendResponse.sendRes(res, err, data);
+        });
+	};
 
 	app.get('/material/findAll', findAllMaterials);
+
+	app.get('/material/findMaterialByID', findMaterialByID);
+
+	app.get('/material/findMaterialsByName', findMaterialsByName);
 
 	app.post('/material/add', addMaterial);
 
