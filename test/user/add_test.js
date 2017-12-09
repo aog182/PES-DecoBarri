@@ -15,10 +15,10 @@ var user = {
 
 describe('add user', function(){
 
-	after(function(done){
+	before(function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user.username)
-			.end(function(err){
+			.delete('user/deleteAllUsers')
+			.end(function(err, res){
 				done();
 			});
 	});
@@ -35,23 +35,6 @@ describe('add user', function(){
 });
 
 describe('add user already registered', function(){
-
-	before(function(done){
-		chai.request(global.baseUrl)
-			.post('user/add')
-			.send(user)
-			.end(function(err){
-				done();
-			});
-	});
-
-	after(function(done){
-		chai.request(global.baseUrl)
-			.delete('user/delete/' + user.username)
-			.end(function(err){
-				done();
-			});
-	});
 
 	it('returns status 409',function(done){
 		chai.request(global.baseUrl)
@@ -72,23 +55,6 @@ describe('add user with same email', function(){
 		password: "1234",
 		email: user.email
 	}
-
-	before(function(done){
-		chai.request(global.baseUrl)
-			.post('user/add')
-			.send(user)
-			.end(function(err){
-				done();
-			});
-	});
-
-	after(function(done){
-		chai.request(global.baseUrl)
-			.delete('user/delete/' + user.username)
-			.end(function(err){
-				done();
-			});
-	});
 
 	it('returns status 409',function(done){
 		chai.request(global.baseUrl)

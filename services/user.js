@@ -35,6 +35,7 @@ function checkPassword(user, password, callback){
 }
 
 function findAllUsers(callback){
+	deleteAllUsers();
 	findUsersByParameter({'deactivated': null}, {'password':0, '__v':0, '_id':0}, function(err, user){
 		callback(err, user);
 	});
@@ -369,3 +370,4 @@ module.exports.deleteContact = deleteContact;
 module.exports.showMyProjects = showMyProjects;
 module.exports.getContacts = getContacts;
 module.exports.getNamePictureDeactivated = getNamePictureDeactivated;
+module.exports.deleteAllUsers = deleteAllUsers;

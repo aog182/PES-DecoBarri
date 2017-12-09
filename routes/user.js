@@ -168,6 +168,12 @@ module.exports = function(app){
 		});
 	}
 
+	deleteAllUsers = function(req, res){
+		serviceUser.deleteAllUsers(function(err, data){
+			sendResponse.sendRes(res, err, data);
+		});
+	}
+
 
 	//returns all the paraments, except the password, of all users
 	app.get('/user/findAll', findAllUsers);
@@ -187,6 +193,7 @@ module.exports = function(app){
 	app.put('/user/deleteContact/:username', deleteContact);
 	app.get('/user/getContacts/:username', getContacts);
 	app.get('/user/showMyProjects/:username', showMyProjects);
+	app.delete('/user/deleteAllUsers/', deleteAllUsers);
 
 }
 

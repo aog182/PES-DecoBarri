@@ -7,8 +7,6 @@ var expressJWT = require('express-jwt')
 
 require('./config');
 
-module.exports = app
-
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
 

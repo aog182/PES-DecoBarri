@@ -1,7 +1,6 @@
 var request = require('request');
 var chai = require('chai');
 var chaiHttp = require('chai-http');
-
 chai.use(chaiHttp);
 
 require('../../config');
@@ -13,18 +12,26 @@ var user = {
 	email: "xavi@email.com"
 }
 
-describe('get all users on the DB', function(){
+describe('get all users on the DB - empty', function(){
+	before(function(done){
+		chai.request(global.baseUrl)
+			.delete('user/deleteAllUsers')
+			.end(function(err, res){
+				done();
+			});
+	});
+
 	it('return status 200', function(done){
 		chai.request(global.baseUrl)
 			.get('user/findAll')
 			.end(function(err, res){
-				chai.expect(res).to.have.status(200);
+				chai.expect(res).to.have.status(404);
 				done();
 			});
 	});
 });
 
-describe('get a user by the username', function(){
+describe('get all users on the DB - 1 user', function(){
 	before(function(done){
 		chai.request(global.baseUrl)
 			.post('user/add')
@@ -34,14 +41,20 @@ describe('get a user by the username', function(){
 			});
 	});
 
-	after(function(done){
+
+	it('return status 200', function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user.username)
+			.get('user/findAll')
 			.end(function(err, res){
+				chai.expect(res).to.have.status(200);
+				chai.expect(res.body.length).to.be.above(0);
 				done();
 			});
 	});
+});
 
+
+describe('get a user by the username', function(){
 	it('return status 200 and all paraments except the password and __v', function(done){
 		chai.request(global.baseUrl)
 			.get('user/findByID/' + user.username)
@@ -58,23 +71,6 @@ describe('get a user by the username', function(){
 });
 
 describe('get a user by the name', function(){
-	before(function(done){
-		chai.request(global.baseUrl)
-			.post('user/add')
-			.send(user)
-			.end(function(err, res){
-				done();
-			});
-	});
-
-	after(function(done){
-		chai.request(global.baseUrl)
-			.delete('user/delete/' + user.username)
-			.end(function(err, res){
-				done();
-			});
-	});
-
 	it('return status 200 and all paraments except the password and __v', function(done){
 		chai.request(global.baseUrl)
 			.get('user/findByName/' + user.name)
@@ -85,11 +81,10 @@ describe('get a user by the name', function(){
 	});
 });
 
-describe('get a user by the username, user does not exist', function(){
-
+describe('get a user by the name, user does not exist', function(){
 	it('return status 404', function(done){
 		chai.request(global.baseUrl)
-			.get('user/findByID/' + user.username)
+			.get('user/findByName/' + user.name+'a')
 			.end(function(err, res){
 				chai.expect(res).to.have.status(404);
 				done();
@@ -97,4 +92,14 @@ describe('get a user by the username, user does not exist', function(){
 	});
 });
 
+describe('get a user by the username, user does not exist', function(){
 
+	it('return status 404', function(done){
+		chai.request(global.baseUrl)
+			.get('user/findByID/' + user.username+'a')
+			.end(function(err, res){
+				chai.expect(res).to.have.status(404);
+				done();
+			});
+	});
+});
