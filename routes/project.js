@@ -94,6 +94,12 @@ module.exports = function(app){
             });
     }
 
+    var getMaterialProjectListID = function (req, res) {
+        serviceProject.getMaterialProjectListID(req.params._id, function(err,matProjectList_ID) {
+                sendResponse.sendRes(res, err, matProjectList_ID);
+        });
+    };
+
     var editProject = function (req, res) {
         if (!req.body.name) {
             res.status(400).send("name required");
@@ -214,6 +220,7 @@ module.exports = function(app){
     app.get('/project/getItems/:_id', getItems);
     //need to pass name, username, password and email
 	app.post('/project/add', addProject);
+	app.get('/project/getMatProjectListID/:_id', getMaterialProjectListID);
 
 	app.put('/project/edit/:_id', editProject);
 

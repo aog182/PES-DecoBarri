@@ -159,8 +159,12 @@ function deleteMatProjectList(id, callback){
     }
 
     findMaterialsOfProjectWithID(id, function(err, matProjectList){
-        if(err)
-            return callback(err, null, null);
+        if(err) {
+            if (err.code !== 404) //No fa falta esborrar el que no existeix
+                return callback (null, null)
+            else
+                return callback(err, null);
+        }
 
         matProjectList.remove(function(err){
             if(err){
@@ -196,10 +200,11 @@ function deleteMaterialNeedList(id, material_id, urgent, callback){
         error = new errorMessage('material_id required', 401);
         return callback(error, null);
     }
+    /*
     if(!urgent) {
         error = new errorMessage('urgent status required', 402);
         return callback(error, null);
-    }
+    }*/
 
     findMaterialsOfProjectWithID(id, function (err, matProjectList) {
         var error;
@@ -212,10 +217,8 @@ function deleteMaterialNeedList(id, material_id, urgent, callback){
             return callback(error);
         }
 
-        if(urgent)
-            matProjectList.urgent_need_list.pull(material_id);
-        else
-            matProjectList.need_list.pull(material_id);
+        matProjectList.urgent_need_list.pull(material_id);
+        matProjectList.need_list.pull(material_id);
 
         matProjectList.save(function (err) {
             if (err) {

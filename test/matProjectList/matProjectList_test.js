@@ -8,8 +8,13 @@ require('../../config');
 
 var project = {
 	_id: "",
-	name: "test-name",
-	city: "test-city"
+    name: "PES",
+    theme: "Software",
+    description: "Programming project",
+    city: "Barcelona",
+    address: "c/ Jordi Girona",
+    lat: "10",
+    lng: "10"
 }
 
 var material_urgent = {
@@ -27,6 +32,7 @@ var material_no_urgent = {
 }
 
 var matProjectList = {
+	_id: "",
 	project_id: ""
 }
 
@@ -59,6 +65,15 @@ before(function(done){
 		});
 });
 
+before(function(done){
+    chai.request(global.baseUrl)
+        .get('project/getMatProjectListID/'+project['_id'])
+        .end(function(err, res){
+            matProjectList['_id'] = res.text;
+            done(err);
+        });
+});
+
 after(function(done){
 	chai.request(global.baseUrl)
 		.delete('project/delete/' + project['_id'])
@@ -83,24 +98,6 @@ after(function(done){
 
 
 describe('find all material Project Lists on the DB', function(){
-    var ID;
-    before(function(done){
-        chai.request(global.baseUrl)
-            .post('matProjectList/add')
-            .send(matProjectList)
-            .end(function(err, res){
-                ID = res.text;
-                done();
-            });
-    });
-
-    after(function(done){
-        chai.request(global.baseUrl)
-            .delete('matProjectList/delete/' + ID)
-            .end(function(err){
-                done(err);
-            });
-    });
 	it('return status 200', function(done){
 		chai.request(global.baseUrl)
 			.get('matProjectList/findAllLists')
@@ -112,28 +109,9 @@ describe('find all material Project Lists on the DB', function(){
 });
 
 describe('find all material Project Lists With ID on the DB', function(){
-	var ID;
-	before(function(done){
-		chai.request(global.baseUrl)
-			.post('matProjectList/add')
-			.send(matProjectList)
-			.end(function(err, res){
-				ID = res.text;
-				done();
-			});
-	});
-
-	after(function(done){
-		chai.request(global.baseUrl)
-			.delete('matProjectList/delete/' + ID)
-			.end(function(err){
-				done(err);
-			});
-	});
-	
 	it('return status 200', function(done){
 		chai.request(global.baseUrl)
-			.get('matProjectList/findMaterialsOfProjectWithID/' + ID)
+			.get('matProjectList/findMaterialsOfProjectWithID/' + matProjectList['_id'])
 			.end(function(err, res){
 				//console.log(ID);
 				chai.expect(res).to.have.status(200);
@@ -142,47 +120,20 @@ describe('find all material Project Lists With ID on the DB', function(){
 	});
 });
 
-describe('add a Material Project List', function(){
-	var ID;
-	after(function(done){
-		chai.request(global.baseUrl)
-			.delete('matProjectList/delete/' + ID)
-			.end(function(err){
-				done(err);
-			});
-	});
-	it('return status 200', function(done){
-		chai.request(global.baseUrl)
-			.post('matProjectList/add')
-			.send(matProjectList)
-			.end(function(err, res){
-				chai.expect(res).to.have.status(200);
-				ID = res.text;
-				done(err);
-			});
-	});
-});
-
 describe('add a Material to Need List', function(){
 	var material_data = {
-		_id : "",
 		material_id : "",
 		urgent : "true"
 	};
-	before(function(done){
-		chai.request(global.baseUrl)
-			.post('matProjectList/add')
-			.send(matProjectList)
-			.end(function(err, res){
-				material_data['_id'] = res.text;
-				material_data['material_id'] = material_urgent['_id'];
-				done(err);
-			});
-	});
+    before(function(done){
+        material_data['material_id'] = material_urgent['_id'];
+		done();
+    });
 
 	after(function(done){
 		chai.request(global.baseUrl)
-			.delete('matProjectList/delete/' + material_data['_id'])
+            .put('matProjectList/deleteMaterialNeedList/'+matProjectList['_id'])
+            .send(material_data)
 			.end(function(err){
 				done(err);
 			});
@@ -190,7 +141,7 @@ describe('add a Material to Need List', function(){
 
 	it('return status 200', function(done){
 		chai.request(global.baseUrl)
-			.put('matProjectList/addMaterialNeedList')
+			.put('matProjectList/addMaterialNeedList/'+matProjectList['_id'])
 			.send(material_data)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(200);
@@ -200,94 +151,29 @@ describe('add a Material to Need List', function(){
 });
 
 describe('add a Material to Inventari', function(){
-	var material_data = {
-		_id : "",
-		material_id : ""
-	};
+    var material_data = {
+        material_id : ""
+    };
+    before(function(done){
+        material_data['material_id'] = material_no_urgent['_id'];
+        done();
+    });
 
-	before(function(done){
-		chai.request(global.baseUrl)
-			.post('matProjectList/add')
-			.send(matProjectList)
-			.end(function(err, res){
-				material_data['_id'] = res.text;
-				material_data['material_id'] = material_urgent['_id'];
-				done(err);
-			});
-	});
-
-	after(function(done){
-		chai.request(global.baseUrl)
-			.delete('matProjectList/delete/' + material_data['_id'])
-			.end(function(err){
-				done(err);
-			});
-	});
+    after(function(done){
+        chai.request(global.baseUrl)
+            .put('matProjectList/deleteMaterialInventari/'+matProjectList['_id'])
+            .send(material_data)
+            .end(function(err){
+                done(err);
+            });
+    });
 
 	it('return status 200', function(done){
 		chai.request(global.baseUrl)
-			.put('matProjectList/addMaterialInventari')
+			.put('matProjectList/addMaterialInventari/'+matProjectList['_id'])
 			.send(material_data)
 			.end(function(err, res){
-				if(err) console.log(err);
-				chai.expect(res).to.have.status(200);
-				done(err);
-			});
-	});
-});
-
-describe('edit a Material Project List', function(){
-	var ID;
-	before(function(done){
-		chai.request(global.baseUrl)
-			.post('matProjectList/add')
-			.send(matProjectList)
-			.end(function(err, res){
-				ID = res.text;
-				matProjectList_data['project_id'] = ID;
-				done(err);
-			});
-	});
-
-	after(function(done){
-		chai.request(global.baseUrl)
-			.delete('matProjectList/delete/' + ID)
-			.end(function(err){
-				done(err);
-			});
-	});
-
-	var matProjectList_data = {
-		project_id : ""
-	};
-
-	it('return status 200', function(done){
-		chai.request(global.baseUrl)
-			.put('matProjectList/edit/' + ID)
-			.send(matProjectList_data)
-			.end(function(err, res){
-				//console.log("id: " + matProjectList_data['_id']);
-				chai.expect(res).to.have.status(200);
-				done(err);
-			});
-	});
-});
-
-describe('delete a Material Project List', function(){
-	var ID;
-	before(function(done){
-		chai.request(global.baseUrl)
-			.post('matProjectList/add')
-			.send(matProjectList)
-			.end(function(err, res){
-				ID = res.text;
-				done(err);
-			});
-	});
-	it('return status 200', function(done){
-		chai.request(global.baseUrl)
-			.delete('matProjectList/delete/' + ID)
-			.end(function(err, res){
+				//if(err) console.log(err);
 				chai.expect(res).to.have.status(200);
 				done(err);
 			});
@@ -296,94 +182,54 @@ describe('delete a Material Project List', function(){
 
 describe('delete a Material from Need List', function(){
 	var material_data = {
-		_id : "",
 		material_id : "",
 		urgent : "true"
 	};
 
-	before(function(done){
-		chai.request(global.baseUrl)
-			.post('matProjectList/add')
-			.send(matProjectList)
-			.end(function(err, res){
-				material_data['_id'] = res.text;
-				material_data['material_id'] = material_urgent['_id'];
-				done(err);
-			});
-	});
+    before(function(done){
+        material_data['material_id'] = material_urgent['_id'];
+        chai.request(global.baseUrl)
+            .put('matProjectList/addMaterialNeedList/'+matProjectList['_id'])
+            .send(material_data)
+            .end(function(err){
+                done(err);
+            });
+    });
 
-	before(function(done){
-		chai.request(global.baseUrl)
-			.put('matProjectList/addMaterialNeedList')
-			.send(material_data)
-			.end(function(err, res){
-				chai.expect(res).to.have.status(200);
-				done(err);
-			});
-	});
-
-	after(function(done){
-		chai.request(global.baseUrl)
-			.delete('matProjectList/delete/' + material_data['_id'])
-			.end(function(err){
-				done(err);
-			});
-	});
-
-	it('return status 200', function(done){
-		chai.request(global.baseUrl)
-			.put('matProjectList/deleteMaterialNeedList')
-			.send(material_data)
-			.end(function(err, res){
-				chai.expect(res).to.have.status(200);
-				done(err);
-			});
-	});
+    it('return status 200', function(done){
+        chai.request(global.baseUrl)
+            .put('matProjectList/deleteMaterialNeedList/'+matProjectList['_id'])
+            .send(material_data)
+            .end(function(err, res){
+                chai.expect(res).to.have.status(200);
+                done(err);
+            });
+    });
 });
 
 
 describe('delete a Material from Inventari', function(){
-	var material_data = {
-		_id : "",
-		material_id : ""
-	};
+    var material_data = {
+        material_id : ""
+    };
 
-	before(function(done){
-		chai.request(global.baseUrl)
-			.post('matProjectList/add')
-			.send(matProjectList)
-			.end(function(err, res){
-				material_data['_id'] = res.text;
-				material_data['material_id'] = material_urgent['_id'];
-				done(err);
-			});
-	});
+    before(function(done){
+        material_data['material_id'] = material_no_urgent['_id'];
+        chai.request(global.baseUrl)
+            .put('matProjectList/addMaterialInventari/'+matProjectList['_id'])
+            .send(material_data)
+            .end(function(err){
+                done(err);
+            });
+    });
 
-	before(function(done){
-		chai.request(global.baseUrl)
-			.put('matProjectList/addMaterialInventari')
-			.send(material_data)
-			.end(function(err, res){
-				chai.expect(res).to.have.status(200);
-				done(err);
-			});
-	});
-
-	after(function(done){
-		chai.request(global.baseUrl)
-			.delete('matProjectList/delete/' + material_data['_id'])
-			.end(function(err){
-				done(err);
-			});
-	});
-
-	it('return status 200', function(done){
-		chai.request(global.baseUrl)
-			.put('matProjectList/deleteMaterialInventari')
-			.send(material_data)
-			.end(function(err, res){
-				chai.expect(res).to.have.status(200);
-				done(err);
-			});
-	});
+    it('return status 200', function(done){
+        chai.request(global.baseUrl)
+            .put('matProjectList/deleteMaterialInventari/'+matProjectList['_id'])
+            .send(material_data)
+            .end(function(err, res){
+                chai.expect(res).to.have.status(200);
+                done(err);
+            });
+    });
 });

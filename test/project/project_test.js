@@ -2,7 +2,7 @@ var request = require('request');
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 
-chai.use(chaiHttp);
+chai.use(chaiHttp);;
 
 require('../../config');
 

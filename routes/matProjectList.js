@@ -25,16 +25,15 @@ module.exports = function(app){
 	};
 
 	var addMaterialNeedList = function(req,res){
-		serviceMatProjectList.addMaterialNeedList(req.body._id, req.body.material_id,
+		serviceMatProjectList.addMaterialNeedList(req.params._id, req.body.material_id,
 			req.body.urgent, function(err) {
 				sendResponse.sendRes(res, err, 'Material Added to NeedList');
 		});
 	};
 
 	var addMaterialInventari = function(req,res){
-        serviceMatProjectList.addMaterialInventari(req.body._id, req.body.material_id,
+        serviceMatProjectList.addMaterialInventari(req.params._id, req.body.material_id,
             function(err) {
-                console.log(req.body._id);
                 sendResponse.sendRes(res, err, 'Material Added to Inventari');
             });
 	};
@@ -58,14 +57,14 @@ module.exports = function(app){
 	};
 
 	var deleteMaterialNeedList = function(req,res){
-        serviceMatProjectList.deleteMaterialNeedList(req.body._id, req.body.material_id,
+        serviceMatProjectList.deleteMaterialNeedList(req.params._id, req.body.material_id,
             req.body.urgent, function(err) {
                 sendResponse.sendRes(res, err, 'Material Deleted from NeedList');
             });
 	};
 
 	var deleteMaterialInventari = function(req,res){
-        serviceMatProjectList.deleteMaterialInventari(req.body._id, req.body.material_id,
+        serviceMatProjectList.deleteMaterialInventari(req.params._id, req.body.material_id,
             function(err) {
                 sendResponse.sendRes(res, err, 'Material Deleted from Inventari');
             });
@@ -77,9 +76,9 @@ module.exports = function(app){
 
 	//app.post('/matProjectList/add', addMatProjectList);
 
-	app.put('/matProjectList/addMaterialNeedList', addMaterialNeedList);
+	app.put('/matProjectList/addMaterialNeedList/:_id', addMaterialNeedList);
 
-	app.put('/matProjectList/addMaterialInventari', addMaterialInventari);
+	app.put('/matProjectList/addMaterialInventari/:_id', addMaterialInventari);
 
 	//app.put('/matProjectList/edit/:_id', editMatProjectList);
 
@@ -87,8 +86,8 @@ module.exports = function(app){
 
 	app.delete('/matProjectList/deleteAll/:sure', deleteAllMaterialProjectLists);
 
-	app.put('/matProjectList/deleteMaterialNeedList', deleteMaterialNeedList);
+	app.put('/matProjectList/deleteMaterialNeedList/:_id', deleteMaterialNeedList);
 
-	app.put('/matProjectList/deleteMaterialInventari', deleteMaterialInventari);
+	app.put('/matProjectList/deleteMaterialInventari/:_id', deleteMaterialInventari);
 
 };
