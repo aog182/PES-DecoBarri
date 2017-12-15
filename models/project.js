@@ -15,16 +15,15 @@ var Project = new mongoose.Schema({
 			description: {type : String, required : true, trim:true},
 			author: {type : String, required : true, trim:true}, 
 			date: {type : String, required : true, trim:true}, 
-		    modifiable: {type : Boolean, required : true, trim:true}}],
+		    modifiable: {type : Boolean, required : true, trim:true},
+			color: {type : String, required : true, trim:true}}],
 	tags : [{tag : String, required : false}],
 	lat: {type : String, required: true},
 	lng: {type : String, required: true}, 
-    //material_id : [{
-    //		mat_id: {type : String, required : false}}],
     items_list : [{
     		_id: {type : String, requiered : true},
-    		name: {type : String, required : true},
-    		description: {type : String, required : true}}],
+    		name: {type : String, required : true, trim:true},
+    		description: {type : String, required : true, trim:true}}],
 	material_id : [{type: mongoose.Schema.Types.ObjectId, ref: 'Material'}]
 
 });
