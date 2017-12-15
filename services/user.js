@@ -217,6 +217,10 @@ function loginUser(username, password, callback){
 			checkPassword(user, password, function(err, isMath){
 				if(err)
 					return callback(err);
+				else{
+					var myToken = jwt.sign({username: username}, global.secret)
+					callback(null, myToken);
+				}
 			});
 		}
 	});
@@ -342,16 +346,18 @@ function getContacts(username, callback){
 		if(err)
 			return callback(err);
 		
+		var calls = 0;
 		for (var i = 0; i < user.contacts.length; i++) {
 			getNamePictureDeactivated(user.contacts[i], function(err, data){
 				//if(err)
 					//return callback(err);
+				calls++;
 				if(!err){
 					result.push(data);
 
 					//esperar que busqui tots el contactes per tornar el resultat
 					//si es fa fora del for, s'executa abans i no retorna res
-					if(i == user.contacts.length)
+					if(calls == user.contacts.length)
 						callback(null, result);
 				}
 			});

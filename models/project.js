@@ -9,6 +9,7 @@ var Project = new mongoose.Schema({
 	city: {type : String, required : true, trim:true},
 	address: {type : String, required : false},
 	members : [{type : String, required : false}],
+	admin: {type : String, required : true, trim:true},
 	notes : [{
 			_id: {type : String, required : true},
 			title : {type : String, required : true, trim:true},

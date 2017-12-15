@@ -109,7 +109,7 @@ function hasProjectID_MaterialGroupList(project_id, callback) {
     });
 }
 
-function addProject(name, theme, description, city, address, lat, lng, callback){
+function addProject(name, theme, description, city, address,  lat, lng, callback){
 	var project = new Project({
 		_id: mongoose.Types.ObjectId(),
 		name: name,
@@ -296,17 +296,21 @@ function getMembers(id, callback){
 		if(err)
 			return callback(err);
 
-		for (var i = 0; i < project.members.length; i++){
+		var calls = 0;
+		for (i = 0; i < project.members.length;i++){
 			serviceUser.getNamePictureDeactivated(project.members[i], function(err, data){
 				//if(err)
 					//return callback(err);
+
+				calls++;
 				if(!err){
 					result.push(data);
 
 					//esperar que busqui tots el contactes per tornar el resultat
 					//si es fa fora del for, s'executa abans i no retorna res
-					if(i == project.members.length)
+					if(calls == project.members.length){
 						callback(null, result);
+					}
 				}
 			});		
 		}
