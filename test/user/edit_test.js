@@ -16,6 +16,14 @@ var user = {
 describe('edit a user that exists', function(){
 	before(function(done){
 		chai.request(global.baseUrl)
+			.delete('user/deleteAllUsers')
+			.end(function(err, res){
+				done();
+			});
+	});
+
+	before(function(done){
+		chai.request(global.baseUrl)
 			.post('user/add')
 			.send(user)
 			.end(function(err){
@@ -58,7 +66,7 @@ describe('edit a user that does not exist', function(){
 
 	it('returns status 404', function(done){
 		chai.request(global.baseUrl)
-			.put('user/edit/' + user.username)
+			.put('user/edit/' + user.username+'1111')
 			.send(new_user)
 			.end(function(err, res){
 				chai.expect(res).to.have.status(404);
@@ -68,23 +76,6 @@ describe('edit a user that does not exist', function(){
 });
 
 describe('edit password user that exists', function(){
-	before(function(done){
-		chai.request(global.baseUrl)
-			.post('user/add')
-			.send(user)
-			.end(function(err){
-				done();
-			});
-	});
-
-	after(function(done){
-		chai.request(global.baseUrl)
-			.delete('user/delete/' + user.username)
-			.end(function(err){
-				done();
-			});
-	});
-
 	var data = {
 		new_password : 'albert',
 		old_password : user.password
@@ -102,23 +93,6 @@ describe('edit password user that exists', function(){
 });
 
 describe('edit password user that does not exist', function(){
-	before(function(done){
-		chai.request(global.baseUrl)
-			.post('user/add')
-			.send(user)
-			.end(function(err){
-				done();
-			});
-	});
-
-	after(function(done){
-		chai.request(global.baseUrl)
-			.delete('user/delete/' + user.username)
-			.end(function(err){
-				done();
-			});
-	});
-
 	var data = {
 		new_password : 'albert',
 		old_password : user.password
@@ -136,23 +110,6 @@ describe('edit password user that does not exist', function(){
 });
 
 describe('edit password user that exists and wrong password', function(){
-	before(function(done){
-		chai.request(global.baseUrl)
-			.post('user/add')
-			.send(user)
-			.end(function(err){
-				done();
-			});
-	});
-
-	after(function(done){
-		chai.request(global.baseUrl)
-			.delete('user/delete/' + user.username)
-			.end(function(err){
-				done();
-			});
-	});
-
 	var data = {
 		new_password : 'albert',
 		old_password : user.password+'aaa'

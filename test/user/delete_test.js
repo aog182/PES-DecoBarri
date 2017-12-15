@@ -45,7 +45,7 @@ describe('delete a user that does not exist', function(){
 
 	it('returns status 404', function(done){
 		chai.request(global.baseUrl)
-			.delete('user/delete/' + user.username)
+			.delete('user/delete/' + user.username+'a')
 			.end(function(err, res){
 				console.log(res.text);
 				chai.expect(res).to.have.status(404);

@@ -11,7 +11,6 @@ var User = new mongoose.Schema({
 	email: {type : String, required : true, trim:true},
 	deactivated: {type : String, trim:true}, 
 	//img: { data: Buffer, contentType: String },
-	delete_date: {type : String},
 	projects : [{type : String, required : true}],
 	contacts : [{type : String, required : true}]
 });

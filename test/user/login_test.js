@@ -16,6 +16,14 @@ var user = {
 describe('login succed', function(){
 	before(function(done){
 		chai.request(global.baseUrl)
+			.delete('user/deleteAllUsers')
+			.end(function(err, res){
+				done();
+			});
+	});
+	
+	before(function(done){
+		chai.request(global.baseUrl)
 			.post('user/add')
 			.send(user)
 			.end(function(err){

@@ -35,10 +35,19 @@ function checkPassword(user, password, callback){
 }
 
 function findAllUsers(callback){
-	deleteAllUsers();
 	findUsersByParameter({'deactivated': null}, {'password':0, '__v':0, '_id':0}, function(err, user){
 		callback(err, user);
 	});
+}
+
+function deleteAllUsers(callback){
+	User.remove({}, function(err) {
+            if (err) {
+                console.log(err)
+            }
+            callback();
+        }
+    );
 }
 
 function findUserByID(username, callback){
@@ -55,7 +64,7 @@ function findUserByID(username, callback){
 }
 
 function findUserByID_Password(username, callback){
-	findUsersByParameter({'username': username}, function(err, user){
+	findUsersByParameter({'username': username},{'__v':0}, function(err, user){
 		if(err)
 			return callback(err);
 		
@@ -199,13 +208,17 @@ function loginUser(username, password, callback){
 	findUserByID_Password(username, function(err, user){
 		if(err)
 			return callback(err);
-		checkPassword(user, password, function(err, isMath){
-			if(err)
-				return callback(err);
 
-			var myToken = jwt.sign({username: username}, global.secret)
-			callback(null, myToken);
-		});
+		if(user.deactivated){
+			var error = new errorMessage('User deactivated',403);
+			return callback(error); 
+		}
+		else{
+			checkPassword(user, password, function(err, isMath){
+				if(err)
+					return callback(err);
+			});
+		}
 	});
 }
 
