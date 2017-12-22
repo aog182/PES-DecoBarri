@@ -109,7 +109,7 @@ function hasProjectID_MaterialGroupList(project_id, callback) {
     });
 }
 
-function addProject(name, theme, description, city, address,  lat, lng, callback){
+function addProject(name, theme, description, city, address,  lat, lng, username, callback){
 	var project = new Project({
 		_id: mongoose.Types.ObjectId(),
 		name: name,
@@ -119,27 +119,44 @@ function addProject(name, theme, description, city, address,  lat, lng, callback
 		address: address, 
 		lat: lat,
 		lng: lng,
+		admin: username,
+		members: [username],
         material_id: null
 	});
 
-	project.save(function(err){
-		if(err){
-			var error = new errorMessage('Internal Server Error',500);
-			return callback(error);
-		}
+	serviceUser.findUserByID_Password(username, function(err, user){
+		if(err)
+			return callback(err);
+		else{
+			user.projects.addToSet(project._id);
+			user.save(function(err){
+				if(err){
+					var error = new errorMessage('Internal Server Error',500);
+					return callback(error);
+				}
+				else {
+					project.save(function(err){
+						if(err){
+							var error = new errorMessage('Internal Server Error',500);
+							return callback(error);
+						}
 
-        serviceMatProjectList.addMatProjectList(project._id,function(err, material_id) {
-            if (err) {
-                var error = new errorMessage('Internal Server Error',500);
-                return callback(error, null);
-            }
-            else {
-                project.material_id = material_id;
-                project.save();
-                callback(null, project._id);
-            }
-        });
-	});
+				        serviceMatProjectList.addMatProjectList(project._id,function(err, material_id) {
+				            if (err) {
+				                var error = new errorMessage('Internal Server Error',500);
+				                return callback(error, null);
+				            }
+				            else {
+				                project.material_id = material_id;
+				                project.save();
+				                callback(null, project._id);
+				            }
+				        });
+					});
+				}
+			});
+		}
+	})
 }
 
 function getMaterialProjectListID(id, callback) {
@@ -160,6 +177,10 @@ function deleteProject(id, callback){
             material = material2;
             //El callback d'error, si hi fos es crida des de DINS de deleteMatProjectList
         });
+
+        for (var i = 0; i < project.members.length; i++) {
+        	serviceUser.deleteProject(project.members[i], project._id, function(err, data){});
+        }
 
         project.remove(function(err){
 			if(err){
@@ -272,20 +293,42 @@ function deleteMember(username, project_id, callback){
 		if(err)
 			return callback(err);
 
-		var index = project.members.indexOf(username);
-		if(index !== -1){
-			project.members.remove(username);			
-			project.save(function(err){
-				if(err){
-					var error = new errorMessage('Internal Server Error',500);
-					return callback(error);
-				}
-				return callback(null, 'Project modified');
-			});
+		if(project.admin == username){
+			if(project.members.length > 1){
+				project.members.shift(); //elimina el primer miembro (admin)
+				project.admin = project.members[0];
+				project.save(function(err){
+					if(err){
+						var error = new errorMessage('Internal Server Error',500);
+						return callback(error);
+					}
+					return callback(null, 'Project modified');
+				});
+			}
+			else{
+				//solo queda un miembro que es el admin
+				deleteProject(project_id, function(err, data){
+					return callback(err, data);
+				})
+				
+			}
 		}
 		else{
-			var error = new errorMessage('Member not registered',404);
-			return callback(error);
+			var index = project.members.indexOf(username);
+			if(index !== -1){
+				project.members.remove(username);			
+				project.save(function(err){
+					if(err){
+						var error = new errorMessage('Internal Server Error',500);
+						return callback(error);
+					}
+					return callback(null, 'Project modified');
+				});
+			}
+			else{
+				var error = new errorMessage('Member not registered',404);
+				return callback(error);
+			}
 		}
 	});
 }

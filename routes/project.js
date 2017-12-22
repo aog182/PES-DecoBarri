@@ -75,6 +75,9 @@ module.exports = function(app){
         if (!req.body.city) {
             return res.status(400).send('city required');
         }
+        if (!req.body.username) {
+            return res.status(400).send('username required');
+        }
         if (!req.body.lat) {
             return res.status(400).send('lat required');
         }
@@ -88,7 +91,8 @@ module.exports = function(app){
             req.body.city,
             req.body.address, 
             req.body.lat,
-            req.body.lng, function (err, id) {
+            req.body.lng,
+            req.body.username, function (err, id) {
                 sendResponse.sendRes(res, err, id);
             });
     };

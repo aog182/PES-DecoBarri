@@ -390,3 +390,4 @@ module.exports.showMyProjects = showMyProjects;
 module.exports.getContacts = getContacts;
 module.exports.getNamePictureDeactivated = getNamePictureDeactivated;
 module.exports.deleteAllUsers = deleteAllUsers;
+module.exports.findUserByID_Password = findUserByID_Password;

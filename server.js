@@ -73,6 +73,12 @@ app.get('/style.css', function(req,res){
 	res.sendFile(process.env.PWD + '/test-chat/style.css');
 });
 
+app.post('/jeje', function(req,res){
+	console.log(req);
+	console.log(req.body.image);
+	res.send(req.body.image);
+});
+
 server.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
