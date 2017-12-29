@@ -146,12 +146,17 @@ module.exports = function(app){
             res.status(400).send('modifiable required');
             return;
         }
+        if (!req.body.color) {
+            res.status(400).send('color required');
+            return;
+        }
 
         serviceProject.addNote(req.params._id,
             req.body.title,
             req.body.description,
             req.body.author,
-            req.body.modifiable, function (err, data) {
+            req.body.modifiable,
+            req.body.color, function (err, data) {
                 sendResponse.sendRes(res, err, data);
             });
     };
@@ -208,6 +213,28 @@ module.exports = function(app){
             });
     }; 
 
+    var deleteItem = function (req, res) {
+        if (!req.body.item_id) {
+            res.status(400).send('item_id required');
+            return;
+        }
+
+        serviceProject.deleteItem(req.params._id, req.body.item_id, function (err, data) {
+            sendResponse.sendRes(res, err, data);
+        });
+    };
+
+    var editItem = function (req, res) {
+        if (!req.body.item_id) {
+            res.status(400).send('item_id required');
+            return;
+        }
+
+        serviceProject.editItem(req.params._id, req.body.item_id, req.body.name, req.body.description, function (err, data) {
+            sendResponse.sendRes(res, err, data);
+        });
+    };
+
 	//returns all the paraments of all projects
 	app.get('/project/findAll', findAllProjects);
 	//returns all the paraments
@@ -232,5 +259,9 @@ module.exports = function(app){
 	app.put('/project/deleteNote/:_id', deleteNote);
 
     app.post('/project/addItem/:_id', addItem);
+    app.put('/project/deleteItem/:_id', deleteItem);
+    app.put('/project/editItem/:_id', editItem);
+
+
 
 };

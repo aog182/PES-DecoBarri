@@ -212,7 +212,7 @@ function editProject(id, name, theme, description, city, address, callback){
 	});
 }
 
-function addNote(id, title, description, author, modifiable, callback){
+function addNote(id, title, description, author, modifiable, color, callback){
 	serviceUser.findUserByID(author, function(err){
 		if(err)
 			return callback(err);
@@ -227,7 +227,8 @@ function addNote(id, title, description, author, modifiable, callback){
 							'description':description,
 							'author':author,
 							'modifiable': modifiable,
-							'date': date};
+							'date': date, 
+							'color': color};
 				project.notes.push(note);
 				project.save(function(err){
 					if(err){
@@ -446,6 +447,54 @@ function addItem(id, name, description, callback){
 	});
 }
 
+function editItem(idProject, idItem, name, description, callback){
+	findProjectByID(idProject, function(err, project){
+		if(err)
+			return callback(err);
+
+		var index = project.items_list.findIndex(item => item._id == idItem);
+		if(index !== -1){
+			project.items_list.name = name;
+			project.items_list.description = description;
+			project.save(function(err){
+				if(err){
+					var error = new errorMessage('Internal Server Error',500);
+					return callback(error);
+				}
+				return callback(null, 'Project item list modified');
+			});
+		}
+		else{
+			var error = new errorMessage('Item not registered',404);
+			return callback(error);
+		}
+	});
+}
+
+function deleteItem(idProject, idItem, callback){
+
+	findProjectByID(idProject, function(err, project){
+		if(err)
+			return callback(err);
+		
+		var index = project.items_list.findIndex(item => item._id == idItem);
+		if(index !== -1){
+			project.items_list.remove(idItem);			
+			project.save(function(err){
+				if(err){
+					var error = new errorMessage('Internal Server Error',500);
+					return callback(error);
+				}
+				return callback(null, 'item deleted');
+			});
+		}
+		else{
+			var error = new errorMessage('Item not registered',404);
+			return callback(error);
+		}
+	});
+}
+
 module.exports.findAllProjects = findAllProjects;
 module.exports.findProjectByID = findProjectByID;
 module.exports.findProjectsByName = findProjectsByName;
@@ -469,3 +518,5 @@ module.exports.getNotes = getNotes;
 module.exports.getMembers = getMembers;
 module.exports.getItems = getItems;
 module.exports.addItem = addItem;
+module.exports.editItem = editItem;
+module.exports.deleteItem = deleteItem;
