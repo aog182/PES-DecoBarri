@@ -177,6 +177,10 @@ module.exports = function(app){
 	}
 
 	uploadImage = function(req, res){
+		if(!req.file) {
+			res.status(400).send('Image required');
+			return;
+		}
 		serviceUser.uploadImage(req.file, function(err, data){
 			sendResponse.sendRes(res, err, data);
 		});
