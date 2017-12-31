@@ -1,9 +1,15 @@
 var express = require('express')
 var app = express()
-var server = require('http').createServer(app);
+var server = require('http').createServer(app)
 var cors = require('cors')
 var bodyParser = require('body-parser')
 var expressJWT = require('express-jwt')
+
+
+
+var path = require('path')
+
+var busboy = require('connect-busboy')
 
 require('./config');
 
@@ -14,6 +20,10 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 app.use(cors());
+
+app.use(busboy());
+
+
 
 //app.use(expressJWT({secret:global.secret}).unless({path:['/user/login','/user/add']}));
  
@@ -77,6 +87,11 @@ app.post('/jeje', function(req,res){
 	console.log(req);
 	console.log(req.body.image);
 	res.send(req.body.image);
+});
+
+
+app.get('/upload', function(req, res){
+	res.sendFile(path.resolve('../index.html'));
 });
 
 server.listen(app.get('port'), function() {

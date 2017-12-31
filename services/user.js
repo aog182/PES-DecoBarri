@@ -5,6 +5,8 @@ var serviceProject = require('./project');
 var errorMessage = require('./error');
 var jwt = require('jsonwebtoken');
 var mongoose = require('mongoose');
+var path = require('path')
+var fs = require('fs')
 
 function findUsersByParameter(parameter, fields, callback){
 	User.find(parameter,fields, function(err, users){
@@ -374,6 +376,26 @@ function showMyProjects(username, callback){
 	})
 }
 
+function uploadImage(image, callback){
+	var tempPath = image.path,
+	targetPath = path.resolve('./database/images/user/image.png');
+    fs.rename(tempPath, targetPath, function(err) {
+        if (err) {
+        	console.log(err);
+        	var error = new errorMessage('Internal Server Error',500);
+			return callback(error);
+        }
+        else {
+        	console.log("Upload completed!");
+        	callback(null, "Upload completed!");
+        }
+    });
+}
+
+function getImage(callback){
+	callback(null, path.resolve('./database/images/user/image.png'));
+}
+
 module.exports.findAllUsers = findAllUsers;
 module.exports.findUserByID = findUserByID;
 module.exports.findUsersByName = findUsersByName;
@@ -391,3 +413,5 @@ module.exports.getContacts = getContacts;
 module.exports.getNamePictureDeactivated = getNamePictureDeactivated;
 module.exports.deleteAllUsers = deleteAllUsers;
 module.exports.findUserByID_Password = findUserByID_Password;
+module.exports.uploadImage = uploadImage;
+module.exports.getImage = getImage;

@@ -1,6 +1,8 @@
 module.exports = function(app){
 
 	var jwt_decode = require('jwt-decode');
+	var multer  = require('multer');
+	var upload = multer({ dest: 'database/images' });
 
 	var serviceUser = require('../services/user');
 	var sendResponse = require('./sendResponse');
@@ -174,6 +176,18 @@ module.exports = function(app){
 		});
 	}
 
+	uploadImage = function(req, res){
+		serviceUser.uploadImage(req.file, function(err, data){
+			sendResponse.sendRes(res, err, data);
+		});
+	}
+
+	getImage = function(req, res){
+		serviceUser.getImage(function(err, data){
+			sendResponse.sendRes(res, err, null, data);
+		});
+	}
+
 
 	//returns all the paraments, except the password, of all users
 	app.get('/user/findAll', findAllUsers);
@@ -194,6 +208,8 @@ module.exports = function(app){
 	app.get('/user/getContacts/:username', getContacts);
 	app.get('/user/showMyProjects/:username', showMyProjects);
 	app.delete('/user/deleteAllUsers/', deleteAllUsers);
+	app.post('/user/uploadImage', upload.single('image'), uploadImage);
+	app.get('/user/getImage', getImage);
 
 }
 
