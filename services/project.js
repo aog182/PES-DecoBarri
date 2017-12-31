@@ -454,8 +454,8 @@ function editItem(idProject, idItem, name, description, callback){
 
 		var index = project.items_list.findIndex(item => item._id == idItem);
 		if(index !== -1){
-			project.items_list.name = name;
-			project.items_list.description = description;
+			project.items_list[index].name = name;
+			project.items_list[index].description = description;
 			project.save(function(err){
 				if(err){
 					var error = new errorMessage('Internal Server Error',500);

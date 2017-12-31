@@ -214,23 +214,23 @@ module.exports = function(app){
     }; 
 
     var deleteItem = function (req, res) {
-        if (!req.body.item_id) {
-            res.status(400).send('item_id required');
+        if (!req.body._id) {
+            res.status(400).send('items id required');
             return;
         }
 
-        serviceProject.deleteItem(req.params._id, req.body.item_id, function (err, data) {
+        serviceProject.deleteItem(req.params._id, req.body._id, function (err, data) {
             sendResponse.sendRes(res, err, data);
         });
     };
 
     var editItem = function (req, res) {
-        if (!req.body.item_id) {
-            res.status(400).send('item_id required');
+        if (!req.body._id) {
+            res.status(400).send('items id required');
             return;
         }
 
-        serviceProject.editItem(req.params._id, req.body.item_id, req.body.name, req.body.description, function (err, data) {
+        serviceProject.editItem(req.params._id, req.body._id, req.body.name, req.body.description, function (err, data) {
             sendResponse.sendRes(res, err, data);
         });
     };
