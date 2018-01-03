@@ -276,9 +276,9 @@ function deleteNote(idProject, idNote, callback){
 		if(err)
 			return callback(err);
 		
-		var index = project.notes.findIndex(note => note._id == idNote);
-		if(index !== -1){
-			project.notes.remove(idNote);			
+		var note = project.notes.find(notes => notes._id == idNote);
+		if(note){
+			project.notes.remove(note);		
 			project.save(function(err){
 				if(err){
 					var error = new errorMessage('Internal Server Error',500);
