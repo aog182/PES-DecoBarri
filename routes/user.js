@@ -87,7 +87,7 @@ module.exports = function(app){
 			email : req.body.email
 		};
 
-		serviceUser.editInfoUser(req.params.username, new_data, function(err, data){
+		serviceUser.editInfoUser(req.params.username, new_data, req.file, function(err, data){
 			sendResponse.sendRes(res, err, data);
 		});
 	}
@@ -203,7 +203,7 @@ module.exports = function(app){
 	//need to pass the name and the password
 	app.post('/user/login', loginUser);
 	app.delete('/user/delete/:username', deleteUser);
-	app.put('/user/edit/:username', editInfoUser);
+	app.put('/user/edit/:username',upload.single('image'), editInfoUser);
 	app.put('/user/editPassword/:username', editPassword);
 	app.put('/user/addProject/:username', addProject);
 	app.put('/user/deleteProject/:username', deleteProject);

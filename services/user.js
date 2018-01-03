@@ -159,10 +159,14 @@ function deleteUser(username,callback){
 	});
 }
 
-function editInfoUser(username, new_data, callback){
+function editInfoUser(username, new_data, image, callback){
 	findUserByID_Password(username, function(err, user){
 		if(err)
-			return callback(err);			
+			return callback(err);
+
+		if(image)
+			uploadImage(image,username,function(err,data){});
+
 		//SELECT * FROM users WHERE users._id != username AND users.email = email
 		User.find({"username": {"$ne": username},"email": new_data.email}, function(err, users){
 			if(err){
