@@ -376,24 +376,22 @@ function showMyProjects(username, callback){
 	})
 }
 
-function uploadImage(image, callback){
+function uploadImage(image, username, callback){
 	var tempPath = image.path,
-	targetPath = path.resolve('./database/images/user/image.png');
+	targetPath = path.resolve('./database/images/user/'+username+'.png');
     fs.rename(tempPath, targetPath, function(err) {
         if (err) {
-        	console.log(err);
         	var error = new errorMessage('Internal Server Error',500);
 			return callback(error);
         }
         else {
-        	console.log("Upload completed!");
         	callback(null, "Upload completed!");
         }
     });
 }
 
-function getImage(callback){
-	callback(null, path.resolve('./database/images/user/image.png'));
+function getImage(username, callback){
+	callback(null, path.resolve('./database/images/user/'+username+'.png'));
 }
 
 module.exports.findAllUsers = findAllUsers;

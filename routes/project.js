@@ -1,5 +1,8 @@
 module.exports = function(app){
 
+    var multer  = require('multer');
+    var upload = multer({ dest: 'database/images' });
+
 	var serviceProject = require('../services/project');
 	var sendResponse = require('./sendResponse');
 
@@ -92,7 +95,8 @@ module.exports = function(app){
             req.body.address, 
             req.body.lat,
             req.body.lng,
-            req.body.username, function (err, id) {
+            req.body.username,
+            req.file, function (err, id) {
                 sendResponse.sendRes(res, err, id);
             });
     };
@@ -235,6 +239,23 @@ module.exports = function(app){
         });
     };
 
+    var editImage = function(req, res){
+        if (!req.file) {
+            res.status(400).send('Image required');
+            return;
+        }
+
+        serviceProject.setImage(req.file, req.params._id, function(err, data){
+            sendResponse.sendRes(res, err, data);
+        });
+    }
+
+    var getImage = function(req, res){
+        serviceProject.getImage(req.params._id, function(err, data){
+            sendResponse.sendRes(res, err, null, data);
+        });
+    }
+
 	//returns all the paraments of all projects
 	app.get('/project/findAll', findAllProjects);
 	//returns all the paraments
@@ -248,8 +269,9 @@ module.exports = function(app){
 	app.get('/project/getNotes/:_id', getNotes);
     app.get('/project/getMembers/:_id', getMembers);
     app.get('/project/getItems/:_id', getItems);
+    app.get('/project/getImage/:_id', getImage);
     //need to pass name, username, password and email
-	app.post('/project/add', addProject);
+	app.post('/project/add', upload.single('image'), addProject);
 	app.get('/project/getMatProjectListID/:_id', getMaterialProjectListID);
 
 	app.put('/project/edit/:_id', editProject);
@@ -261,6 +283,7 @@ module.exports = function(app){
     app.post('/project/addItem/:_id', addItem);
     app.put('/project/deleteItem/:_id', deleteItem);
     app.put('/project/editItem/:_id', editItem);
+    app.post('/project/editImage/:_id',upload.single('image'), editImage)
 
 
 

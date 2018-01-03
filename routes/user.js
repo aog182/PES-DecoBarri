@@ -181,13 +181,13 @@ module.exports = function(app){
 			res.status(400).send('Image required');
 			return;
 		}
-		serviceUser.uploadImage(req.file, function(err, data){
+		serviceUser.uploadImage(req.file, req.params.username, function(err, data){
 			sendResponse.sendRes(res, err, data);
 		});
 	}
 
 	getImage = function(req, res){
-		serviceUser.getImage(function(err, data){
+		serviceUser.getImage(req.params.username, function(err, data){
 			sendResponse.sendRes(res, err, null, data);
 		});
 	}
@@ -212,8 +212,8 @@ module.exports = function(app){
 	app.get('/user/getContacts/:username', getContacts);
 	app.get('/user/showMyProjects/:username', showMyProjects);
 	app.delete('/user/deleteAllUsers/', deleteAllUsers);
-	app.post('/user/uploadImage', upload.single('image'), uploadImage);
-	app.get('/user/getImage', getImage);
+	app.post('/user/uploadImage/:username', upload.single('image'), uploadImage);
+	app.get('/user/getImage/:username', getImage);
 
 }
 

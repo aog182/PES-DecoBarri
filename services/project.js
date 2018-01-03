@@ -7,6 +7,9 @@ var serviceMatProjectList = require('../services/matProjectList');
 var errorMessage = require('./error');
 var serviceUser = require('./user');
 
+var path = require('path')
+var fs = require('fs')
+
 function findProjectByParameter(parameter, callback){
     var error;
 	Project.find(parameter, function(err, projects){
@@ -109,7 +112,21 @@ function hasProjectID_MaterialGroupList(project_id, callback) {
     });
 }
 
-function addProject(name, theme, description, city, address,  lat, lng, username, callback){
+function setImage(image, project_id, callback){
+	var tempPath = image.path,
+	targetPath = path.resolve('./database/images/project/'+project_id+'.png');
+    fs.rename(tempPath, targetPath, function(err) {
+        if (err) {
+        	var error = new errorMessage('Internal Server Error',500);
+			return callback(error);
+        }
+        else {
+        	callback(null, "Upload completed!");
+        }
+    });
+}
+
+function addProject(name, theme, description, city, address,  lat, lng, username, image, callback){
 	var project = new Project({
 		_id: mongoose.Types.ObjectId(),
 		name: name,
@@ -144,11 +161,13 @@ function addProject(name, theme, description, city, address,  lat, lng, username
 				        serviceMatProjectList.addMatProjectList(project._id,function(err, material_id) {
 				            if (err) {
 				                var error = new errorMessage('Internal Server Error',500);
-				                return callback(error, null);
+				                return callback(error);
 				            }
 				            else {
 				                project.material_id = material_id;
 				                project.save();
+				                if(image)
+				                	setImage(image, project._id, function(err, data){});
 				                callback(null, project._id);
 				            }
 				        });
@@ -157,6 +176,10 @@ function addProject(name, theme, description, city, address,  lat, lng, username
 			});
 		}
 	})
+}
+
+function getImage(project_id, callback){
+	callback(null, path.resolve('./database/images/project/'+project_id+'.png'));
 }
 
 function getMaterialProjectListID(id, callback) {
@@ -178,8 +201,10 @@ function deleteProject(id, callback){
             //El callback d'error, si hi fos es crida des de DINS de deleteMatProjectList
         });
 
+        var project_id = project._id;
+
         for (var i = 0; i < project.members.length; i++) {
-        	serviceUser.deleteProject(project.members[i], project._id, function(err, data){});
+        	serviceUser.deleteProject(project.members[i], project_id, function(err, data){});
         }
 
         project.remove(function(err){
@@ -187,7 +212,10 @@ function deleteProject(id, callback){
 				serviceMatProjectList.addMatProjectList(material.project_id, null);
                 //El callback d'error, si hi fos es crida des de DINS d'addMatProjectList
 			}
-			return callback(null, 'Project deleted');
+			else {
+				fs.unlink(path.resolve('./database/images/project/'+project_id+'.png'));
+				return callback(null, 'Project deleted');
+			}
 		});
 	});
 }
@@ -227,7 +255,7 @@ function addNote(id, title, description, author, modifiable, color, callback){
 							'description':description,
 							'author':author,
 							'modifiable': modifiable,
-							'date': date, 
+							'date': date.toString().slice(0,21), 
 							'color': color};
 				project.notes.push(note);
 				project.save(function(err){
@@ -520,3 +548,5 @@ module.exports.getItems = getItems;
 module.exports.addItem = addItem;
 module.exports.editItem = editItem;
 module.exports.deleteItem = deleteItem;
+module.exports.getImage = getImage;
+module.exports.setImage = setImage;
