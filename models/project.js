@@ -17,6 +17,7 @@ var Project = new mongoose.Schema({
 			author: {type : String, required : true, trim:true}, 
 			date: {type : String, required : true, trim:true}, 
 		    modifiable: {type : Boolean, required : true, trim:true},
+		    img : {type: Buffer},
 			color: {type : String, required : true, trim:true}}],
 	tags : [{tag : String, required : false}],
 	lat: {type : String, required: true},
@@ -25,7 +26,8 @@ var Project = new mongoose.Schema({
     		_id: {type : String, requiered : true},
     		name: {type : String, required : true, trim:true},
     		description: {type : String, required : true, trim:true}}],
-	material_id : [{type: mongoose.Schema.Types.ObjectId, ref: 'Material'}]
+	material_id : [{type: mongoose.Schema.Types.ObjectId, ref: 'Material'}],
+	img : {type: Buffer}
 
 });
 

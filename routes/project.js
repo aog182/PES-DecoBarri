@@ -160,7 +160,8 @@ module.exports = function(app){
             req.body.description,
             req.body.author,
             req.body.modifiable,
-            req.body.color, function (err, data) {
+            req.body.color,
+            req.file, function (err, data) {
                 sendResponse.sendRes(res, err, data);
             });
     };
@@ -256,6 +257,35 @@ module.exports = function(app){
         });
     }
 
+    var editNote = function(req, res){
+        if(!req.body.note_id){
+            res.status(400).send('note_id required');
+            return;
+        }
+        if(!req.body.description){
+            res.status(400).send('description required');
+            return;
+        }
+        if(!req.body.modifiable){
+            res.status(400).send('modifiable required');
+            return;
+        }
+        if(!req.body.color){
+            res.status(400).send('color required');
+            return;
+        }
+
+        serviceProject.editNote(
+            req.params._id,
+            req.body.note_id,
+            req.body.description, 
+            req.body.modifiable,
+            req.body.color,
+            req.file, function(err, data){
+            sendResponse.sendRes(res, err, data);
+        });
+    }
+
 	//returns all the paraments of all projects
 	app.get('/project/findAll', findAllProjects);
 	//returns all the paraments
@@ -277,13 +307,14 @@ module.exports = function(app){
 	app.put('/project/edit/:_id', editProject);
 
 	app.delete('/project/delete/:_id', deleteProject);
-	app.post('/project/addNote/:_id', addNote);
+	app.post('/project/addNote/:_id', upload.single('image'),addNote);
 	app.put('/project/deleteNote/:_id', deleteNote);
 
     app.post('/project/addItem/:_id', addItem);
     app.put('/project/deleteItem/:_id', deleteItem);
     app.put('/project/editItem/:_id', editItem);
     app.post('/project/editImage/:_id',upload.single('image'), editImage)
+    app.post('/project/editNote/:_id',upload.single('image'), editNote)
 
 
 

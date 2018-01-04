@@ -12,7 +12,8 @@ var User = new mongoose.Schema({
 	deactivated: {type : String, trim:true}, 
 	//img: { data: Buffer, contentType: String },
 	projects : [{type : String, required : true}],
-	contacts : [{type : String, required : true}]
+	contacts : [{type : String, required : true}],
+	img : {type: Buffer}
 });
 
 User.pre('save', function(next){

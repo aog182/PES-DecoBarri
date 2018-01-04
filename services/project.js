@@ -113,17 +113,20 @@ function hasProjectID_MaterialGroupList(project_id, callback) {
 }
 
 function setImage(image, project_id, callback){
-	var tempPath = image.path,
-	targetPath = path.resolve('./database/images/project/'+project_id+'.png');
-    fs.rename(tempPath, targetPath, function(err) {
-        if (err) {
-        	var error = new errorMessage('Internal Server Error',500);
-			return callback(error);
-        }
-        else {
-        	callback(null, "Upload completed!");
-        }
-    });
+	findProjectByID(project_id, function(err, project){
+		if(err)
+			return callback(err);
+
+		project.img = fs.readFileSync(image.path);
+ 		project.save(function(err){
+			if(err){
+				var error = new errorMessage('Internal Server Error',500);
+				return callback(error);
+			}
+			return callback(null, 'Picture uploaded');
+		});
+
+	});
 }
 
 function addProject(name, theme, description, city, address,  lat, lng, username, image, callback){
@@ -140,6 +143,10 @@ function addProject(name, theme, description, city, address,  lat, lng, username
 		members: [username],
         material_id: null
 	});
+
+	if(image){
+		project.img = fs.readFileSync(image.path);
+	}
 
 	serviceUser.findUserByID_Password(username, function(err, user){
 		if(err)
@@ -166,9 +173,8 @@ function addProject(name, theme, description, city, address,  lat, lng, username
 				            else {
 				                project.material_id = material_id;
 				                project.save();
-				                if(image)
-				                	setImage(image, project._id, function(err, data){});
 				                callback(null, project._id);
+				                
 				            }
 				        });
 					});
@@ -179,7 +185,12 @@ function addProject(name, theme, description, city, address,  lat, lng, username
 }
 
 function getImage(project_id, callback){
-	callback(null, path.resolve('./database/images/project/'+project_id+'.png'));
+	findUserByID(project_id, function(err, project){
+		if(err)
+			return callback(err);
+
+		callback(null, project.img);
+	});
 }
 
 function getMaterialProjectListID(id, callback) {
@@ -213,7 +224,6 @@ function deleteProject(id, callback){
                 //El callback d'error, si hi fos es crida des de DINS d'addMatProjectList
 			}
 			else {
-				fs.unlink(path.resolve('./database/images/project/'+project_id+'.png'));
 				return callback(null, 'Project deleted');
 			}
 		});
@@ -240,7 +250,7 @@ function editProject(id, name, theme, description, city, address, callback){
 	});
 }
 
-function addNote(id, title, description, author, modifiable, color, callback){
+function addNote(id, title, description, author, modifiable, color, image, callback){
 	serviceUser.findUserByID(author, function(err){
 		if(err)
 			return callback(err);
@@ -257,6 +267,10 @@ function addNote(id, title, description, author, modifiable, color, callback){
 							'modifiable': modifiable,
 							'date': date.toString().slice(0,21), 
 							'color': color};
+				if(image){
+					note.img = fs.readFileSync(image.path);
+				}
+
 				project.notes.push(note);
 				project.save(function(err){
 					if(err){
@@ -267,6 +281,34 @@ function addNote(id, title, description, author, modifiable, color, callback){
 				});
 			});
 		}
+	});
+}
+
+function editNote(project_id, note_id, description, modifiable, color, image, callback){
+	findProjectByID(project_id, function(err, project){
+		if(err)
+			return callback(err);
+
+		var note = project.notes.find(notes => notes._id == idNote);
+		if(note){
+			note.description = description;
+			note.modifiable = modifiable;
+			note.color = color;
+			if(image)
+				note.img = fs.readFileSync(image.path);	
+			project.save(function(err){
+				if(err){
+					var error = new errorMessage('Internal Server Error',500);
+					return callback(error);
+				}
+				return callback(null, 'Note deleted');
+			});
+		}
+		else{
+			var error = new errorMessage('Note not registered',404);
+			return callback(error);
+		}
+
 	});
 }
 
@@ -550,3 +592,4 @@ module.exports.editItem = editItem;
 module.exports.deleteItem = deleteItem;
 module.exports.getImage = getImage;
 module.exports.setImage = setImage;
+module.exports.editNote = editNote;

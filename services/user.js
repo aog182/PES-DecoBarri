@@ -381,21 +381,29 @@ function showMyProjects(username, callback){
 }
 
 function uploadImage(image, username, callback){
-	var tempPath = image.path,
-	targetPath = path.resolve('./database/images/user/'+username+'.png');
-    fs.rename(tempPath, targetPath, function(err) {
-        if (err) {
-        	var error = new errorMessage('Internal Server Error',500);
-			return callback(error);
-        }
-        else {
-        	callback(null, "Upload completed!");
-        }
-    });
+	findUserByID_Password(username, function(err, user){
+		if(err)
+			return callback(err);
+
+		user.img = fs.readFileSync(image.path);
+ 		user.save(function(err){
+			if(err){
+				var error = new errorMessage('Internal Server Error',500);
+				return callback(error);
+			}
+			return callback(null, 'Picture uploaded');
+		});
+
+	});
 }
 
 function getImage(username, callback){
-	callback(null, path.resolve('./database/images/user/'+username+'.png'));
+	findUserByID(username, function(err, user){
+		if(err)
+			return callback(err);
+
+		callback(null, user.img);
+	});
 }
 
 module.exports.findAllUsers = findAllUsers;
