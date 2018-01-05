@@ -286,6 +286,32 @@ module.exports = function(app){
         });
     }
 
+    var addRequest = function(req, res){
+        if(!req.body.username){
+            res.status(400).send('Username required');
+            return;
+        }
+        serviceProject.addRequest(req.params._id, req.body.username, function(err, data){
+            sendResponse.sendRes(res, err, data);
+        });
+    }
+
+    var deleteRequest = function(req, res){
+        if(!req.body.username){
+            res.status(400).send('Username required');
+            return;
+        }
+        serviceProject.deleteRequest(req.params._id, req.body.username, function(err, data){
+            sendResponse.sendRes(res, err, data);
+        });
+    }
+
+    var getRequests = function(req, res){
+        serviceProject.getRequests(req.params._id, function(err, data){
+            sendResponse.sendRes(res, err, data);
+        });
+    }
+
 	//returns all the paraments of all projects
 	app.get('/project/findAll', findAllProjects);
 	//returns all the paraments
@@ -315,7 +341,9 @@ module.exports = function(app){
     app.put('/project/editItem/:_id', editItem);
     app.post('/project/editImage/:_id',upload.single('image'), editImage)
     app.post('/project/editNote/:_id',upload.single('image'), editNote)
-
+    app.post('/project/addRequest/:_id', addRequest);
+    app.post('/project/deleteRequest/:_id', deleteRequest);
+    app.get('/project/getRequests/:_id', getRequests);
 
 
 };

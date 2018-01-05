@@ -341,8 +341,16 @@ function addMember(username, project_id, callback){
 		if(err)
 			return callback(err);
 
-		var index = project.members.indexOf(username);
+		var index = project.requests.indexOf(username);
+
+		if(index != -1){
+			var error = new errorMessage('The user has not request to join', 401);
+			return callback(error);
+		}
+
+		index = project.members.indexOf(username);
 		if(index === -1){
+			project.requests.remove(username);
 			project.members.push(username);
 			project.save(function(err){
 				if(err){
@@ -565,6 +573,75 @@ function deleteItem(idProject, idItem, callback){
 	});
 }
 
+function addRequest(idProject, username, callback){
+	findProjectByID(idProject, function(err, project){
+		if(err)
+			return callback(err);
+
+		var index = project.members.indexOf(username);
+
+		if(index != -1){
+			var error = new errorMessage('The user is already a member', 401);
+			return callback(error);
+		}
+		
+		serviceUser.findUserByID(username, function(err, user){
+			if(err)
+				return callback(err);
+
+			index = project.requests.indexOf(username);
+			if(index == -1){
+				project.requests.addToSet(username);
+				project.save(function(err){
+					if(err){
+						var error = new errorMessage('Internal Server Error',500);
+						return callback(error);
+					}
+					return callback(null, 'Request added');
+				});
+			}
+			else{
+				var error = new errorMessage('Request already registered',401);
+				return callback(error);
+			}
+		});
+
+	});
+}
+
+function deleteRequest(idProject, username, callback){
+	findProjectByID(idProject, function(err, project){
+		if(err)
+			return callback(err);
+
+		var index = project.requests.indexOf(username);
+		if(index != -1){
+			project.requests.remove(username);			
+			project.save(function(err){
+				if(err){
+					var error = new errorMessage('Internal Server Error',500);
+					return callback(error);
+				}
+				return callback(null, 'Request deleted');
+			});
+		}
+		else{
+			var error = new errorMessage('Request not registered', 404);
+			return callback(error);
+		}
+	});
+}
+
+function getRequests(idProject, callback){
+	findProjectByID(idProject, function(err, project){
+		if(err)
+			return callback(err);
+
+		callback(null, project.requests);
+	});
+}
+
+
 module.exports.findAllProjects = findAllProjects;
 module.exports.findProjectByID = findProjectByID;
 module.exports.findProjectsByName = findProjectsByName;
@@ -593,3 +670,6 @@ module.exports.deleteItem = deleteItem;
 module.exports.getImage = getImage;
 module.exports.setImage = setImage;
 module.exports.editNote = editNote;
+module.exports.addRequest = addRequest;
+module.exports.deleteRequest = deleteRequest;
+module.exports.getRequests = getRequests;
