@@ -307,7 +307,7 @@ module.exports = function(app){
     }
 
     var getRequests = function(req, res){
-        serviceProject.getRequests(req.params._id, function(err, data){
+        serviceProject.getRequests(req.params.username, function(err, data){
             sendResponse.sendRes(res, err, data);
         });
     }
@@ -343,7 +343,7 @@ module.exports = function(app){
     app.post('/project/editNote/:_id',upload.single('image'), editNote)
     app.post('/project/addRequest/:_id', addRequest);
     app.post('/project/deleteRequest/:_id', deleteRequest);
-    app.get('/project/getRequests/:_id', getRequests);
+    app.get('/project/getRequests/:username', getRequests);
 
 
 };

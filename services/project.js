@@ -632,12 +632,18 @@ function deleteRequest(idProject, username, callback){
 	});
 }
 
-function getRequests(idProject, callback){
-	findProjectByID(idProject, function(err, project){
+function getRequests(username, callback){
+	findAllProjects(function(err, projects){
 		if(err)
 			return callback(err);
 
-		callback(null, project.requests);
+		var result = [];
+		for (var i = 0; i < projects.length; i++) {
+			if(projects[i].admin == username){
+				result.push(projects[i]._id, projects[i].requests);
+			}
+		}
+		callback(null, result);
 	});
 }
 
