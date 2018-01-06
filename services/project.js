@@ -640,7 +640,7 @@ function getRequests(username, callback){
 		var result = [];
 		for (var i = 0; i < projects.length; i++) {
 			if(projects[i].admin == username){
-				result.push(projects[i]._id, projects[i].requests);
+				result.push({_id : projects[i]._id, name: projects[i].name, requests: projects[i].requests});
 			}
 		}
 		callback(null, result);

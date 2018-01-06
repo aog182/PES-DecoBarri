@@ -353,6 +353,9 @@ function getContacts(username, callback){
 			return callback(err);
 		
 		var calls = 0;
+		if(user.contacts.length == 0)
+			return callback(null, result);
+
 		for (var i = 0; i < user.contacts.length; i++) {
 			getNamePictureDeactivated(user.contacts[i], function(err, data){
 				//if(err)
