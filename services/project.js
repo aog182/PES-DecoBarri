@@ -343,7 +343,7 @@ function addMember(username, project_id, callback){
 
 		var index = project.requests.indexOf(username);
 
-		if(index != -1){
+		if(index == -1){
 			var error = new errorMessage('The user has not request to join', 401);
 			return callback(error);
 		}
