@@ -6,7 +6,8 @@ var Material = new mongoose.Schema({
 	description: {type : String, required : false},
 	urgent: {type: Boolean, required: true},
 	quantity: {type : Number, min: 0, required : true},
-	address: {type : String, required : false} 
+	address: {type : String, required : false},
+	img : {type: Buffer} 
 });
 
 module.exports = mongoose.model('Material', Material);

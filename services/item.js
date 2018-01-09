@@ -1,6 +1,8 @@
 var db = require('../database/db');
 var Item = db.model('Item');
 var mongoose = require('mongoose');
+var path = require('path')
+var fs = require('fs')
 
 var errorMessage = require('./error');
 var serviceUser = require('./user');
@@ -39,12 +41,15 @@ function findItemByName(name, callback){
 	});
 }
 
-function addItem(name, description, callback){
+function addItem(name, description, image, callback){
 	var item = new Item({
 		_id: mongoose.Types.ObjectId(),
 		name: name,
 		description: description
 	});
+
+	if(image)
+		item.img = fs.readFileSync(image.path);
 
 	item.save(function(err){
 		if(err){
@@ -71,7 +76,7 @@ function deleteItem(id, callback){
 	});
 }
 
-function editItem(id, name, description, callback){
+function editItem(id, name, description, image, callback){
 	findItemByID(id, function(err, item){
 		if(err){
 			return callback(err);
@@ -79,6 +84,9 @@ function editItem(id, name, description, callback){
 
 		item.name = name;
 		item.description = description;
+		if(image)
+			item.img = fs.readFileSync(image.path);
+
 		item.save(function(err){
 			if(err){
 				var error = new errorMessage('Internal Server Error',500);

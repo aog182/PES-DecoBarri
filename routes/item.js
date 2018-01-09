@@ -1,5 +1,8 @@
 module.exports = function(app){	
 
+	var multer  = require('multer');
+	var upload = multer({ dest: 'database/images' });
+
 	var serviceItem = require('../services/item');
 	var sendResponse = require('./sendResponse');
 
@@ -28,7 +31,8 @@ module.exports = function(app){
 		}
 
 		serviceItem.addItem(	req.body.name,
-								req.body.description, function(err, id){
+								req.body.description,
+								req.file, function(err, id){
 										sendResponse.sendRes(res, err, id);
 		});			
 	}
@@ -40,7 +44,8 @@ module.exports = function(app){
 
 		serviceItem.editItem(req.body._id,
 								req.body.name,
-								req.body.description, function(err, data){
+								req.body.description,
+								req.file, function(err, data){
 									sendResponse.sendRes(res, err, data);
 		});
 	}
@@ -55,9 +60,9 @@ module.exports = function(app){
 	app.get('/item/findAll', findAllItems);
 	app.get('/item/findItemByID/:_id', findItemByID);
 	app.get('/item/findItemByName/:name', findItemByName);
-	app.post('/item/add/', addItem);
+	app.post('/item/add/', upload.single('image'),addItem);
 
-	app.put('/item/edit/:_id', editItem);
+	app.put('/item/edit/:_id',upload.single('image'), editItem);
 
 	app.delete('/item/delete/:_id', deleteItem);
 
