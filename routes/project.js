@@ -167,12 +167,12 @@ module.exports = function(app){
     };
 
     var deleteNote = function (req, res) {
-        if (!req.body.note_id) {
-            res.status(400).send('note_id required');
+        if (!req.body._id) {
+            res.status(400).send('_id required');
             return;
         }
 
-        serviceProject.deleteNote(req.params._id, req.body.note_id, function (err, data) {
+        serviceProject.deleteNote(req.params._id, req.body._id, function (err, data) {
             sendResponse.sendRes(res, err, data);
         });
     };
@@ -258,8 +258,8 @@ module.exports = function(app){
     }
 
     var editNote = function(req, res){
-        if(!req.body.note_id){
-            res.status(400).send('note_id required');
+        if(!req.body._id){
+            res.status(400).send('_id required');
             return;
         }
         if(!req.body.description){
@@ -277,7 +277,7 @@ module.exports = function(app){
 
         serviceProject.editNote(
             req.params._id,
-            req.body.note_id,
+            req.body._id,
             req.body.description, 
             req.body.modifiable,
             req.body.color,

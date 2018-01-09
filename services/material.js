@@ -1,6 +1,8 @@
 var db = require('../database/db');
 var Material = db.model('Material');
 var mongoose = require('mongoose');
+var path = require('path')
+var fs = require('fs')
 
 var errorMessage = require('./error');
 
@@ -38,7 +40,7 @@ function findMaterialsByName(name, callback){
     });
 }
 
-function addMaterial(name, description, urgent, quantity, address, callback){
+function addMaterial(name, description, urgent, quantity, address, image, callback){
     var material = new Material({
         _id: mongoose.Types.ObjectId(),
         name: name,
@@ -47,6 +49,9 @@ function addMaterial(name, description, urgent, quantity, address, callback){
         quantity: quantity,
         address: address
     });
+
+    if(image)
+        image.img = fs.readFileSync(image.path);
 
     material.save(function(err){
         if(err){
@@ -57,7 +62,7 @@ function addMaterial(name, description, urgent, quantity, address, callback){
     });
 }
 
-function editMaterial(id, name, theme, description, city, address, callback){
+function editMaterial(id, name, theme, description, city, address, image, callback){
     findMaterialByID(id, function(err, material) {
         if (err) {
             return callback(err);
@@ -68,6 +73,8 @@ function editMaterial(id, name, theme, description, city, address, callback){
             material.description = description;
             material.city = city;
             material.address = address;
+            if(image)
+                image.img = fs.readFileSync(image.path);
             material.save(function (err) {
                 if (err) {
                     var error = new errorMessage('Internal Server Error', 500);

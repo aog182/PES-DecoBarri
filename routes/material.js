@@ -1,3 +1,6 @@
+var multer  = require('multer');
+var upload = multer({ dest: 'database/images' });
+
 var serviceMaterial = require('../services/material');
 var sendResponse = require('./sendResponse');
 
@@ -45,7 +48,8 @@ module.exports = function(app){
             req.body.description,
             req.body.urgent,
             req.body.quantity,
-            req.body.address, function (err, id) {
+            req.body.address,
+            req.file, function (err, id) {
                 sendResponse.sendRes(res, err, id);
             });
     };
@@ -84,7 +88,8 @@ module.exports = function(app){
             req.body.description,
             req.body.urgent,
             req.body.quantity,
-            req.body.address, function (err, data) {
+            req.body.address,
+            req.file, function (err, data) {
                 sendResponse.sendRes(res, err, data);
             });
 	};
@@ -101,9 +106,9 @@ module.exports = function(app){
 
 	app.get('/material/findMaterialsByName', findMaterialsByName);
 
-	app.post('/material/add', addMaterial);
+	app.post('/material/add', upload.single('image'), addMaterial);
 
-	app.put('/material/edit/:_id', editMaterial);
+	app.put('/material/edit/:_id', upload.single('image'), editMaterial);
 
 	app.delete('/material/delete/:_id', deleteMaterial);
 
