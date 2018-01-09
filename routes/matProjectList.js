@@ -6,8 +6,8 @@ module.exports = function(app){
 	var sendResponse = require('./sendResponse');
 
     var findAllMatProjectList = function(req, res){
-        serviceMatProjectList.findAllMatProjectList(function (err, projects) {
-            sendResponse.sendRes(res, err, projects);
+        serviceMatProjectList.findAllMatProjectList(function (err, matProjectList) {
+            sendResponse.sendRes(res, err, matProjectList);
         });
 	};
 
@@ -70,9 +70,33 @@ module.exports = function(app){
             });
 	};
 
+    var getUrgentNeedList = function(req, res){
+        serviceMatProjectList.getUrgentNeedList(req.params._id, function (err, urgentNeedList) {
+            sendResponse.sendRes(res, err, urgentNeedList);
+        });
+    };
+
+    var getNeedList = function(req, res){
+        serviceMatProjectList.getNeedList(req.params._id, function (err, needList) {
+            sendResponse.sendRes(res, err, needList);
+        });
+    };
+
+    var getInventari = function(req, res){
+        serviceMatProjectList.getInventari(req.params._id, function (err, inventari) {
+            sendResponse.sendRes(res, err, inventari);
+        });
+    };
+
 	app.get('/matProjectList/findAllLists', findAllMatProjectList);
 
-	app.get('/matProjectList/findMaterialsOfProjectWithID/:_id', findMaterialsOfProjectWithID);
+    app.get('/matProjectList/findMaterialsOfProjectWithID/:_id', findMaterialsOfProjectWithID);
+
+    app.get('/matProjectList/getUrgentNeedLists/:_id', getUrgentNeedList);
+
+    app.get('/matProjectList/getNeedLists/:_id', getNeedList);
+
+    app.get('/matProjectList/getInventari/:_id', getInventari);
 
 	//app.post('/matProjectList/add', addMatProjectList);
 

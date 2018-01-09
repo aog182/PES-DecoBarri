@@ -39,6 +39,30 @@ function findMaterialsOfProjectWithID(id, callback){
     });
 }
 
+function getUrgentNeedList(id, callback) {
+    findMaterialsOfProjectWithID(id, function (err, project) {
+        if (err)
+            return callback(err, null);
+        return callback(null, project.urgent_need_list);
+    });
+}
+
+function getNeedList(id, callback) {
+    findMaterialsOfProjectWithID(id, function (err, project) {
+        if(err)
+            return callback(err);
+        return callback(null, project.need_list);
+    });
+}
+
+function getInventari(id, callback) {
+    findMaterialsOfProjectWithID(id, function (err, project) {
+        if(err)
+            return callback(err);
+        return callback(null, project.inventari);
+    });
+}
+
 function addMatProjectList(project_id, callback){
     var error;
     if(!project_id){
@@ -81,7 +105,7 @@ function addMaterialNeedList(id, material_id, urgent, callback){
             return callback(err);
         }
         else {
-            if (urgent)
+            if (urgent === "True" || urgent === "true" || urgent === true)
                 matProjectList.urgent_need_list.push(material_id);
             else
                 matProjectList.need_list.push(material_id);
@@ -266,6 +290,9 @@ function deleteMaterialInventari(id, material_id, callback){
 
 module.exports.findAllMatProjectList = findAllMatProjectList;
 module.exports.findMaterialsOfProjectWithID = findMaterialsOfProjectWithID;
+module.exports.getUrgentNeedList = getUrgentNeedList;
+module.exports.getNeedList = getNeedList;
+module.exports.getInventari = getInventari;
 module.exports.addMatProjectList = addMatProjectList;
 module.exports.addMaterialNeedList = addMaterialNeedList;
 module.exports.addMaterialInventari = addMaterialInventari;
