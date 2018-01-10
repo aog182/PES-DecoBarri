@@ -86,13 +86,13 @@ function findProjectsByLocation(lat, lng, callback){
 		if(err)
 			return callback(err);
 		
-		var latit, longit, result;
+		var latit, longit, dist;
 		for (var i = projects.length - 1; i >= 0; i--) {
-			if(projects[i].lat){
-				latit = (+projects[i].lat) - (+lat);
-				longit = (+projects[i].lng) - (+lng);
-				result = Math.sqrt(Math.pow(latit)+Math.pow(longit));
-				results.push([toString(result), projects[i]]);
+			if(projects[i].lat && projects[i].lng){
+				latit = projects[i].lat - lat;
+				longit = projects[i].lng - lng;
+				dist = Math.sqrt(Math.pow(latit,2)+Math.pow(longit,2));
+				results.push({distance : dist, project: projects[i]});
 			}
 		}
 		//ordenar de mas cercano a mas lejano
