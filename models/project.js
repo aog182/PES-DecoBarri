@@ -18,7 +18,7 @@ var Project = new mongoose.Schema({
 			author: {type : String, required : true, trim:true}, 
 			date: {type : String, required : true, trim:true}, 
 		    modifiable: {type : Boolean, required : true, trim:true},
-		    img : {type: Buffer},
+		    img : {type: String, requiered: false},
 			color: {type : String, required : true, trim:true}}],
 	need_list : [{
 			_id: {type : String, required : true},
@@ -27,7 +27,7 @@ var Project = new mongoose.Schema({
 			urgent: {type: Boolean, required: true},
 			quantity: {type : Number, min: 0, required : true},
 			address: {type : String, required : false},
-			img : {type: Buffer}}],
+			img : {type: String, requiered: false}}],
 	inventory : [{
 			_id: {type : String, required : true},
 			name: {type : String, required : true},
@@ -35,7 +35,7 @@ var Project = new mongoose.Schema({
 			urgent: {type: Boolean, required: true},
 			quantity: {type : Number, min: 0, required : true},
 			address: {type : String, required : false},
-			img : {type: Buffer}}],
+			img : {type: String, requiered: false}}],
 	tags : [{tag : String, required : false}],
 	lat: {type : String, required: true},
 	lng: {type : String, required: true}, 
@@ -43,7 +43,7 @@ var Project = new mongoose.Schema({
     		_id: {type : String, requiered : true},
     		name: {type : String, required : true, trim:true},
     		description: {type : String, required : true, trim:true},
-    		img : {type: Buffer}}],
+    		img: {type: String, requiered: false}}],
 	material_id : [{type: mongoose.Schema.Types.ObjectId, ref: 'Material'}],
 	img : {type: Buffer}
 

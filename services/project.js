@@ -650,19 +650,19 @@ function getRequests(username, callback){
 }
 
 function getNeedList(project_id, callback){
-	findProjectByID(project_id, function(err, project)){
+	findProjectByID(project_id, function(err, project){
 		if(err)
 			return callback(err);
 		return callback(null, project.need_list);
-	}
+	});
 }
 
 function getInventory(project_id, callback){
-	findProjectByID(project_id, function(err, project)){
+	findProjectByID(project_id, function(err, project){
 		if(err)
 			return callback(err);
 		return callback(null, project.inventory);
-	}
+	});
 }
 
 function addNeedListMaterial(project_id, name, description, urgent, quantity, address, image, callback){
