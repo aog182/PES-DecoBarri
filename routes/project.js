@@ -3,8 +3,8 @@ module.exports = function(app){
     var multer  = require('multer');
     var upload = multer({ dest: 'database/images' });
 
-	var serviceProject = require('../services/project');
-	var sendResponse = require('./sendResponse');
+    var serviceProject = require('../services/project');
+    var sendResponse = require('./sendResponse');
 
 
     var findAllProjects = function (req, res) {
@@ -66,10 +66,10 @@ module.exports = function(app){
             return res.status(400).send('lng required');
         }
 
-		serviceProject.findProjectsByLocation(req.body.lat, req.body.lng, function(err, project){
-			sendResponse.sendRes(res, err, project);
-		});
-	};
+        serviceProject.findProjectsByLocation(req.body.lat, req.body.lng, function(err, project){
+            sendResponse.sendRes(res, err, project);
+        });
+    };
 
     var addProject = function (req, res) {
         if (!req.body.name) {
@@ -178,9 +178,9 @@ module.exports = function(app){
     };
 
     var getMaterials = function(req, res){
-    	serviceProject.getMaterials(req.params._id, function(err, data){
-    		sendResponse.sendRes(res, err, data);
-    	});
+        serviceProject.getMaterials(req.params._id, function(err, data){
+            sendResponse.sendRes(res, err, data);
+        });
     };
 
     var getNotes = function(req, res){
@@ -354,8 +354,8 @@ module.exports = function(app){
     }
 
     var editNeedListMaterial = function(req, res){
-        if (!req.body.material_id) {
-           return res.status(400).send('material_id required');
+        if (!req.body._id) {
+           return res.status(400).send('_id required');
         }
         if (!req.body.name) {
            return res.status(400).send('name required');
@@ -378,7 +378,7 @@ module.exports = function(app){
 
         serviceProject.editNeedListMaterial(
             req.params._id,
-            req.body.material_id,
+            req.body._id,
             req.body.name,
             req.body.description,
             req.body.urgent,
@@ -390,10 +390,10 @@ module.exports = function(app){
     }
 
     var deleteNeedListMaterial = function(req, res){
-        if (!req.body.material_id) {
-           return res.status(400).send('material_id required');
+        if (!req.body._id) {
+           return res.status(400).send('_id required');
         }
-        serviceProject.deleteNeedListMaterial(req.params._id,req.body.material_id, function(err, data){
+        serviceProject.deleteNeedListMaterial(req.params._id,req.body._id, function(err, data){
             sendResponse.sendRes(res, err, data);
         });
     }
@@ -445,8 +445,8 @@ module.exports = function(app){
     }
 
     var editInventoryMaterial = function(req, res){
-        if (!req.body.material_id) {
-           return res.status(400).send('material_id required');
+        if (!req.body._id) {
+           return res.status(400).send('_id required');
         }
         if (!req.body.name) {
            return res.status(400).send('name required');
@@ -469,7 +469,7 @@ module.exports = function(app){
 
         serviceProject.editInventoryMaterial(
             req.params._id,
-            req.body.material_id,
+            req.body._id,
             req.body.name,
             req.body.description,
             req.body.urgent,
@@ -481,37 +481,37 @@ module.exports = function(app){
     }
 
     var deleteInventoryMaterial = function(req, res){
-        if (!req.body.material_id) {
-           return res.status(400).send('material_id required');
+        if (!req.body._id) {
+           return res.status(400).send('_id required');
         }
-        serviceProject.deleteInventoryMaterial(req.params._id,req.body.material_id, function(err, data){
+        serviceProject.deleteInventoryMaterial(req.params._id,req.body._id, function(err, data){
             sendResponse.sendRes(res, err, data);
         });
     }
 
-	//returns all the paraments of all projects
-	app.get('/project/findAll', findAllProjects);
-	//returns all the paraments
-	app.get('/project/findByID/:_id', findProjectByID);
-	app.get('/project/findByName/:name', findProjectsByName);
-	app.get('/project/findByTheme/:theme', findProjectsByTheme);
-	app.post('/project/findByDescription/', findProjectsByDescription);
-	app.get('/project/findByCity/:city', findProjectsByCity);
-	app.post('/project/findProjectsByLocation/', findProjectsByLocation);
-	app.get('/project/getMaterials/:_id', getMaterials);
-	app.get('/project/getNotes/:_id', getNotes);
+    //returns all the paraments of all projects
+    app.get('/project/findAll', findAllProjects);
+    //returns all the paraments
+    app.get('/project/findByID/:_id', findProjectByID);
+    app.get('/project/findByName/:name', findProjectsByName);
+    app.get('/project/findByTheme/:theme', findProjectsByTheme);
+    app.post('/project/findByDescription/', findProjectsByDescription);
+    app.get('/project/findByCity/:city', findProjectsByCity);
+    app.post('/project/findProjectsByLocation/', findProjectsByLocation);
+    app.get('/project/getMaterials/:_id', getMaterials);
+    app.get('/project/getNotes/:_id', getNotes);
     app.get('/project/getMembers/:_id', getMembers);
     app.get('/project/getItems/:_id', getItems);
     app.get('/project/getImage/:_id', getImage);
     //need to pass name, username, password and email
-	app.post('/project/add', addProject);
-	app.get('/project/getMatProjectListID/:_id', getMaterialProjectListID);
+    app.post('/project/add', addProject);
+    app.get('/project/getMatProjectListID/:_id', getMaterialProjectListID);
 
-	app.put('/project/edit/:_id', editProject);
+    app.put('/project/edit/:_id', editProject);
 
-	app.delete('/project/delete/:_id', deleteProject);
-	app.post('/project/addNote/:_id', addNote);
-	app.put('/project/deleteNote/:_id', deleteNote);
+    app.delete('/project/delete/:_id', deleteProject);
+    app.post('/project/addNote/:_id', addNote);
+    app.put('/project/deleteNote/:_id', deleteNote);
 
     app.post('/project/addItem/:_id',addItem);
     app.put('/project/deleteItem/:_id', deleteItem);
