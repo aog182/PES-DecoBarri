@@ -78,7 +78,7 @@ module.exports = function(app){
         if (!req.body.city) {
             return res.status(400).send('city required');
         }
-        if (!req.body.username) {
+        if (!req.body.admin) {
             return res.status(400).send('username required');
         }
         if (!req.body.lat) {
@@ -95,7 +95,7 @@ module.exports = function(app){
             req.body.address, 
             req.body.lat,
             req.body.lng,
-            req.body.username,
+            req.body.admin,
             req.file, function (err, id) {
                 sendResponse.sendRes(res, err, id);
             });
@@ -213,7 +213,8 @@ module.exports = function(app){
 
         serviceProject.addItem(req.params._id,
             req.body.name,
-            req.body.description, function (err, data) {
+            req.body.description,
+            req.body.img, function (err, data) {
                 sendResponse.sendRes(res, err, data);
             });
     }; 
@@ -235,7 +236,7 @@ module.exports = function(app){
             return;
         }
 
-        serviceProject.editItem(req.params._id, req.body._id, req.body.name, req.body.description, function (err, data) {
+        serviceProject.editItem(req.params._id, req.body._id, req.body.name, req.body.description, req.body.img, function (err, data) {
             sendResponse.sendRes(res, err, data);
         });
     };
@@ -312,6 +313,176 @@ module.exports = function(app){
         });
     }
 
+    //MATERIALS NEED LIST
+
+    var getNeedList = function(req, res){
+        serviceProject.getNeedList(req.params._id, function(err, data){
+            sendResponse.sendRes(res, err, data);
+        });
+    }
+
+    var addNeedListMaterial = function(req, res){
+        if (!req.body.name) {
+           return res.status(400).send('name required');
+        }
+        if (!req.body.urgent) {
+            return res.status(400).send('urgent required');
+        }
+        if (!req.body.quantity) {
+            return res.status(400).send('urgent required');
+        }
+        if (!Boolean(req.body.urgent)) {
+            return res.status(401).send("urgent must be a boolean");
+        }
+        if (!Number(req.body.quantity)) {
+            return res.status(401).send("quantity must be a number");
+        }
+        if (req.body.quantity < 0) {
+            return res.status(401).send("quantity must be a number over 0");
+        }
+
+        serviceMaterial.addNeedListMaterial(
+            req.params._id,
+            req.body.name,
+            req.body.description,
+            req.body.urgent,
+            req.body.quantity,
+            req.body.address,
+            req.file, function (err, id) {
+                sendResponse.sendRes(res, err, id);
+        });
+    }
+
+    var editNeedListMaterial = function(req, res){
+        if (!req.body.material_id) {
+           return res.status(400).send('material_id required');
+        }
+        if (!req.body.name) {
+           return res.status(400).send('name required');
+        }
+        if (!req.body.urgent) {
+            return res.status(400).send('urgent required');
+        }
+        if (!req.body.quantity) {
+            return res.status(400).send('urgent required');
+        }
+        if (!Boolean(req.body.urgent)) {
+            return res.status(401).send("urgent must be a boolean");
+        }
+        if (!Number(req.body.quantity)) {
+            return res.status(401).send("quantity must be a number");
+        }
+        if (req.body.quantity < 0) {
+            return res.status(401).send("quantity must be a number over 0");
+        }
+
+        serviceMaterial.editNeedListMaterial(
+            req.params._id,
+            req.body.material_id,
+            req.body.name,
+            req.body.description,
+            req.body.urgent,
+            req.body.quantity,
+            req.body.address,
+            req.file, function (err, data) {
+                sendResponse.sendRes(res, err, data);
+        });
+    }
+
+    var deleteNeedListMaterial = function(req, res){
+        if (!req.body.material_id) {
+           return res.status(400).send('material_id required');
+        }
+        serviceProject.deleteNeedListMaterial(req.params._id,req.body.material_id, function(err, data){
+            sendResponse.sendRes(res, err, data);
+        });
+    }
+
+    //MATERIAL INVENTORY
+
+    var getInventory = function(req, res){
+        serviceProject.getInventory(req.params._id, function(err, data){
+            sendResponse.sendRes(res, err, data);
+        });
+    }
+
+    var addInventoryMaterial = function(req, res){
+        if (!req.body.name) {
+           return res.status(400).send('name required');
+        }
+        if (!req.body.urgent) {
+            return res.status(400).send('urgent required');
+        }
+        if (!req.body.quantity) {
+            return res.status(400).send('urgent required');
+        }
+        if (!Boolean(req.body.urgent)) {
+            return res.status(401).send("urgent must be a boolean");
+        }
+        if (!Number(req.body.quantity)) {
+            return res.status(401).send("quantity must be a number");
+        }
+        if (req.body.quantity < 0) {
+            return res.status(401).send("quantity must be a number over 0");
+        }
+
+        serviceMaterial.addInventoryMaterial(
+            req.params._id,
+            req.body.name,
+            req.body.description,
+            req.body.urgent,
+            req.body.quantity,
+            req.body.address,
+            req.file, function (err, id) {
+                sendResponse.sendRes(res, err, id);
+        });
+    }
+
+    var editInventoryMaterial = function(req, res){
+        if (!req.body.material_id) {
+           return res.status(400).send('material_id required');
+        }
+        if (!req.body.name) {
+           return res.status(400).send('name required');
+        }
+        if (!req.body.urgent) {
+            return res.status(400).send('urgent required');
+        }
+        if (!req.body.quantity) {
+            return res.status(400).send('urgent required');
+        }
+        if (!Boolean(req.body.urgent)) {
+            return res.status(401).send("urgent must be a boolean");
+        }
+        if (!Number(req.body.quantity)) {
+            return res.status(401).send("quantity must be a number");
+        }
+        if (req.body.quantity < 0) {
+            return res.status(401).send("quantity must be a number over 0");
+        }
+
+        serviceMaterial.editInventoryMaterial(
+            req.params._id,
+            req.body.material_id,
+            req.body.name,
+            req.body.description,
+            req.body.urgent,
+            req.body.quantity,
+            req.body.address,
+            req.file, function (err, data) {
+                sendResponse.sendRes(res, err, data);
+        });
+    }
+
+    var deleteInventoryMaterial = function(req, res){
+        if (!req.body.material_id) {
+           return res.status(400).send('material_id required');
+        }
+        serviceProject.deleteInventoryMaterial(req.params._id,req.body.material_id, function(err, data){
+            sendResponse.sendRes(res, err, data);
+        });
+    }
+
 	//returns all the paraments of all projects
 	app.get('/project/findAll', findAllProjects);
 	//returns all the paraments
@@ -336,7 +507,7 @@ module.exports = function(app){
 	app.post('/project/addNote/:_id', upload.single('image'),addNote);
 	app.put('/project/deleteNote/:_id', deleteNote);
 
-    app.post('/project/addItem/:_id', addItem);
+    app.post('/project/addItem/:_id',addItem);
     app.put('/project/deleteItem/:_id', deleteItem);
     app.put('/project/editItem/:_id', editItem);
     app.post('/project/editImage/:_id',upload.single('image'), editImage)
@@ -346,4 +517,13 @@ module.exports = function(app){
     app.get('/project/getRequests/:username', getRequests);
 
 
+    app.get('/project/getNeedList/:_id', getNeedList);
+    app.post('/project/addNeedListMaterial/:_id',upload.single('image'), addNeedListMaterial)
+    app.put('/project/editNeedListMaterial/:_id',upload.single('image'), editNeedListMaterial)
+    app.post('/project/deleteNeedListMaterial/:_id', deleteNeedListMaterial)
+
+    app.get('/project/getInventory/:_id', getInventory);
+    app.post('/project/addInventoryMaterial/:_id',upload.single('image'), addInventoryMaterial)
+    app.put('/project/editInventoryMaterial/:_id',upload.single('image'), editInventoryMaterial)
+    app.post('/project/deleteInventoryMaterial/:_id', deleteInventoryMaterial)
 };

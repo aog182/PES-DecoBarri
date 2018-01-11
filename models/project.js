@@ -20,13 +20,30 @@ var Project = new mongoose.Schema({
 		    modifiable: {type : Boolean, required : true, trim:true},
 		    img : {type: Buffer},
 			color: {type : String, required : true, trim:true}}],
+	need_list : [{
+			_id: {type : String, required : true},
+			name: {type : String, required : true},
+			description: {type : String, required : false},
+			urgent: {type: Boolean, required: true},
+			quantity: {type : Number, min: 0, required : true},
+			address: {type : String, required : false},
+			img : {type: Buffer}}],
+	inventory : [{
+			_id: {type : String, required : true},
+			name: {type : String, required : true},
+			description: {type : String, required : false},
+			urgent: {type: Boolean, required: true},
+			quantity: {type : Number, min: 0, required : true},
+			address: {type : String, required : false},
+			img : {type: Buffer}}],
 	tags : [{tag : String, required : false}],
 	lat: {type : String, required: true},
 	lng: {type : String, required: true}, 
     items_list : [{
     		_id: {type : String, requiered : true},
     		name: {type : String, required : true, trim:true},
-    		description: {type : String, required : true, trim:true}}],
+    		description: {type : String, required : true, trim:true},
+    		img : {type: Buffer}}],
 	material_id : [{type: mongoose.Schema.Types.ObjectId, ref: 'Material'}],
 	img : {type: Buffer}
 
