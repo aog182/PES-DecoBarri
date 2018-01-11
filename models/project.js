@@ -21,7 +21,7 @@ var Project = new mongoose.Schema({
 		    img : {type: String, requiered: false},
 			color: {type : String, required : true, trim:true}}],
 	need_list : [{
-			material_id: {type : String, required : true},
+			_id: {type : String, required : true},
 			name: {type : String, required : true},
 			description: {type : String, required : false},
 			urgent: {type: Boolean, required: true},
@@ -29,7 +29,7 @@ var Project = new mongoose.Schema({
 			address: {type : String, required : false},
 			img : {type: String, requiered: false}}],
 	inventory : [{
-			material_id: {type : String, required : true},
+			_id: {type : String, required : true},
 			name: {type : String, required : true},
 			description: {type : String, required : false},
 			urgent: {type: Boolean, required: true},
