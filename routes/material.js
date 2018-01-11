@@ -24,7 +24,7 @@ module.exports = function(app){
             sendResponse.sendRes(res, err, material);
         });
     };
-    var addMaterial = function (req, res) {findAllMaterials
+    var addMaterial = function (req, res) {
         if (!req.body.name) {
             return res.status(400).send('name required');
         }

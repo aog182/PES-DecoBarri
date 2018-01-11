@@ -185,7 +185,7 @@ function addProject(name, theme, description, city, address,  lat, lng, username
 }
 
 function getImage(project_id, callback){
-	findUserByID(project_id, function(err, project){
+	findProjectByID(project_id, function(err, project){
 		if(err)
 			return callback(err);
 
@@ -289,7 +289,7 @@ function editNote(project_id, note_id, description, modifiable, color, image, ca
 		if(err)
 			return callback(err);
 
-		var note = project.notes.find(notes => notes._id == idNote);
+		var note = project.notes.find(notes => notes._id == note_id);
 		if(note){
 			note.description = description;
 			note.modifiable = modifiable;
@@ -312,13 +312,13 @@ function editNote(project_id, note_id, description, modifiable, color, image, ca
 	});
 }
 
-function deleteNote(idProject, idNote, callback){
+function deleteNote(idProject, note_id, callback){
 
 	findProjectByID(idProject, function(err, project){
 		if(err)
 			return callback(err);
 		
-		var note = project.notes.find(notes => notes._id == idNote);
+		var note = project.notes.find(notes => notes._id == note_id);
 		if(note){
 			project.notes.remove(note);		
 			project.save(function(err){
