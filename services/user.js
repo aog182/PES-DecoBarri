@@ -176,7 +176,8 @@ function editInfoUser(username, new_data, image, callback){
 			}
 			user.name = new_data.name;
 			user.email = new_data.email;
-			user.img = image;
+			if(image)
+				user.img = image;
 			user.save(function(err){
 				if(err){
 					var error = new errorMessage('Internal Server Error',500);

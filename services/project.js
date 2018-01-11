@@ -527,7 +527,8 @@ function editItem(idProject, idItem, name, description, image, callback){
 		if(index !== -1){
 			project.items_list[index].name = name;
 			project.items_list[index].description = description;
-			project.items_list[index].img = image;
+			if(image)
+				project.items_list[index].img = image;
 			project.save(function(err){
 				if(err){
 					var error = new errorMessage('Internal Server Error',500);
@@ -722,7 +723,8 @@ function editNeedListMaterial(project_id, material_id, name, description, urgent
 	        material.urgent = urgent;
 	        material.quantity = quantity;
 	        material.address = address;
-	        material.img = image;	
+	        if(image)
+	        	material.img = image;	
 			project.save(function(err){
 				if(err){
 					var error = new errorMessage('Internal Server Error',500);
@@ -751,7 +753,8 @@ function editInventoryMaterial(project_id, material_id, name, description, urgen
 	        material.urgent = urgent;
 	        material.quantity = quantity;
 	        material.address = address;
-	        material.img = image;	
+	        if(image)
+	        	material.img = image;	
 			project.save(function(err){
 				if(err){
 					var error = new errorMessage('Internal Server Error',500);
