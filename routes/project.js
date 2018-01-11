@@ -348,7 +348,7 @@ module.exports = function(app){
             req.body.urgent,
             req.body.quantity,
             req.body.address,
-            req.file, function (err, id) {
+            req.body.img, function (err, id) {
                 sendResponse.sendRes(res, err, id);
         });
     }
@@ -384,7 +384,7 @@ module.exports = function(app){
             req.body.urgent,
             req.body.quantity,
             req.body.address,
-            req.file, function (err, data) {
+            req.body.img, function (err, data) {
                 sendResponse.sendRes(res, err, data);
         });
     }
@@ -433,7 +433,7 @@ module.exports = function(app){
             req.body.urgent,
             req.body.quantity,
             req.body.address,
-            req.file, function (err, id) {
+            req.body.img, function (err, id) {
                 sendResponse.sendRes(res, err, id);
         });
     }
@@ -469,7 +469,7 @@ module.exports = function(app){
             req.body.urgent,
             req.body.quantity,
             req.body.address,
-            req.file, function (err, data) {
+            req.body.img, function (err, data) {
                 sendResponse.sendRes(res, err, data);
         });
     }
@@ -518,12 +518,12 @@ module.exports = function(app){
 
 
     app.get('/project/getNeedList/:_id', getNeedList);
-    app.post('/project/addNeedListMaterial/:_id',upload.single('image'), addNeedListMaterial)
-    app.put('/project/editNeedListMaterial/:_id',upload.single('image'), editNeedListMaterial)
+    app.post('/project/addNeedListMaterial/:_id',addNeedListMaterial)
+    app.put('/project/editNeedListMaterial/:_id',editNeedListMaterial)
     app.post('/project/deleteNeedListMaterial/:_id', deleteNeedListMaterial)
 
     app.get('/project/getInventory/:_id', getInventory);
-    app.post('/project/addInventoryMaterial/:_id',upload.single('image'), addInventoryMaterial)
-    app.put('/project/editInventoryMaterial/:_id',upload.single('image'), editInventoryMaterial)
+    app.post('/project/addInventoryMaterial/:_id', addInventoryMaterial)
+    app.put('/project/editInventoryMaterial/:_id', editInventoryMaterial)
     app.post('/project/deleteInventoryMaterial/:_id', deleteInventoryMaterial)
 };

@@ -301,7 +301,7 @@ function editNote(project_id, note_id, description, modifiable, color, image, ca
 					var error = new errorMessage('Internal Server Error',500);
 					return callback(error);
 				}
-				return callback(null, 'Note deleted');
+				return callback(null, 'Note edited');
 			});
 		}
 		else{
@@ -505,13 +505,14 @@ function getItems(project_id, callback){
 	});
 }
 
-function addItem(id, name, description, callback){
+function addItem(id, name, description, image, callback){
 	findProjectByID(id, function(err, project){
 		if(err)return callback(err);
 		
 		var item = {'_id': mongoose.Types.ObjectId(),
 					'name':name, 
-					'description':description};
+					'description':description, 
+					'img': image};
 
 		project.items_list.push(item);
 
@@ -525,7 +526,7 @@ function addItem(id, name, description, callback){
 	});
 }
 
-function editItem(idProject, idItem, name, description, callback){
+function editItem(idProject, idItem, name, description, image, callback){
 	findProjectByID(idProject, function(err, project){
 		if(err)
 			return callback(err);
@@ -534,6 +535,7 @@ function editItem(idProject, idItem, name, description, callback){
 		if(index !== -1){
 			project.items_list[index].name = name;
 			project.items_list[index].description = description;
+			project.items_list[index].img = image;
 			project.save(function(err){
 				if(err){
 					var error = new errorMessage('Internal Server Error',500);
@@ -647,6 +649,177 @@ function getRequests(username, callback){
 	});
 }
 
+function getNeedList(project_id, callback){
+	findProjectByID(project_id, function(err, project)){
+		if(err)
+			return callback(err);
+		return callback(null, project.need_list);
+	}
+}
+
+function getInventory(project_id, callback){
+	findProjectByID(project_id, function(err, project)){
+		if(err)
+			return callback(err);
+		return callback(null, project.inventory);
+	}
+}
+
+function addNeedListMaterial(project_id, name, description, urgent, quantity, address, image, callback){
+	findProjectByID(project_id, function(err, project){
+		if(err)
+			return callback(err);
+
+		var material = new Material({
+	        _id: mongoose.Types.ObjectId(),
+	        name: name,
+	        description: description,
+	        urgent: urgent,
+	        quantity: quantity,
+	        address: address,
+	        img: image
+	    });
+
+	    project.need_list.push(material);
+		project.save(function(err){
+			if(err){
+				var error = new errorMessage('Internal Server Error',500);
+				return callback(error);
+			}
+			return callback(null, material._id);
+		});
+	});
+}
+
+function addInventoryMaterial(project_id, name, description, urgent, quantity, address, image, callback){
+	findProjectByID(project_id, function(err, project){
+		if(err)
+			return callback(err);
+
+		var material = new Material({
+	        _id: mongoose.Types.ObjectId(),
+	        name: name,
+	        description: description,
+	        urgent: urgent,
+	        quantity: quantity,
+	        address: address,
+	        img: image
+	    });
+
+	    project.inventory.push(material);
+		project.save(function(err){
+			if(err){
+				var error = new errorMessage('Internal Server Error',500);
+				return callback(error);
+			}
+			return callback(null, material._id);
+		});
+	});
+}
+
+function editNeedListMaterial(project_id, material_id, name, description, urgent, quantity, address, image, callback){
+	findProjectByID(project_id, function(err, project){
+		if(err)
+			return callback(err);
+
+
+		var material = project.need_list.find(need_list => need_list._id == material_id);
+		if(material){
+			material.name = name;
+	        material.description = description;
+	        material.urgent = urgent;
+	        material.quantity = quantity;
+	        material.address = address;
+	        material.img = image;	
+			project.save(function(err){
+				if(err){
+					var error = new errorMessage('Internal Server Error',500);
+					return callback(error);
+				}
+				return callback(null, 'Material edited');
+			});
+		}
+		else{
+			var error = new errorMessage('Material not registered',404);
+			return callback(error);
+		}
+	});
+}
+
+function editInventoryMaterial(project_id, material_id, name, description, urgent, quantity, address, image, callback){
+	findProjectByID(project_id, function(err, project){
+		if(err)
+			return callback(err);
+
+
+		var material = project.inventory.find(inventory => inventory._id == material_id);
+		if(material){
+			material.name = name;
+	        material.description = description;
+	        material.urgent = urgent;
+	        material.quantity = quantity;
+	        material.address = address;
+	        material.img = image;	
+			project.save(function(err){
+				if(err){
+					var error = new errorMessage('Internal Server Error',500);
+					return callback(error);
+				}
+				return callback(null, 'Material edited');
+			});
+		}
+		else{
+			var error = new errorMessage('Material not registered',404);
+			return callback(error);
+		}
+	});
+}
+
+function deleteNeedListMaterial(project_id, material_id, callback){
+	findProjectByID(project_id, function(err, project){
+		if(err)
+			return callback(err);
+		
+		var material = project.need_list.find(need_list => need_list._id == material_id);
+		if(material){
+			project.need_list.remove(note);		
+			project.save(function(err){
+				if(err){
+					var error = new errorMessage('Internal Server Error',500);
+					return callback(error);
+				}
+				return callback(null, 'Material deleted');
+			});
+		}
+		else{
+			var error = new errorMessage('Material not registered',404);
+			return callback(error);
+		}
+	});
+}
+
+function deleteInventoryMaterial(project_id, material_id, callback){
+	findProjectByID(project_id, function(err, project){
+		if(err)
+			return callback(err);
+		
+		var material = project.inventory.find(inventory => inventory._id == material_id);
+		if(material){
+			project.inventory.remove(note);		
+			project.save(function(err){
+				if(err){
+					var error = new errorMessage('Internal Server Error',500);
+					return callback(error);
+				}
+				return callback(null, 'Material deleted');
+			});
+		}
+		else{
+			var error = new errorMessage('Material not registered',404);
+			return callback(error);
+		}
+	});
+}
 
 module.exports.findAllProjects = findAllProjects;
 module.exports.findProjectByID = findProjectByID;
@@ -679,3 +852,10 @@ module.exports.editNote = editNote;
 module.exports.addRequest = addRequest;
 module.exports.deleteRequest = deleteRequest;
 module.exports.getRequests = getRequests;
+module.exports.getNeedList = getNeedList;
+module.exports.getInventory = getInventory;
+module.exports.addNeedListMaterial = addNeedListMaterial;
+module.exports.editNeedListMaterial = editNeedListMaterial;
+module.exports.addInventoryMaterial = addInventoryMaterial;
+module.exports.deleteNeedListMaterial = deleteNeedListMaterial;
+module.exports.deleteInventoryMaterial = deleteInventoryMaterial;
