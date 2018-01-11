@@ -13,7 +13,7 @@ var User = new mongoose.Schema({
 	//img: { data: Buffer, contentType: String },
 	projects : [{type : String, required : true}],
 	contacts : [{type : String, required : true}],
-	img : {type: Buffer}
+	img : {type: String, required: false}
 });
 
 User.pre('save', function(next){

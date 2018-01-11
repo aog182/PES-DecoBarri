@@ -45,7 +45,7 @@ var Project = new mongoose.Schema({
     		description: {type : String, required : true, trim:true},
     		img: {type: String, requiered: false}}],
 	material_id : [{type: mongoose.Schema.Types.ObjectId, ref: 'Material'}],
-	img : {type: Buffer}
+	img : {type: String, required: false}
 
 });
 

@@ -47,11 +47,9 @@ function addMaterial(name, description, urgent, quantity, address, image, callba
         description: description,
         urgent: urgent,
         quantity: quantity,
-        address: address
+        address: address,
+        img: image
     });
-
-    if(image)
-        image.img = fs.readFileSync(image.path);
 
     material.save(function(err){
         if(err){
@@ -74,7 +72,7 @@ function editMaterial(id, name, theme, description, city, address, image, callba
             material.city = city;
             material.address = address;
             if(image)
-                image.img = fs.readFileSync(image.path);
+                material.img = image;
             material.save(function (err) {
                 if (err) {
                     var error = new errorMessage('Internal Server Error', 500);

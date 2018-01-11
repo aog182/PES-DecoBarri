@@ -87,7 +87,7 @@ module.exports = function(app){
 			email : req.body.email
 		};
 
-		serviceUser.editInfoUser(req.params.username, new_data, req.file, function(err, data){
+		serviceUser.editInfoUser(req.params.username, new_data, req.body.img, function(err, data){
 			sendResponse.sendRes(res, err, data);
 		});
 	}
@@ -177,11 +177,11 @@ module.exports = function(app){
 	}
 
 	uploadImage = function(req, res){
-		if(!req.file) {
+		if(!req.body.img) {
 			res.status(400).send('Image required');
 			return;
 		}
-		serviceUser.uploadImage(req.file, req.params.username, function(err, data){
+		serviceUser.uploadImage(req.body.img, req.params.username, function(err, data){
 			sendResponse.sendRes(res, err, data);
 		});
 	}
@@ -203,7 +203,7 @@ module.exports = function(app){
 	//need to pass the name and the password
 	app.post('/user/login', loginUser);
 	app.delete('/user/delete/:username', deleteUser);
-	app.put('/user/edit/:username',upload.single('image'), editInfoUser);
+	app.put('/user/edit/:username', editInfoUser);
 	app.put('/user/editPassword/:username', editPassword);
 	app.put('/user/addProject/:username', addProject);
 	app.put('/user/deleteProject/:username', deleteProject);
@@ -212,7 +212,7 @@ module.exports = function(app){
 	app.get('/user/getContacts/:username', getContacts);
 	app.get('/user/showMyProjects/:username', showMyProjects);
 	app.delete('/user/deleteAllUsers/', deleteAllUsers);
-	app.post('/user/uploadImage/:username', upload.single('image'), uploadImage);
+	app.post('/user/uploadImage/:username', uploadImage);
 	app.get('/user/getImage/:username', getImage);
 
 }

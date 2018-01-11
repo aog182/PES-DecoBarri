@@ -164,9 +164,6 @@ function editInfoUser(username, new_data, image, callback){
 		if(err)
 			return callback(err);
 
-		if(image)
-			uploadImage(image,username,function(err,data){});
-
 		//SELECT * FROM users WHERE users._id != username AND users.email = email
 		User.find({"username": {"$ne": username},"email": new_data.email}, function(err, users){
 			if(err){
@@ -179,6 +176,7 @@ function editInfoUser(username, new_data, image, callback){
 			}
 			user.name = new_data.name;
 			user.email = new_data.email;
+			user.img = image;
 			user.save(function(err){
 				if(err){
 					var error = new errorMessage('Internal Server Error',500);
@@ -388,7 +386,7 @@ function uploadImage(image, username, callback){
 		if(err)
 			return callback(err);
 
-		user.img = fs.readFileSync(image.path);
+		user.img = image;
  		user.save(function(err){
 			if(err){
 				var error = new errorMessage('Internal Server Error',500);

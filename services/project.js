@@ -7,9 +7,6 @@ var serviceMatProjectList = require('../services/matProjectList');
 var errorMessage = require('./error');
 var serviceUser = require('./user');
 
-var path = require('path')
-var fs = require('fs')
-
 function findProjectByParameter(parameter, callback){
     var error;
 	Project.find(parameter, function(err, projects){
@@ -117,7 +114,7 @@ function setImage(image, project_id, callback){
 		if(err)
 			return callback(err);
 
-		project.img = fs.readFileSync(image.path);
+		project.img = image;
  		project.save(function(err){
 			if(err){
 				var error = new errorMessage('Internal Server Error',500);
@@ -141,12 +138,9 @@ function addProject(name, theme, description, city, address,  lat, lng, username
 		lng: lng,
 		admin: username,
 		members: [username],
-        material_id: null
+        material_id: null,
+		img: image
 	});
-
-	if(image){
-		project.img = fs.readFileSync(image.path);
-	}
 
 	serviceUser.findUserByID_Password(username, function(err, user){
 		if(err)
@@ -266,10 +260,8 @@ function addNote(id, title, description, author, modifiable, color, image, callb
 							'author':author,
 							'modifiable': modifiable,
 							'date': date.toString().slice(0,21), 
-							'color': color};
-				if(image){
-					note.img = fs.readFileSync(image.path);
-				}
+							'color': color,
+							'img': image};
 
 				project.notes.push(note);
 				project.save(function(err){
@@ -295,7 +287,7 @@ function editNote(project_id, note_id, description, modifiable, color, image, ca
 			note.modifiable = modifiable;
 			note.color = color;
 			if(image)
-				note.img = fs.readFileSync(image.path);	
+				note.img = image;	
 			project.save(function(err){
 				if(err){
 					var error = new errorMessage('Internal Server Error',500);
@@ -670,7 +662,7 @@ function addNeedListMaterial(project_id, name, description, urgent, quantity, ad
 		if(err)
 			return callback(err);
 
-		var material = new Material({
+		var material = {
 	        _id: mongoose.Types.ObjectId(),
 	        name: name,
 	        description: description,
@@ -678,7 +670,7 @@ function addNeedListMaterial(project_id, name, description, urgent, quantity, ad
 	        quantity: quantity,
 	        address: address,
 	        img: image
-	    });
+	    };
 
 	    project.need_list.push(material);
 		project.save(function(err){
@@ -696,7 +688,7 @@ function addInventoryMaterial(project_id, name, description, urgent, quantity, a
 		if(err)
 			return callback(err);
 
-		var material = new Material({
+		var material = {
 	        _id: mongoose.Types.ObjectId(),
 	        name: name,
 	        description: description,
@@ -704,7 +696,7 @@ function addInventoryMaterial(project_id, name, description, urgent, quantity, a
 	        quantity: quantity,
 	        address: address,
 	        img: image
-	    });
+	    };
 
 	    project.inventory.push(material);
 		project.save(function(err){
@@ -782,7 +774,7 @@ function deleteNeedListMaterial(project_id, material_id, callback){
 		
 		var material = project.need_list.find(need_list => need_list._id == material_id);
 		if(material){
-			project.need_list.remove(note);		
+			project.need_list.remove(material);		
 			project.save(function(err){
 				if(err){
 					var error = new errorMessage('Internal Server Error',500);
@@ -805,7 +797,7 @@ function deleteInventoryMaterial(project_id, material_id, callback){
 		
 		var material = project.inventory.find(inventory => inventory._id == material_id);
 		if(material){
-			project.inventory.remove(note);		
+			project.inventory.remove(material);		
 			project.save(function(err){
 				if(err){
 					var error = new errorMessage('Internal Server Error',500);
@@ -818,6 +810,26 @@ function deleteInventoryMaterial(project_id, material_id, callback){
 			var error = new errorMessage('Material not registered',404);
 			return callback(error);
 		}
+	});
+}
+
+function getAllNeedMaterials(callback){
+	var result = [];
+	findAllProjects(function(err, projects){
+		if(err)
+			return callback(err)
+		for (var i = 0; i < projects.length; i++) {
+			result.push({
+				project: {
+					_id : projects[i]._id,
+					lat: projects[i].lat,
+					lng: projects[i].lng,
+					address: projects[i].address
+				},
+				materials: projects[i].need_list
+			});
+		}
+		callback(null, result);
 	});
 }
 
@@ -856,6 +868,8 @@ module.exports.getNeedList = getNeedList;
 module.exports.getInventory = getInventory;
 module.exports.addNeedListMaterial = addNeedListMaterial;
 module.exports.editNeedListMaterial = editNeedListMaterial;
+module.exports.editInventoryMaterial = editInventoryMaterial;
 module.exports.addInventoryMaterial = addInventoryMaterial;
 module.exports.deleteNeedListMaterial = deleteNeedListMaterial;
 module.exports.deleteInventoryMaterial = deleteInventoryMaterial;
+module.exports.getAllNeedMaterials = getAllNeedMaterials;

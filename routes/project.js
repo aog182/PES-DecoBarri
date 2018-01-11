@@ -79,7 +79,7 @@ module.exports = function(app){
             return res.status(400).send('city required');
         }
         if (!req.body.admin) {
-            return res.status(400).send('username required');
+            return res.status(400).send('admin required');
         }
         if (!req.body.lat) {
             return res.status(400).send('lat required');
@@ -96,7 +96,7 @@ module.exports = function(app){
             req.body.lat,
             req.body.lng,
             req.body.admin,
-            req.file, function (err, id) {
+            req.body.img, function (err, id) {
                 sendResponse.sendRes(res, err, id);
             });
     };
@@ -161,7 +161,7 @@ module.exports = function(app){
             req.body.author,
             req.body.modifiable,
             req.body.color,
-            req.file, function (err, data) {
+            req.body.img, function (err, data) {
                 sendResponse.sendRes(res, err, data);
             });
     };
@@ -242,12 +242,12 @@ module.exports = function(app){
     };
 
     var editImage = function(req, res){
-        if (!req.file) {
+        if (!req.body.img) {
             res.status(400).send('Image required');
             return;
         }
 
-        serviceProject.setImage(req.file, req.params._id, function(err, data){
+        serviceProject.setImage(req.body.img, req.params._id, function(err, data){
             sendResponse.sendRes(res, err, data);
         });
     }
@@ -282,7 +282,7 @@ module.exports = function(app){
             req.body.description, 
             req.body.modifiable,
             req.body.color,
-            req.file, function(err, data){
+            req.body.img, function(err, data){
             sendResponse.sendRes(res, err, data);
         });
     }
@@ -329,7 +329,7 @@ module.exports = function(app){
             return res.status(400).send('urgent required');
         }
         if (!req.body.quantity) {
-            return res.status(400).send('urgent required');
+            return res.status(400).send('quantity required');
         }
         if (!Boolean(req.body.urgent)) {
             return res.status(401).send("urgent must be a boolean");
@@ -341,7 +341,7 @@ module.exports = function(app){
             return res.status(401).send("quantity must be a number over 0");
         }
 
-        serviceMaterial.addNeedListMaterial(
+        serviceProject.addNeedListMaterial(
             req.params._id,
             req.body.name,
             req.body.description,
@@ -376,7 +376,7 @@ module.exports = function(app){
             return res.status(401).send("quantity must be a number over 0");
         }
 
-        serviceMaterial.editNeedListMaterial(
+        serviceProject.editNeedListMaterial(
             req.params._id,
             req.body.material_id,
             req.body.name,
@@ -406,6 +406,12 @@ module.exports = function(app){
         });
     }
 
+    var getAllNeedMaterials = function(req, res){
+        serviceProject.getAllNeedMaterials(function(err, data){
+            sendResponse.sendRes(res, err, data);
+        });
+    }
+
     var addInventoryMaterial = function(req, res){
         if (!req.body.name) {
            return res.status(400).send('name required');
@@ -426,7 +432,7 @@ module.exports = function(app){
             return res.status(401).send("quantity must be a number over 0");
         }
 
-        serviceMaterial.addInventoryMaterial(
+        serviceProject.addInventoryMaterial(
             req.params._id,
             req.body.name,
             req.body.description,
@@ -461,7 +467,7 @@ module.exports = function(app){
             return res.status(401).send("quantity must be a number over 0");
         }
 
-        serviceMaterial.editInventoryMaterial(
+        serviceProject.editInventoryMaterial(
             req.params._id,
             req.body.material_id,
             req.body.name,
@@ -498,20 +504,20 @@ module.exports = function(app){
     app.get('/project/getItems/:_id', getItems);
     app.get('/project/getImage/:_id', getImage);
     //need to pass name, username, password and email
-	app.post('/project/add', upload.single('image'), addProject);
+	app.post('/project/add', addProject);
 	app.get('/project/getMatProjectListID/:_id', getMaterialProjectListID);
 
 	app.put('/project/edit/:_id', editProject);
 
 	app.delete('/project/delete/:_id', deleteProject);
-	app.post('/project/addNote/:_id', upload.single('image'),addNote);
+	app.post('/project/addNote/:_id', addNote);
 	app.put('/project/deleteNote/:_id', deleteNote);
 
     app.post('/project/addItem/:_id',addItem);
     app.put('/project/deleteItem/:_id', deleteItem);
     app.put('/project/editItem/:_id', editItem);
-    app.post('/project/editImage/:_id',upload.single('image'), editImage)
-    app.post('/project/editNote/:_id',upload.single('image'), editNote)
+    app.post('/project/editImage/:_id', editImage)
+    app.post('/project/editNote/:_id', editNote)
     app.post('/project/addRequest/:_id', addRequest);
     app.post('/project/deleteRequest/:_id', deleteRequest);
     app.get('/project/getRequests/:username', getRequests);
@@ -526,4 +532,6 @@ module.exports = function(app){
     app.post('/project/addInventoryMaterial/:_id', addInventoryMaterial)
     app.put('/project/editInventoryMaterial/:_id', editInventoryMaterial)
     app.post('/project/deleteInventoryMaterial/:_id', deleteInventoryMaterial)
+
+    app.get('/project/getAllNeedMaterials', getAllNeedMaterials);
 };
